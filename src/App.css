@@ -1,0 +1,36 @@
+.App {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+ /*
+::-webkit-scrollbar,
+::-webkit-scrollbar-horizontal {
+  height: 5px;
+  width: 5px;
+}
+
+::-webkit-scrollbar-track,
+::-webkit-scrollbar-horizontal {
+  background: white;
+  box-shadow: inset 0 0 5px grey;
+}
+
+::-webkit-scrollbar-thumb,
+::-webkit-scrollbar-thumb:horizontal {
+  background: linear-gradient(13deg, rgba(250,191,44,1) 14%, rgba(255,171,26,1) 64%);
+  border-radius: 10px;
+  transition: background 0.5s;
+}
+
+::-webkit-scrollbar-thumb:hover,
+::-webkit-scrollbar-thumb:horizontal:hover {
+  background: linear-gradient(13deg, rgba(255,171,26,1) 14%, rgba(250,191,44,1) 64%);
+}
+*/
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(250,191,44,1) white;
+}

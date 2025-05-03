@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
 import { FaSearch, FaPlus, FaHeart } from 'react-icons/fa';
+import { useDispatch } from 'react-redux';
+import { addToCart } from '../redux/slices/cartSlice';
+import CartNotification from '../components/CartNotification';
 
 // Menu categories and items data
 const menuData = {
@@ -95,7 +98,7 @@ const menuData = {
   ],
 };
 
-const MenuItem = ({ item }) => {
+const MenuItem = ({ item, onAddToCart }) => {
   const [isLiked, setIsLiked] = useState(false);
   
   return (
@@ -140,7 +143,10 @@ const MenuItem = ({ item }) => {
         </div>
       </div>
       
-      <button className="w-full bg-text text-secondary py-3 px-4 rounded-lg font-medium hover:bg-text/80 transition-colors flex items-center justify-center">
+      <button 
+        className="w-full bg-text text-secondary py-3 px-4 rounded-lg font-medium hover:bg-text/80 transition-colors flex items-center justify-center"
+        onClick={() => onAddToCart(item)}
+      >
         + ADD TO CART
       </button>
     </div>
@@ -150,6 +156,8 @@ const MenuItem = ({ item }) => {
 const MenuPage = () => {
   const [activeCategory, setActiveCategory] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
+  const [addedItem, setAddedItem] = useState(null); // Track added item for notification
+  const dispatch = useDispatch();
   
   // Filter items based on active category and search query
   const filteredItems = menuData.items.filter((item) => {
@@ -159,8 +167,22 @@ const MenuPage = () => {
     return matchesCategory && matchesSearch;
   });
   
+  // Handle adding item to cart
+  const handleAddToCart = (item) => {
+    dispatch(addToCart(item));
+    setAddedItem(item); // Set the added item to show notification
+  };
+  
   return (
     <div className="min-h-screen bg-background">
+      {/* Show notification when item is added to cart */}
+      {addedItem && (
+        <CartNotification 
+          item={addedItem} 
+          onClose={() => setAddedItem(null)} 
+        />
+      )}
+      
       <div className="container mx-auto">
         <div className="sticky top-0 pt-12 pb-6 px-4 bg-background z-10">
           <h1 className="text-3xl md:text-4xl font-bold mb-8 text-center text-black">
@@ -214,7 +236,11 @@ const MenuPage = () => {
         <div className="px-4 pb-12">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredItems.map((item) => (
-              <MenuItem key={item.id} item={item} />
+              <MenuItem 
+                key={item.id} 
+                item={item}
+                onAddToCart={handleAddToCart} 
+              />
             ))}
           </div>
           

@@ -1,12 +1,38 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { FaBars, FaShoppingCart, FaUser, FaTrash } from 'react-icons/fa';
+import { FaBars, FaShoppingCart, FaUser, FaTrash, FaPlus, FaMinus } from 'react-icons/fa';
+import { useSelector, useDispatch } from 'react-redux';
+import { removeFromCart, increaseQuantity, decreaseQuantity, selectCartItems, selectCartTotalAmount, selectCartTotalQuantity } from '../redux/slices/cartSlice';
 
 const Navbar = ({ toggleSidebar }) => {
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const dispatch = useDispatch();
+  
+  // Get cart data from Redux store
+  const cartItems = useSelector(selectCartItems);
+  const totalQuantity = useSelector(selectCartTotalQuantity);
+  const totalAmount = useSelector(selectCartTotalAmount);
 
-  // Sample cart items - replace with your actual cart data
-  const cartItems = [];
+  // Handle removing an item from cart
+  const handleRemoveItem = (id, event) => {
+    event.preventDefault(); // Prevent navigating to cart page
+    
+    if (window.confirm('Are you sure you want to remove this item from cart?')) {
+      dispatch(removeFromCart(id));
+    }
+  };
+
+  // Handle increasing item quantity
+  const handleIncreaseQuantity = (id, event) => {
+    event.preventDefault(); // Prevent navigating to cart page
+    dispatch(increaseQuantity(id));
+  };
+
+  // Handle decreasing item quantity
+  const handleDecreaseQuantity = (id, event) => {
+    event.preventDefault(); // Prevent navigating to cart page
+    dispatch(decreaseQuantity(id));
+  };
 
   return (
     <nav className="fixed top-0 left-0 w-full h-20 flex items-center justify-between p-7 z-50 bg-background">
@@ -51,14 +77,14 @@ const Navbar = ({ toggleSidebar }) => {
               <FaShoppingCart className="text-xl" />
               <span className="ml-2 hidden sm:inline text-text">CART</span>
               <span className="ml-1 bg-red-500 text-secondary text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold">
-                {cartItems.length}
+                {totalQuantity}
               </span>
             </div>
           </Link>
           
           {/* Dropdown menu */}
           <div 
-            className={`absolute right-0 mt-2 w-64 bg-background rounded-lg shadow-lg overflow-hidden transition-all duration-300 ease-in-out ${
+            className={`absolute right-0 mt-2 w-80 bg-background rounded-lg shadow-lg overflow-hidden transition-all duration-300 ease-in-out ${
               isCartOpen ? 'opacity-100 transform translate-y-0 max-h-96' : 'opacity-0 transform -translate-y-2 max-h-0 pointer-events-none'
             }`}
           >
@@ -68,25 +94,48 @@ const Navbar = ({ toggleSidebar }) => {
               {cartItems.length > 0 ? (
                 <>
                   <div className="max-h-52 overflow-y-auto py-2">
-                    {cartItems.map((item, index) => (
-                      <div key={index} className="flex items-center justify-between py-2 border-b">
+                    {cartItems.map((item) => (
+                      <div key={item.id} className="flex items-center justify-between py-2 border-b">
                         <div className="flex items-center">
                           <img src={item.image} alt={item.name} className="w-10 h-10 object-cover rounded" />
                           <div className="ml-2">
-                            <p className="font-medium">{item.name}</p>
-                            <p className="text-sm text-text">{item.quantity} x Rs.{item.price}</p>
+                            <p className="font-medium text-sm">{item.name}</p>
+                            <p className="text-sm text-text/70">Rs.{item.price.toFixed(2)}</p>
                           </div>
                         </div>
-                        <button className="text-red-500 hover:text-red-700">
-                          <FaTrash />
-                        </button>
+                        <div className="flex items-center space-x-2">
+                          {/* Quantity controls */}
+                          <div className="flex items-center bg-gray-100 rounded">
+                            <button 
+                              onClick={(e) => handleDecreaseQuantity(item.id, e)}
+                              className="px-2 py-1 text-xs"
+                            >
+                              <FaMinus size={10} />
+                            </button>
+                            <span className="px-2 text-sm">{item.quantity}</span>
+                            <button 
+                              onClick={(e) => handleIncreaseQuantity(item.id, e)}
+                              className="px-2 py-1 text-xs"
+                            >
+                              <FaPlus size={10} />
+                            </button>
+                          </div>
+                          
+                          {/* Remove button */}
+                          <button 
+                            onClick={(e) => handleRemoveItem(item.id, e)}
+                            className="text-accent hover:text-red-600"
+                          >
+                            <FaTrash size={14} />
+                          </button>
+                        </div>
                       </div>
                     ))}
                   </div>
                   
                   <div className="mt-4 flex justify-between font-bold">
                     <span>Total:</span>
-                    <span>Rs.{cartItems.reduce((total, item) => total + (item.price * item.quantity), 0)}</span>
+                    <span>Rs.{totalAmount.toFixed(2)}</span>
                   </div>
                   
                   <div className="mt-4 grid grid-cols-2 gap-2">
@@ -98,7 +147,7 @@ const Navbar = ({ toggleSidebar }) => {
                     </Link>
                     <Link 
                       to="/checkout" 
-                      className={`bg-primary hover:bg-primary/50 text-center py-2 rounded font-medium text-sm`}
+                      className={`bg-primary hover:bg-primary/80 text-center py-2 rounded font-medium text-sm`}
                     >
                       Checkout
                     </Link>
@@ -106,12 +155,11 @@ const Navbar = ({ toggleSidebar }) => {
                 </>
               ) : (
                 <div className="py-6 text-center">
-                  
                   <p className="text-text/70 mb-4">YOUR CART IS EMPTY</p>
                   <p className="text-sm text-text/40 mb-4">Go ahead and explore top categories.</p>
                   <Link 
                     to="/menu" 
-                    className={`bg-primary hover:bg-primary/50 px-4 py-2 rounded-lg font-medium text-sm inline-block`}
+                    className={`bg-primary hover:bg-primary/80 px-4 py-2 rounded-lg font-medium text-sm inline-block`}
                   >
                     Start Shopping
                   </Link>

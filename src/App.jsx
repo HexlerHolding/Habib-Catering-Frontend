@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Sidebar from "./components/Sidebar";
 import HomePage from "./pages/HomePage";
 import MenuPage from "./pages/MenuPage";
+import CartPage from "./pages/CartPage"; // Import new CartPage
 import "./App.css";
 import Login from "./pages/Login";
 import Footer from "./components/Footer";
@@ -105,6 +106,21 @@ function App() {
                 user={user}
               >
                 <MenuPage />
+              </MainLayout>
+            }
+          />
+          {/* Add Cart Route */}
+          <Route
+            path="/cart"
+            element={
+              <MainLayout
+                isSidebarOpen={isSidebarOpen}
+                toggleSidebar={toggleSidebar}
+                closeSidebar={() => setIsSidebarOpen(false)}
+                isLoggedIn={isLoggedIn}
+                user={user}
+              >
+                <CartPage />
               </MainLayout>
             }
           />

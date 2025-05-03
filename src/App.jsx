@@ -5,6 +5,8 @@ import Sidebar from "./components/Sidebar";
 import HomePage from "./pages/HomePage";
 import MenuPage from "./pages/MenuPage";
 import CartPage from "./pages/CartPage"; // Import new CartPage
+import CheckoutPage from "./pages/CheckoutPage"; // Import CheckoutPage
+import OrderSuccessPage from "./pages/OrderSuccessPage"; // Import OrderSuccessPage
 import "./App.css";
 import Login from "./pages/Login";
 import Footer from "./components/Footer";
@@ -164,6 +166,30 @@ function App() {
               >
                 <BlogDetail />
               </MainLayout>
+            }
+          />
+
+          {/* Add Checkout Route */}
+          <Route
+            path="/checkout"
+            element={
+              <MainLayout
+                isSidebarOpen={isSidebarOpen}
+                toggleSidebar={toggleSidebar}
+                closeSidebar={() => setIsSidebarOpen(false)}
+                isLoggedIn={isLoggedIn}
+                user={user}
+              >
+                <CheckoutPage />
+              </MainLayout>
+            }
+          />
+          
+          {/* Add Order Success Route */}
+          <Route
+            path="/order-success"
+            element={
+              <OrderSuccessPage />
             }
           />
 

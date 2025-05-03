@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { 
   increaseQuantity, 
@@ -14,6 +14,7 @@ import { FaTrash, FaPlus, FaMinus, FaArrowLeft, FaCreditCard, FaMoneyBill, FaSho
 
 const CartPage = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   
   // Get cart data from Redux store
   const cartItems = useSelector(selectCartItems);
@@ -51,6 +52,11 @@ const CartPage = () => {
     }
   };
   
+  // Handle checkout navigation
+  const handleCheckout = () => {
+    navigate('/checkout');
+  };
+  
   return (
     <div className="min-h-screen pt-8 pb-16">
       <div className="container mx-auto px-4">
@@ -59,7 +65,7 @@ const CartPage = () => {
           {cartItems.length > 0 && (
             <button 
               onClick={handleClearCart}
-              className="text-accent hover:text-red-600 text-sm font-medium flex items-center"
+              className="text-accent hover:text-accent/80 text-sm font-medium flex items-center"
             >
               <FaTrash className="mr-1" /> Clear Cart
             </button>
@@ -121,7 +127,7 @@ const CartPage = () => {
                           </div>
                           <button 
                             onClick={() => handleRemoveItem(item.id)}
-                            className="text-accent hover:text-red-600 text-sm flex items-center ml-auto"
+                            className="text-accent hover:text-accent/80 text-sm flex items-center ml-auto"
                           >
                             <FaTrash className="mr-1" size={12} /> Remove
                           </button>
@@ -169,7 +175,10 @@ const CartPage = () => {
                 </div>
                 
                 {/* Checkout button */}
-                <button className="w-full bg-primary text-text py-3 px-6 rounded-lg font-bold hover:bg-primary/80 transition mb-4 flex items-center justify-center">
+                <button 
+                  onClick={handleCheckout}
+                  className="w-full bg-primary text-text py-3 px-6 rounded-lg font-bold hover:bg-primary/80 transition mb-4 flex items-center justify-center"
+                >
                   <FaCreditCard className="mr-2" /> PROCEED TO CHECKOUT
                 </button>
                 

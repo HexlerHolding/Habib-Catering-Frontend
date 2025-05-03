@@ -1,196 +1,261 @@
+import React, { useState } from 'react';
+import { FaHeart, FaSearch } from 'react-icons/fa';
+import { useDispatch } from 'react-redux';
+import CartNotification from '../components/CartNotification';
+import { addToCart } from '../redux/slices/cartSlice';
 
-import React, { useEffect, useState } from 'react';
-import { FaPlus, FaSearch } from 'react-icons/fa';
-import { menuService } from '../../Services/menuService';
-//import categoryservice
-import { categoryService } from '../../Services/CategoryService';
-
-const MenuPage = () => {
-  const [activeCategory, setActiveCategory] = useState('all');
-  const [searchQuery, setSearchQuery] = useState('');
-  const [menuItems, setMenuItems] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [categoryCounts, setCategoryCounts] = useState({});
-
-  // Define categories (you can also fetch these from POS if needed)
-  const menuCategories = [
-    { id: 'all', name: 'All' },
+// Menu categories and items data
+const menuData = {
+  categories: [
     { id: 'pizzas', name: 'Pizzas' },
     { id: 'burgers', name: 'Burgers' },
     { id: 'sides', name: 'Sides' },
     { id: 'drinks', name: 'Drinks' },
     { id: 'desserts', name: 'Desserts' },
-    { id: 'others', name: 'Others' }
-  ];
+  ],
+  items: [
+    {
+      id: 1,
+      categoryId: 'pizzas',
+      name: 'Classic Margherita',
+      description: 'Fresh tomatoes, mozzarella, basil, and our signature sauce',
+      price: 11.99,
+      image: '/menu1.jpg',
+      isPopular: true,
+    },
+    {
+      id: 2,
+      categoryId: 'pizzas',
+      name: 'Pepperoni',
+      description: 'Pepperoni slices with extra cheese and our signature sauce',
+      price: 13.99,
+      image: '/menu2.jpg',
+      isPopular: true,
+    },
+    {
+      id: 3,
+      categoryId: 'pizzas',
+      name: 'BBQ Chicken',
+      description: 'Grilled chicken, BBQ sauce, red onions, and cilantro',
+      price: 14.99,
+      image: '/menu3.jpg',
+      isPopular: false,
+    },
+    {
+      id: 4,
+      categoryId: 'burgers',
+      name: 'Classic Cheeseburger',
+      description: 'Beef patty, cheddar cheese, lettuce, tomato, and special sauce',
+      price: 9.99,
+      image: '/menu1.jpg',
+      isPopular: true,
+    },
+    {
+      id: 5,
+      categoryId: 'burgers',
+      name: 'BBQ Bacon Burger',
+      description: 'Beef patty, bacon, cheddar, onion rings, and BBQ sauce',
+      price: 12.99,
+      image: '/menu2.jpg',
+      isPopular: true,
+    },
+    {
+      id: 6,
+      categoryId: 'sides',
+      name: 'Garlic Breadsticks',
+      description: 'Warm breadsticks brushed with garlic butter and herbs',
+      price: 5.99,
+      image: '/menu3.jpg',
+      isPopular: false,
+    },
+    {
+      id: 7,
+      categoryId: 'sides',
+      name: 'Cheese Fries',
+      description: 'Crispy fries topped with melted cheese and bacon bits',
+      price: 6.99,
+      image: '/menu1.jpg',
+      isPopular: true,
+    },
+    {
+      id: 8,
+      categoryId: 'drinks',
+      name: 'Soft Drinks',
+      description: 'Choose from a variety of refreshing soft drinks',
+      price: 2.49,
+      image: '/menu2.jpg',
+      isPopular: false,
+    },
+    {
+      id: 9,
+      categoryId: 'desserts',
+      name: 'Chocolate Brownie',
+      description: 'Warm chocolate brownie served with vanilla ice cream',
+      price: 6.99,
+      image: '/menu3.jpg',
+      isPopular: true,
+    },
+  ],
+};
 
-  useEffect(() => {
-    const fetchMenuItems = async () => {
-      try {
-        setIsLoading(true);
-        const products = await menuService.getMenuProducts();
-        setMenuItems(products);
-        
-        // Get category counts
-        const counts = await categoryService.getCategoriesWithCounts(products);
-        setCategoryCounts(counts);
-        
-        setError(null);
-      } catch (err) {
-        setError('Failed to load menu items');
-        console.error('Error loading menu:', err);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+const MenuItem = ({ item, onAddToCart }) => {
+  const [isLiked, setIsLiked] = useState(false);
   
-    fetchMenuItems();
-  }, []);
-  
-  // Update category button to show counts:
-  {menuCategories.map((category) => (
-    <button
-      key={category.id}
-      className={`px-5 py-2 mx-1 mb-2 rounded-full font-medium transition-all ${
-        activeCategory === category.id 
-          ? 'bg-accent text-text'
-          : 'bg-primary text-text hover:bg-accent'
-      }`}
-      onClick={() => setActiveCategory(category.id)}
-    >
-      {category.name}
-      {categoryCounts[category.id] > 0 && (
-        <span className="ml-2 bg-secondary text-text rounded-full px-2 py-0.5 text-xs">
-          {categoryCounts[category.id]}
-        </span>
-      )}
-    </button>
-  ))}
+  return (
+    <div className="bg-secondary rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all p-4">
+      <div className="relative">
+        {/* Heart icon */}
+        <button 
+          className="absolute top-2 right-2 "
+          onClick={() => setIsLiked(!isLiked)}
+        >
+          <FaHeart className={`w-6 h-6  ${isLiked ? 'text-accent fill-current' : 'text-secondary'}`} />
+        </button>
+        
+        {/* Image container with slate background */}
+        <div className="bg-text/10 rounded-lg p-4 mb-4">
+          <img 
+            src={item.image}
+            alt={item.name}
+            className="w-full h-48 object-cover rounded-lg"
+          />
+        </div>
+      </div>
+      
+      <h3 className="font-bold text-xl mb-1 text-text">
+        {item.name}
+      </h3>
+      
+      <p className="text-text/50 text-sm mb-3 line-clamp-2">
+        {item.description}
+      </p>
+      
+      <div className="flex justify-between items-center mb-3">
+        <div>
+          <span className="text-accent font-bold text-xl">
+            Rs. {item.price.toFixed(2)}
+          </span>
+          {item.isPopular && (
+            <span className="ml-2 bg-accent brightness-110 text-secondary text-xs px-2 py-1 rounded">
+              Starting Price
+            </span>
+          )}
+        </div>
+      </div>
+      
+      <button 
+        className="w-full bg-text text-secondary py-3 px-4 rounded-lg font-medium hover:bg-text/80 transition-colors flex items-center justify-center"
+        onClick={() => onAddToCart(item)}
+      >
+        + ADD TO CART
+      </button>
+    </div>
+  );
+};
 
+const MenuPage = () => {
+  const [activeCategory, setActiveCategory] = useState('all');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [addedItem, setAddedItem] = useState(null); // Track added item for notification
+  const dispatch = useDispatch();
+  
   // Filter items based on active category and search query
-  const filteredItems = menuItems.filter((item) => {
+  const filteredItems = menuData.items.filter((item) => {
     const matchesCategory = activeCategory === 'all' || item.categoryId === activeCategory;
     const matchesSearch = item.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
                          item.description.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesCategory && matchesSearch;
   });
-
-  const MenuItem = ({ item }) => {
-    return (
-      <div className="rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-all p-4 flex flex-col">
-        <div className="relative pb-[75%] mb-4">
-          <img 
-            src={item.image} 
-            alt={item.name}
-            className="absolute top-0 left-0 w-full h-full object-cover rounded-lg"
-            onError={(e) => {
-              e.target.src = item.placeholderImage;
-            }}
-          />
-          {item.isPopular && (
-            <div className="absolute top-2 right-2 px-2 py-1 text-xs font-bold rounded bg-accent text-text">
-              POPULAR
+  
+  // Handle adding item to cart
+  const handleAddToCart = (item) => {
+    dispatch(addToCart(item));
+    setAddedItem(item); // Set the added item to show notification
+  };
+  
+  return (
+    <div className="min-h-screen bg-background">
+      {/* Show notification when item is added to cart */}
+      {addedItem && (
+        <CartNotification 
+          item={addedItem} 
+          onClose={() => setAddedItem(null)} 
+        />
+      )}
+      
+      <div className="container mx-auto">
+        <div className="sticky top-0 pt-12 pb-6 px-4 bg-background z-10">
+          <h1 className="text-3xl md:text-4xl font-bold mb-8 text-center text-black">
+            Our Menu
+          </h1>
+          
+          {/* Search Bar */}
+          <div className="max-w-md mx-auto mb-10">
+            <div className="flex items-center bg-background px-4 py-3 rounded-full shadow-sm ">
+              <FaSearch className="text-text/70 mr-2" />
+              <input
+                type="text"
+                placeholder="Search our menu..."
+                className="bg-transparent w-full outline-none text-text/70"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+            </div>
+          </div>
+          
+          {/* Category Tabs - Sticky Section */}
+          <div className="flex flex-wrap justify-center mb-4">
+            <button
+              className={`px-5 py-2 mx-1 mb-2 rounded-full font-medium transition-all ${
+                activeCategory === 'all' 
+                  ? 'bg-primary text-text' 
+                  : 'bg-text/10 text-text '
+              }`}
+              onClick={() => setActiveCategory('all')}
+            >
+              All
+            </button>
+            
+            {menuData.categories.map((category) => (
+              <button
+                key={category.id}
+                className={`px-5 py-2 mx-1 mb-2 rounded-full font-medium transition-all ${
+                  activeCategory === category.id 
+                ? 'bg-primary text-text' 
+                  : 'bg-text/10 text-text '
+                }`}
+                onClick={() => setActiveCategory(category.id)}
+              >
+                {category.name}
+              </button>
+            ))}
+          </div>
+        </div>
+        
+        {/* Menu Items Grid - Scrollable Section */}
+        <div className="px-4 pb-12">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredItems.map((item) => (
+              <MenuItem 
+                key={item.id} 
+                item={item}
+                onAddToCart={handleAddToCart} 
+              />
+            ))}
+          </div>
+          
+          {/* No Results Message */}
+          {filteredItems.length === 0 && (
+            <div className="text-center py-12">
+              <h3 className="text-xl font-medium mb-2 text-black">
+                No items found
+              </h3>
+              <p className="text-gray-600">
+                Try a different search term or category
+              </p>
             </div>
           )}
         </div>
-        
-        <h3 className="font-bold text-lg mb-1">
-          {item.name}
-        </h3>
-        
-        <p className="text-sm mb-4 flex-grow">
-          {item.description}
-        </p>
-        
-        <div className="flex justify-between items-center mt-auto">
-          <span className="font-bold text-xl">
-            ${item.price.toFixed(2)}
-          </span>
-          
-          <button className="p-2 rounded-full bg-primary hover:bg-accent text-text">
-            <FaPlus />
-          </button>
-        </div>
-      </div>
-    );
-  };
-
-  return (
-    <div className="min-h-screen py-12 px-4">
-      <div className="container mx-auto">
-        <h1 className="text-3xl md:text-4xl font-bold mb-8 text-center">
-          Our Menu
-        </h1>
-        
-        {/* Loading State */}
-        {isLoading && (
-          <div className="text-center py-12">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-accent mx-auto mb-4"></div>
-            <p>Loading menu...</p>
-          </div>
-        )}
-
-        {/* Error State */}
-        {error && (
-          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-8" role="alert">
-            <span className="block sm:inline">{error}</span>
-          </div>
-        )}
-
-        {/* Menu Content */}
-        {!isLoading && !error && (
-          <>
-            {/* Search Bar */}
-            <div className="max-w-md mx-auto mb-10">
-              <div className="flex items-center px-4 py-2 rounded-full shadow-md bg-white">
-                <FaSearch className="mr-2 text-gray-400" />
-                <input
-                  type="text"
-                  placeholder="Search our menu..."
-                  className="bg-transparent w-full outline-none"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                />
-              </div>
-            </div>
-            
-            {/* Category Tabs */}
-            <div className="flex flex-wrap justify-center mb-8">
-              {menuCategories.map((category) => (
-                <button
-                  key={category.id}
-                  className={`px-5 py-2 mx-1 mb-2 rounded-full font-medium transition-all ${
-                    activeCategory === category.id 
-                      ? 'bg-accent text-text'
-                      : 'bg-primary text-text hover:bg-accent'
-                  }`}
-                  onClick={() => setActiveCategory(category.id)}
-                >
-                  {category.name}
-                </button>
-              ))}
-            </div>
-            
-            {/* Menu Items Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredItems.map((item) => (
-                <MenuItem key={item.id} item={item} />
-              ))}
-            </div>
-            
-            {/* No Results Message */}
-            {filteredItems.length === 0 && (
-              <div className="text-center py-12">
-                <h3 className="text-xl font-medium mb-2">
-                  No items found
-                </h3>
-                <p className="text-gray-700">
-                  Try a different search term or category
-                </p>
-              </div>
-            )}
-          </>
-        )}
       </div>
     </div>
   );

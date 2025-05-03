@@ -27,7 +27,7 @@ const Navbar = ({ toggleSidebar }) => {
             alt="Cheezious Logo" 
             className="h-10"
           />
-          <h1 className='font-bold font-montserrat text-2xl ml-2 text-text'>Cheezious</h1>
+          <h1 className='hidden sm:block font-bold font-montserrat text-2xl ml-2 text-text'>Cheezious</h1>
         </Link>
       </div>
       

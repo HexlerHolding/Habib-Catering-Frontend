@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Sidebar from "./components/Sidebar";
@@ -20,11 +20,18 @@ const MainLayout = ({
   isSidebarOpen,
   toggleSidebar,
   closeSidebar,
+  isLoggedIn,
+  user,
 }) => {
   return (
     <>
       <Navbar toggleSidebar={toggleSidebar} />
-      <Sidebar isOpen={isSidebarOpen} closeSidebar={closeSidebar} />
+      <Sidebar 
+        isOpen={isSidebarOpen} 
+        closeSidebar={closeSidebar}
+        isLoggedIn={isLoggedIn}
+        user={user}
+      />
       <main className="content">{children}</main>
       <Footer />
       <OrderNowButtonWrapper />
@@ -34,9 +41,39 @@ const MainLayout = ({
 
 function App() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [user, setUser] = useState(null);
+
+  // Check for authentication status on component mount
+  useEffect(() => {
+    // Check if user data exists in localStorage
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      const userData = JSON.parse(storedUser);
+      setUser(userData);
+      setIsLoggedIn(true);
+    }
+  }, []);
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
+  };
+
+  // Login function (call this when user successfully logs in)
+  const handleLogin = (userData) => {
+    setUser(userData);
+    setIsLoggedIn(true);
+    // Store user data in localStorage
+    localStorage.setItem('user', JSON.stringify(userData));
+  };
+
+  // Logout function
+  const handleLogout = () => {
+    setUser(null);
+    setIsLoggedIn(false);
+    localStorage.removeItem('user');
+    // Navigate to home page after logout
+    window.location.href = '/';
   };
 
   return (
@@ -50,6 +87,8 @@ function App() {
                 isSidebarOpen={isSidebarOpen}
                 toggleSidebar={toggleSidebar}
                 closeSidebar={() => setIsSidebarOpen(false)}
+                isLoggedIn={isLoggedIn}
+                user={user}
               >
                 <HomePage />
               </MainLayout>
@@ -62,6 +101,8 @@ function App() {
                 isSidebarOpen={isSidebarOpen}
                 toggleSidebar={toggleSidebar}
                 closeSidebar={() => setIsSidebarOpen(false)}
+                isLoggedIn={isLoggedIn}
+                user={user}
               >
                 <MenuPage />
               </MainLayout>
@@ -74,6 +115,8 @@ function App() {
                 isSidebarOpen={isSidebarOpen}
                 toggleSidebar={toggleSidebar}
                 closeSidebar={() => setIsSidebarOpen(false)}
+                isLoggedIn={isLoggedIn}
+                user={user}
               >
                 <BranchLocator />
               </MainLayout>
@@ -86,6 +129,8 @@ function App() {
                 isSidebarOpen={isSidebarOpen}
                 toggleSidebar={toggleSidebar}
                 closeSidebar={() => setIsSidebarOpen(false)}
+                isLoggedIn={isLoggedIn}
+                user={user}
               >
                 <BlogsPage />
               </MainLayout>
@@ -98,6 +143,8 @@ function App() {
                 isSidebarOpen={isSidebarOpen}
                 toggleSidebar={toggleSidebar}
                 closeSidebar={() => setIsSidebarOpen(false)}
+                isLoggedIn={isLoggedIn}
+                user={user}
               >
                 <BlogDetail />
               </MainLayout>
@@ -105,9 +152,18 @@ function App() {
           />
 
           {/* Login route without Navbar and Footer */}
-          <Route path="/login" element={<Login />} />
-          <Route path="/login/phone-number" element={<LoginPhone />} />
-          <Route path="/login/otp" element={<LoginOTP />} />
+          <Route 
+            path="/login" 
+            element={<Login onLogin={handleLogin} />} 
+          />
+          <Route 
+            path="/login/phone-number" 
+            element={<LoginPhone onLogin={handleLogin} />} 
+          />
+          <Route 
+            path="/login/otp" 
+            element={<LoginOTP onLogin={handleLogin} />} 
+          />
 
           {/* Add more routes as needed */}
         </Routes>

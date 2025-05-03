@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { FaSearch, FaPlus } from 'react-icons/fa';
+import { FaSearch, FaPlus, FaHeart } from 'react-icons/fa';
 
 // Menu categories and items data
 const menuData = {
@@ -18,7 +18,6 @@ const menuData = {
       description: 'Fresh tomatoes, mozzarella, basil, and our signature sauce',
       price: 11.99,
       image: '/menu1.jpg',
-      placeholderImage: 'https://via.placeholder.com/300x300/FFDE59/222222?text=Margherita',
       isPopular: true,
     },
     {
@@ -28,7 +27,6 @@ const menuData = {
       description: 'Pepperoni slices with extra cheese and our signature sauce',
       price: 13.99,
       image: '/menu2.jpg',
-      placeholderImage: 'https://via.placeholder.com/300x300/FFDE59/222222?text=Pepperoni',
       isPopular: true,
     },
     {
@@ -38,7 +36,6 @@ const menuData = {
       description: 'Grilled chicken, BBQ sauce, red onions, and cilantro',
       price: 14.99,
       image: '/menu3.jpg',
-      placeholderImage: 'https://via.placeholder.com/300x300/FFDE59/222222?text=BBQ+Chicken',
       isPopular: false,
     },
     {
@@ -48,7 +45,6 @@ const menuData = {
       description: 'Beef patty, cheddar cheese, lettuce, tomato, and special sauce',
       price: 9.99,
       image: '/menu1.jpg',
-      placeholderImage: 'https://via.placeholder.com/300x300/FFDE59/222222?text=Classic+Burger',
       isPopular: true,
     },
     {
@@ -58,7 +54,6 @@ const menuData = {
       description: 'Beef patty, bacon, cheddar, onion rings, and BBQ sauce',
       price: 12.99,
       image: '/menu2.jpg',
-      placeholderImage: 'https://via.placeholder.com/300x300/FFDE59/222222?text=BBQ+Bacon',
       isPopular: true,
     },
     {
@@ -68,7 +63,6 @@ const menuData = {
       description: 'Warm breadsticks brushed with garlic butter and herbs',
       price: 5.99,
       image: '/menu3.jpg',
-      placeholderImage: 'https://via.placeholder.com/300x300/FFDE59/222222?text=Breadsticks',
       isPopular: false,
     },
     {
@@ -78,7 +72,6 @@ const menuData = {
       description: 'Crispy fries topped with melted cheese and bacon bits',
       price: 6.99,
       image: '/menu1.jpg',
-      placeholderImage: 'https://via.placeholder.com/300x300/FFDE59/222222?text=Cheese+Fries',
       isPopular: true,
     },
     {
@@ -88,7 +81,6 @@ const menuData = {
       description: 'Choose from a variety of refreshing soft drinks',
       price: 2.49,
       image: '/menu2.jpg',
-      placeholderImage: 'https://via.placeholder.com/300x300/FFDE59/222222?text=Soft+Drinks',
       isPopular: false,
     },
     {
@@ -98,53 +90,65 @@ const menuData = {
       description: 'Warm chocolate brownie served with vanilla ice cream',
       price: 6.99,
       image: '/menu3.jpg',
-      placeholderImage: 'https://via.placeholder.com/300x300/FFDE59/222222?text=Brownie',
       isPopular: true,
     },
   ],
 };
 
 const MenuItem = ({ item }) => {
+  const [isLiked, setIsLiked] = useState(false);
   
   return (
-    <div className={`rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-all p-4 flex flex-col `}>
-      <div className="relative pb-[75%] mb-4">
-        <img 
-          src={item.image} 
-          alt={item.name}
-          className="absolute top-0 left-0 w-full h-full object-cover rounded-lg"
-       
-        />
-        {item.isPopular && (
-          <div className={`absolute top-2 right-2 px-2 py-1 text-xs font-bold rounded  `}>
-            POPULAR
-          </div>
-        )}
+    <div className="bg-secondary rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all p-4">
+      <div className="relative">
+        {/* Heart icon */}
+        <button 
+          className="absolute top-2 right-2 "
+          onClick={() => setIsLiked(!isLiked)}
+        >
+          <FaHeart className={`w-6 h-6  ${isLiked ? 'text-accent fill-current' : 'text-secondary'}`} />
+        </button>
+        
+        {/* Image container with slate background */}
+        <div className="bg-text/10 rounded-lg p-4 mb-4">
+          <img 
+            src={item.image}
+            alt={item.name}
+            className="w-full h-48 object-cover rounded-lg"
+          />
+        </div>
       </div>
       
-      <h3 className={`font-bold text-lg mb-1 `}>
+      <h3 className="font-bold text-xl mb-1 text-text">
         {item.name}
       </h3>
       
-      <p className={`text-sm mb-4 flex-grow `}>
+      <p className="text-text/50 text-sm mb-3 line-clamp-2">
         {item.description}
       </p>
       
-      <div className="flex justify-between items-center mt-auto">
-        <span className={`font-bold text-xl `}>
-          ${item.price.toFixed(2)}
-        </span>
-        
-        <button className={`p-2 rounded-full `}>
-          <FaPlus />
-        </button>
+      <div className="flex justify-between items-center mb-3">
+        <div>
+          <span className="text-accent font-bold text-xl">
+            Rs. {item.price.toFixed(2)}
+          </span>
+          {item.isPopular && (
+            <span className="ml-2 bg-accent brightness-110 text-secondary text-xs px-2 py-1 rounded">
+              Starting Price
+            </span>
+          )}
+        </div>
       </div>
+      
+      <button className="w-full bg-text text-secondary py-3 px-4 rounded-lg font-medium hover:bg-text/80 transition-colors flex items-center justify-center">
+        + ADD TO CART
+      </button>
     </div>
   );
 };
 
 const MenuPage = () => {
-  const [activeCategory, setActiveCategory] = useState(menuData.categories[0].id);
+  const [activeCategory, setActiveCategory] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
   
   // Filter items based on active category and search query
@@ -156,72 +160,76 @@ const MenuPage = () => {
   });
   
   return (
-    <div className={`min-h-screen py-12 px-4`}>
+    <div className="min-h-screen bg-background">
       <div className="container mx-auto">
-        <h1 className={`text-3xl md:text-4xl font-bold mb-8 text-center }`}>
-          Our Menu
-        </h1>
-        
-        {/* Search Bar */}
-        <div className="max-w-md mx-auto mb-10">
-          <div className={`flex items-center px-4 py-2 rounded-full shadow-md `}>
-            <FaSearch className={`mr-2`} />
-            <input
-              type="text"
-              placeholder="Search our menu..."
-              className={`bg-transparent w-full outline-none`}
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-          </div>
-        </div>
-        
-        {/* Category Tabs */}
-        <div className="flex flex-wrap justify-center mb-8">
-          <button
-            className={`px-5 py-2 mx-1 mb-2 rounded-full font-medium transition-all ${
-              activeCategory === 'all' 
-                ? `bg-accent text-text`
-                : `bg-primary text-text `
-            }`}
-            onClick={() => setActiveCategory('all')}
-          >
-            All
-          </button>
+        <div className="sticky top-0 pt-12 pb-6 px-4 bg-background z-10">
+          <h1 className="text-3xl md:text-4xl font-bold mb-8 text-center text-black">
+            Our Menu
+          </h1>
           
-          {menuData.categories.map((category) => (
-            <button
-              key={category.id}
-              className={`px-5 py-2 mx-1 mb-2 rounded-full font-medium transition-all ${
-                activeCategory === category.id 
-                  ? `text-text`
-                  : `text-text`
-              }`}
-              onClick={() => setActiveCategory(category.id)}
-            >
-              {category.name}
-            </button>
-          ))}
-        </div>
-        
-        {/* Menu Items Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredItems.map((item) => (
-            <MenuItem key={item.id} item={item} />
-          ))}
-        </div>
-        
-        {/* No Results Message */}
-        {filteredItems.length === 0 && (
-          <div className="text-center py-12">
-            <h3 className={`text-xl font-medium mb-2`}>
-              No items found
-            </h3>
-            <p className='text-gray-700'>
-              Try a different search term or category
-            </p>
+          {/* Search Bar */}
+          <div className="max-w-md mx-auto mb-10">
+            <div className="flex items-center bg-background px-4 py-3 rounded-full shadow-sm ">
+              <FaSearch className="text-text/70 mr-2" />
+              <input
+                type="text"
+                placeholder="Search our menu..."
+                className="bg-transparent w-full outline-none text-text/70"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+            </div>
           </div>
-        )}
+          
+          {/* Category Tabs - Sticky Section */}
+          <div className="flex flex-wrap justify-center mb-4">
+            <button
+              className={`px-5 py-2 mx-1 mb-2 rounded-full font-medium transition-all ${
+                activeCategory === 'all' 
+                  ? 'bg-primary text-text' 
+                  : 'bg-text/10 text-text '
+              }`}
+              onClick={() => setActiveCategory('all')}
+            >
+              All
+            </button>
+            
+            {menuData.categories.map((category) => (
+              <button
+                key={category.id}
+                className={`px-5 py-2 mx-1 mb-2 rounded-full font-medium transition-all ${
+                  activeCategory === category.id 
+                ? 'bg-primary text-text' 
+                  : 'bg-text/10 text-text '
+                }`}
+                onClick={() => setActiveCategory(category.id)}
+              >
+                {category.name}
+              </button>
+            ))}
+          </div>
+        </div>
+        
+        {/* Menu Items Grid - Scrollable Section */}
+        <div className="px-4 pb-12">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredItems.map((item) => (
+              <MenuItem key={item.id} item={item} />
+            ))}
+          </div>
+          
+          {/* No Results Message */}
+          {filteredItems.length === 0 && (
+            <div className="text-center py-12">
+              <h3 className="text-xl font-medium mb-2 text-black">
+                No items found
+              </h3>
+              <p className="text-gray-600">
+                Try a different search term or category
+              </p>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

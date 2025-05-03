@@ -1,0 +1,53 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Montserrat:wght@300;400;500;600;700&display=swap');
+
+@import "tailwindcss";
+
+@layer base {
+  html {
+    font-family: 'Poppins', sans-serif;
+  }
+}
+
+@theme {
+  /* Colors */
+  --color-primary: #fedc00;
+  --color-secondary: #ffffff;
+  --color-accent: #d2604e;
+  --color-text: #0a131c;
+  --color-background: #ffffff;
+
+  /* Animations */
+}
+
+/* Font utility classes */
+.font-poppins {
+  font-family: 'Poppins', sans-serif;
+}
+
+.font-montserrat {
+  font-family: 'Montserrat', sans-serif;
+}
+
+.app {
+  position: relative;
+  min-height: 100vh;
+  width: 100%;
+}
+
+.content {
+  padding-top: 60px; /* Height of navbar */
+  min-height: calc(100vh - 60px);
+}
+
+/* For UI components that need specific theme styling */
+.btn-primary {
+  @apply bg-yellow-400 text-gray-900 font-medium py-2 px-4 rounded hover:bg-yellow-500 transition-all duration-300;
+}
+
+.btn-secondary {
+  @apply bg-red-600 text-white font-medium py-2 px-4 rounded hover:bg-red-700 transition-all duration-300;
+}
+
+.section-heading {
+  @apply text-2xl md:text-3xl font-bold mb-6;
+}

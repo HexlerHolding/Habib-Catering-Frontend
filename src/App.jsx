@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Sidebar from "./components/Sidebar";
 import HomePage from "./pages/HomePage";
@@ -16,6 +16,10 @@ import BranchLocator from "./pages/BranchLocator";
 import BlogDetail from "./pages/BlogDetail";
 import BlogsPage from "./pages/BlogsPage";
 import OrderNowButtonWrapper from "./components/OrderNowButtonWrapper";
+import AccountLayout from "./layouts/AccountLayout";
+import EditProfilePage from "./pages/account/EditProfilePage";
+import OrderHistoryPage from "./pages/account/OrderHistoryPage";
+import FavoritesPage from "./pages/account/FavoritesPage";
 
 // Layout component for pages that should include Navbar and Footer
 const MainLayout = ({
@@ -44,7 +48,7 @@ const MainLayout = ({
 
 function App() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(true);
   const [user, setUser] = useState(null);
 
   // Check for authentication status on component mount
@@ -80,6 +84,7 @@ function App() {
   };
 
   return (
+   
       <div className="app">
         <Routes>
           {/* Routes with Navbar and Footer */}
@@ -193,6 +198,27 @@ function App() {
             }
           />
 
+          {/* Account routes - fixed to avoid nesting Routes */}
+          <Route
+            path="/account"
+            element={
+              <MainLayout
+                isSidebarOpen={isSidebarOpen}
+                toggleSidebar={toggleSidebar}
+                closeSidebar={() => setIsSidebarOpen(false)}
+                isLoggedIn={isLoggedIn}
+                user={user}
+              >
+                <AccountLayout isLoggedIn={isLoggedIn} user={user} />
+              </MainLayout>
+            }
+          >
+            <Route index element={<EditProfilePage />} />
+            <Route path="profile" element={<EditProfilePage />} />
+            <Route path="orders" element={<OrderHistoryPage />} />
+            <Route path="favorites" element={<FavoritesPage />} />
+          </Route>
+
           {/* Login route without Navbar and Footer */}
           <Route 
             path="/login" 
@@ -210,6 +236,7 @@ function App() {
           {/* Add more routes as needed */}
         </Routes>
       </div>
+
   );
 }
 

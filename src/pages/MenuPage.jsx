@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { FaSearch, FaPlus, FaHeart } from 'react-icons/fa';
-import { useDispatch } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { addToCart } from '../redux/slices/cartSlice';
+import { addToFavorites, removeFromFavorites, selectIsFavorite } from '../redux/slices/favoritesSlice';
 import CartNotification from '../components/CartNotification';
+import FavoriteNotification from '../components/FavoriteNotification';
 
 // Menu categories and items data
 const menuData = {
@@ -98,8 +100,19 @@ const menuData = {
   ],
 };
 
-const MenuItem = ({ item, onAddToCart }) => {
-  const [isLiked, setIsLiked] = useState(false);
+const MenuItem = ({ item, onAddToCart, onToggleFavorite }) => {
+  const dispatch = useDispatch();
+  const isFavorited = useSelector((state) => selectIsFavorite(state, item.id));
+  
+  const handleToggleFavorite = () => {
+    if (isFavorited) {
+      dispatch(removeFromFavorites(item.id));
+      onToggleFavorite(item, true); // true means removing from favorites
+    } else {
+      dispatch(addToFavorites(item));
+      onToggleFavorite(item, false); // false means adding to favorites
+    }
+  };
   
   return (
     <div className="bg-secondary rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all p-4">
@@ -107,9 +120,9 @@ const MenuItem = ({ item, onAddToCart }) => {
         {/* Heart icon */}
         <button 
           className="absolute top-2 right-2 "
-          onClick={() => setIsLiked(!isLiked)}
+          onClick={handleToggleFavorite}
         >
-          <FaHeart className={`w-6 h-6  ${isLiked ? 'text-accent fill-current' : 'text-secondary'}`} />
+          <FaHeart className={`w-6 h-6 ${isFavorited ? 'text-accent fill-current' : 'text-secondary'}`} />
         </button>
         
         {/* Image container with slate background */}
@@ -156,7 +169,9 @@ const MenuItem = ({ item, onAddToCart }) => {
 const MenuPage = () => {
   const [activeCategory, setActiveCategory] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
-  const [addedItem, setAddedItem] = useState(null); // Track added item for notification
+  const [addedItem, setAddedItem] = useState(null); // Track added item for cart notification
+  const [favoriteItem, setFavoriteItem] = useState(null); // Track item for favorite notification
+  const [isRemovingFavorite, setIsRemovingFavorite] = useState(false); // Track if removing from favorites
   const dispatch = useDispatch();
   
   // Filter items based on active category and search query
@@ -173,6 +188,12 @@ const MenuPage = () => {
     setAddedItem(item); // Set the added item to show notification
   };
   
+  // Handle toggling favorite status
+  const handleToggleFavorite = (item, isRemoving) => {
+    setFavoriteItem(item);
+    setIsRemovingFavorite(isRemoving);
+  };
+  
   return (
     <div className="min-h-screen bg-background">
       {/* Show notification when item is added to cart */}
@@ -180,6 +201,15 @@ const MenuPage = () => {
         <CartNotification 
           item={addedItem} 
           onClose={() => setAddedItem(null)} 
+        />
+      )}
+      
+      {/* Show notification when item is added/removed from favorites */}
+      {favoriteItem && (
+        <FavoriteNotification 
+          item={favoriteItem} 
+          onClose={() => setFavoriteItem(null)}
+          isRemoving={isRemovingFavorite}
         />
       )}
       
@@ -239,7 +269,8 @@ const MenuPage = () => {
               <MenuItem 
                 key={item.id} 
                 item={item}
-                onAddToCart={handleAddToCart} 
+                onAddToCart={handleAddToCart}
+                onToggleFavorite={handleToggleFavorite}
               />
             ))}
           </div>

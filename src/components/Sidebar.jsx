@@ -111,7 +111,7 @@ const Sidebar = ({ isOpen, closeSidebar, isLoggedIn, user }) => {
             {isLoggedIn && (
               <li>
                 <Link 
-                  to="/order-history"
+                  to="/account"
                   className="flex items-center text-text py-2"
                   onClick={closeSidebar}
                 >

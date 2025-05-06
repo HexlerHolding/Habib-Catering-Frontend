@@ -7,11 +7,11 @@ const Footer = () => {
   return (
     <>
       {/* Footer */}
-      <footer className="bg-background border-t h-24 border-background py-4 px-4">
-        <div className="container mx-auto">
-          <div className="flex flex-col items-center gap-3 justify-between text-sm">
+      <footer className="bg-background border-t h-24 border-background py-4 px-4 flex items-center">
+        <div className="container  mx-auto">
+          <div className="flex flex-col items-center sm:gap-3 justify-center text-sm">
             {/* Logo and Copyright */}
-            <div className="flex items-center mb-4 md:mb-0">
+            <div className="flex  items-center  sm:mb-4 md:mb-0 ">
               <img src="/logo.webp" alt="Cheezious" className="h-6 mr-2" />
               <span className="text-text">
                 Cheezious Copyright © {currentYear}. All Rights Reserved.
@@ -19,7 +19,7 @@ const Footer = () => {
             </div>
             
             {/* Links */}
-            <div className="flex space-x-4 text-text">
+            <div className="text-sm sm:text-base  space-x-4 text-text hidden sm:flex ">
               <Link to="/terms" className="hover:text-text/50 transition-colors">
                 TERMS & CONDITIONS
               </Link>

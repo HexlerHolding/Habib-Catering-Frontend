@@ -120,7 +120,7 @@ const Navbar = ({ toggleSidebar }) => {
             <div className="flex items-center">
               <FaShoppingCart className="text-xl" />
               <span className="ml-2 hidden sm:inline text-text">CART</span>
-              <span className="ml-1 bg-red-500 text-secondary text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold">
+              <span className="ml-1 bg-accent text-secondary text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold">
                 {totalQuantity}
               </span>
             </div>
@@ -132,7 +132,7 @@ const Navbar = ({ toggleSidebar }) => {
               isCartOpen ? 'opacity-100 scale-100 max-h-96' : 'opacity-0 scale-95 max-h-0 pointer-events-none'
             }`}
           >
-            <div className="p-4">
+            <div className="p-4 hidden sm:block">
               <h3 className="font-bold text-lg border-b pb-2 text-text">Your Cart</h3>
               
               {isLoading ? (

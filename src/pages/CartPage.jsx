@@ -76,7 +76,7 @@ const CartPage = () => {
           <div className="lg:grid lg:grid-cols-3 lg:gap-8">
             {/* Cart Items Section (2/3 width on large screens) */}
             <div className="lg:col-span-2 mb-8 lg:mb-0">
-              <div className="bg-secondary rounded-lg shadow-sm p-6">
+              <div className="bg-secondary rounded-lg shadow-sm p-6 h-screen overflow-y-auto ">
                 <h2 className="text-xl font-bold mb-6 text-text">Cart Items ({totalQuantity})</h2>
                 
                 {/* Cart items list */}
@@ -177,7 +177,7 @@ const CartPage = () => {
                 {/* Checkout button */}
                 <button 
                   onClick={handleCheckout}
-                  className="w-full bg-primary text-text py-3 px-6 rounded-lg font-bold hover:bg-primary/80 transition mb-4 flex items-center justify-center"
+                  className="w-full bg-primary text-text py-3 px-6 rounded-lg font-bold hover:bg-primary/80 hover:brightness-105 transition mb-4 flex items-center justify-center"
                 >
                   <FaCreditCard className="mr-2" /> PROCEED TO CHECKOUT
                 </button>

@@ -9,7 +9,7 @@ const BlogSection = () => {
       <div className="container mx-auto">
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-3xl font-bold text-text">Blogs</h2>
-          <Link to="/blogs" className="text-accent flex items-center">
+          <Link to="/blogs" className="text-accent text-sm hover:text-accent/80 flex items-center">
             VIEW ALL
           </Link>
         </div>

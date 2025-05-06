@@ -53,11 +53,11 @@ const CategorySlider = () => {
           </h2>
           <Link 
             to="/menu"
-            className="flex items-center text-sm font-medium text-accent"
+            className="flex items-center text-sm font-medium text-accent hover:text-accent/80"
          
           >
             VIEW ALL
-            <FaArrowRight className="ml-1" />
+        
           </Link>
         </div>
         

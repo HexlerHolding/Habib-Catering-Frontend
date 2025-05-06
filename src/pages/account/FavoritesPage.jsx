@@ -28,12 +28,12 @@ const FavoritesPage = () => {
           <p className="text-text/50 mt-2">Browse our menu and click the heart icon to add items to your favorites.</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
           {favorites.map((item) => (
             <div key={item.id} className="border border-text/10 rounded-lg overflow-hidden">
-              <div className="flex">
+              <div className="flex flex-col ">
                 {/* Item image */}
-                <div className="w-1/3 bg-text/10">
+                <div className="w-full bg-text/10">
                   <img 
                     src={item.image}
                     alt={item.name}
@@ -42,17 +42,17 @@ const FavoritesPage = () => {
                 </div>
                 
                 {/* Item details */}
-                <div className="w-2/3 p-4 flex flex-col justify-between">
+                <div className="w-full p-4 flex flex-col justify-between">
                   <div>
                     <h3 className="font-bold text-lg text-text mb-1">{item.name}</h3>
                     <p className="text-text/50 text-sm mb-2 line-clamp-2">{item.description}</p>
                     <p className="text-accent font-bold">Rs. {item.price.toFixed(2)}</p>
                   </div>
                   
-                  <div className="flex justify-between mt-4">
+                  <div className="flex flex-col  gap-3  justify-between mt-4">
                     <button 
                       onClick={() => handleRemoveFromFavorites(item.id)}
-                      className="flex items-center text-accent"
+                      className="flex items-center hover:text-accent/80 text-accent"
                     >
                       <FaHeart className="mr-1" />
                       <span>Remove</span>
@@ -60,7 +60,7 @@ const FavoritesPage = () => {
                     
                     <button 
                       onClick={() => handleAddToCart(item)}
-                      className="flex items-center px-3 py-1 bg-text text-secondary rounded-lg"
+                      className="flex w-full items-center px-3 py-3 sm:py-1 justify-center bg-text text-secondary rounded-lg"
                     >
                       <FaShoppingCart className="mr-1" />
                       <span>Add to Cart</span>

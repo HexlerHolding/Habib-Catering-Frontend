@@ -402,7 +402,7 @@ const CheckoutPage = () => {
               className={`w-full mt-6 py-3 rounded-md text-center font-bold text-text transition-all ${
                 isSubmitting
                   ? 'bg-gray-400 cursor-not-allowed'
-                  : 'bg-primary hover:bg-primary/90'
+                  : 'bg-primary hover:bg-primary/90 hover:brightness-105'
               }`}
             >
               {isSubmitting ? 'Processing...' : 'Place Order'}

@@ -41,7 +41,7 @@ const MainLayout = ({
       />
       <main className="content">{children}</main>
       <Footer />
-      <OrderNowButtonWrapper />
+      {/* <OrderNowButtonWrapper /> */}
     </>
   );
 };
@@ -233,7 +233,6 @@ function App() {
             element={<LoginOTP onLogin={handleLogin} />} 
           />
 
-          {/* Add more routes as needed */}
         </Routes>
       </div>
 

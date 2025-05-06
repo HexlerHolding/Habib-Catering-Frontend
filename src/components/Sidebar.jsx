@@ -100,7 +100,7 @@ c
           <ul className="space-y-4">
             <li>
               <Link 
-                to="/"
+                to="/menu"
                 className="flex items-center text-text py-2"
                 onClick={closeSidebar}
               >

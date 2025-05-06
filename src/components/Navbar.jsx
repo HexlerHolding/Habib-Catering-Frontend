@@ -223,7 +223,7 @@ const Navbar = ({ toggleSidebar }) => {
         {/* Login/Account button */}
         {isAuthenticated ? (
           <Link 
-            to="/account"
+            to="/account/profile"
             className={`flex items-center justify-center px-4 py-2 rounded-xl font-bold bg-primary hover:bg-primary/80 hover:brightness-105 transitio`}
           >
             <FaUser className="text-xl sm:mr-2" />

@@ -49,7 +49,7 @@ const OrderSuccessPage = () => {
           
           <button
             onClick={() => navigate('/menu')}
-            className="flex items-center justify-center py-3 px-4 rounded bg-primary hover:bg-primary/90 font-medium transition-colors"
+            className="flex items-center justify-center py-3 px-4 rounded bg-primary hover:bg-primary/80 hover:brightness-105 font-medium transition-colors"
           >
             <FaList className="mr-2" /> Order Again
           </button>

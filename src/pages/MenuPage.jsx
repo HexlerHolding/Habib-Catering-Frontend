@@ -6,8 +6,19 @@ import { menuService } from '../../Services/menuService';
 import CartNotification from '../components/CartNotification';
 import { addToCart } from '../redux/slices/cartSlice';
 
-const MenuItem = ({ item, onAddToCart }) => {
-  const [isLiked, setIsLiked] = useState(false);
+const MenuItem = ({ item, onAddToCart, onToggleFavorite }) => {
+  const dispatch = useDispatch();
+  const isFavorited = useSelector((state) => selectIsFavorite(state, item.id));
+  
+  const handleToggleFavorite = () => {
+    if (isFavorited) {
+      dispatch(removeFromFavorites(item.id));
+      onToggleFavorite(item, true); // true means removing from favorites
+    } else {
+      dispatch(addToFavorites(item));
+      onToggleFavorite(item, false); // false means adding to favorites
+    }
+  };
   
   return (
     <div className="bg-secondary rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all p-4">
@@ -15,9 +26,9 @@ const MenuItem = ({ item, onAddToCart }) => {
         {/* Heart icon */}
         <button 
           className="absolute top-2 right-2 "
-          onClick={() => setIsLiked(!isLiked)}
+          onClick={handleToggleFavorite}
         >
-          <FaHeart className={`w-6 h-6  ${isLiked ? 'text-accent fill-current' : 'text-secondary'}`} />
+          <FaHeart className={`w-6 h-6 ${isFavorited ? 'text-accent fill-current' : 'text-secondary'}`} />
         </button>
         
         {/* Image container with slate background */}
@@ -133,7 +144,7 @@ const MenuPage = () => {
   // Handle adding item to cart
   const handleAddToCart = (item) => {
     dispatch(addToCart(item));
-    setAddedItem(item);
+    setAddedItem(item); // Set the added item to show notification
   };
   
   return (
@@ -143,6 +154,15 @@ const MenuPage = () => {
         <CartNotification 
           item={addedItem} 
           onClose={() => setAddedItem(null)} 
+        />
+      )}
+      
+      {/* Show notification when item is added/removed from favorites */}
+      {favoriteItem && (
+        <FavoriteNotification 
+          item={favoriteItem} 
+          onClose={() => setFavoriteItem(null)}
+          isRemoving={isRemovingFavorite}
         />
       )}
       

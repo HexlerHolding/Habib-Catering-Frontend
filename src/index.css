@@ -10,13 +10,12 @@
 
 @theme {
   /* Colors */
-  --color-primary: #fedc00;
+  --color-primary: #fedc00; /*yellow*/
   --color-secondary: #ffffff;
   --color-accent: #d2604e;
   --color-text: #0a131c;
   --color-background: #ffffff;
 
-  /* Animations */
 }
 
 /* Font utility classes */

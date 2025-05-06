@@ -14,6 +14,7 @@ import Login from "./pages/Login";
 import LoginPhone from "./pages/LoginPhone";
 import LoginOTP from "./pages/LoginOTP";
 import BranchLocator from "./pages/BranchLocator";
+import BranchDetail from "./pages/BranchDetail";
 import BlogDetail from "./pages/BlogDetail";
 import BlogsPage from "./pages/BlogsPage";
 import AccountLayout from "./layouts/AccountLayout";
@@ -83,6 +84,14 @@ function App() {
             element={
               <MainLayout {...layoutProps}>
                 <BranchLocator />
+              </MainLayout>
+            }
+          />
+          <Route
+            path="/branches/:branchId"
+            element={
+              <MainLayout {...layoutProps}>
+                <BranchDetail />
               </MainLayout>
             }
           />

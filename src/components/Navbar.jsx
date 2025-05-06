@@ -224,7 +224,7 @@ const Navbar = ({ toggleSidebar }) => {
         {isAuthenticated ? (
           <Link 
             to="/account/profile"
-            className={`flex items-center justify-center px-4 py-2 rounded-xl font-bold bg-primary hover:bg-primary/80 hover:brightness-105 transitio`}
+            className={`flex items-center justify-center px-4 py-2 rounded-xl font-bold bg-primary hover:bg-primary/80 hover:brightness-105 transition duration-300`}
           >
             <FaUser className="text-xl sm:mr-2" />
             <span className="hidden sm:inline">ACCOUNT</span>
@@ -232,7 +232,7 @@ const Navbar = ({ toggleSidebar }) => {
         ) : (
           <Link 
             to="/login"
-            className={`flex items-center justify-center px-4 py-2 rounded-xl font-bold bg-primary hover:bg-primary/80 hover:brightness-105 transitio`}
+            className={`flex items-center justify-center px-4 py-2 rounded-xl font-bold bg-primary hover:bg-primary/80 hover:brightness-105 transition duration-300`}
           >
             <FaUser className="text-xl sm:mr-2" />
             <span className="hidden sm:inline">LOGIN</span>

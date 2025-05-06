@@ -1,87 +1,114 @@
 import React, { useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
-import { clearCart } from '../redux/slices/cartSlice';
-import { FaCheckCircle, FaHome, FaList } from 'react-icons/fa';
+import { FaCheckCircle, FaClipboard, FaHome } from 'react-icons/fa';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 const OrderSuccessPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const dispatch = useDispatch();
   
-  // Get order ID from location state
-  const { orderId } = location.state || { orderId: 'ORD-' + Date.now() };
+  // Extract order details from location state
+  const { orderId, orderDetails } = location.state || {};
   
-  // Clear cart when order is successfully placed
+  // Redirect to home if no order details are present
   useEffect(() => {
-    dispatch(clearCart());
-  }, [dispatch]);
+    if (!orderId) {
+      navigate('/');
+    }
+  }, [orderId, navigate]);
+  
+  // Format date to readable string
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    return date.toLocaleString('en-US', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: 'numeric',
+      minute: 'numeric'
+    });
+  };
+  
+  // If no order details, show loading
+  if (!orderId) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
   
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center px-4 py-16 bg-gray-50">
-      <div className="bg-white rounded-lg shadow-md p-8 max-w-md w-full text-center">
+    <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4">
+      <div className="max-w-md w-full bg-secondary rounded-lg shadow-lg p-8 text-center">
         <div className="mb-6">
-          <FaCheckCircle className="mx-auto text-6xl text-green-500" />
+          <FaCheckCircle className="text-green-500 text-6xl mx-auto" />
         </div>
         
-        <h1 className="text-2xl font-bold mb-4">Order Successfully Placed!</h1>
+        <h1 className="text-3xl font-bold mb-4 text-text">Order Successful!</h1>
         
-        <p className="text-gray-700 mb-6">
+        <p className="text-gray-600 mb-6">
           Thank you for your order. We've received your order and will begin processing it right away.
         </p>
         
-        <div className="bg-gray-100 rounded-lg p-4 mb-6">
-          <p className="text-sm text-gray-600">Order Reference</p>
-          <p className="text-xl font-bold">{orderId}</p>
+        <div className="bg-background rounded-lg p-6 mb-8">
+          <h2 className="text-lg font-bold mb-4 text-text">Order Details</h2>
+          
+          <div className="flex justify-between mb-2">
+            <span className="text-gray-600">Order ID:</span>
+            <span className="font-medium">{orderId}</span>
+          </div>
+          
+          {orderDetails && (
+            <>
+              <div className="flex justify-between mb-2">
+                <span className="text-gray-600">Date:</span>
+                <span className="font-medium">{formatDate(orderDetails.orderTime)}</span>
+              </div>
+              
+              <div className="flex justify-between mb-2">
+                <span className="text-gray-600">Items:</span>
+                <span className="font-medium">{orderDetails.items}</span>
+              </div>
+              
+              <div className="flex justify-between mb-2">
+                <span className="text-gray-600">Subtotal:</span>
+                <span className="font-medium">Rs. {orderDetails.subtotal.toFixed(2)}</span>
+              </div>
+              
+              <div className="flex justify-between mb-2">
+                <span className="text-gray-600">Tax:</span>
+                <span className="font-medium">Rs. {orderDetails.tax.toFixed(2)}</span>
+              </div>
+              
+              <div className="flex justify-between font-bold">
+                <span>Total:</span>
+                <span>Rs. {orderDetails.total.toFixed(2)}</span>
+              </div>
+            </>
+          )}
         </div>
         
-        <p className="text-gray-600 mb-8">
-          A confirmation has been sent to your email address.
-        </p>
-        
-        <div className="grid grid-cols-2 gap-4">
-          <button
-            onClick={() => navigate('/')}
-            className="flex items-center justify-center py-3 px-4 rounded border border-gray-300 hover:bg-gray-100 font-medium transition-colors"
+        <div className="flex flex-col md:flex-row space-y-3 md:space-y-0 md:space-x-3">
+          <Link 
+            to="/"
+            className="bg-primary text-text py-3 px-6 rounded-lg font-bold hover:bg-primary/80 transition flex-1 flex items-center justify-center"
           >
-            <FaHome className="mr-2" /> Home
-          </button>
+            <FaHome className="mr-2" /> Return Home
+          </Link>
           
-          <button
-            onClick={() => navigate('/menu')}
-            className="flex items-center justify-center py-3 px-4 rounded bg-primary hover:bg-primary/80 hover:brightness-105 font-medium transition-colors"
+          <Link 
+            to="/menu"
+            className="bg-text text-secondary py-3 px-6 rounded-lg font-bold hover:bg-text/80 transition flex-1 flex items-center justify-center"
           >
-            <FaList className="mr-2" /> Order Again
-          </button>
+            <FaClipboard className="mr-2" /> Order Again
+          </Link>
         </div>
       </div>
       
-      <div className="mt-8 text-center max-w-md">
-        <h2 className="font-bold text-lg mb-2">What happens next?</h2>
-        <ol className="text-left space-y-4 mt-4">
-          <li className="flex">
-            <div className="bg-primary text-text h-8 w-8 rounded-full flex items-center justify-center font-bold mr-3 flex-shrink-0">1</div>
-            <div>
-              <p className="font-medium">Order Preparation</p>
-              <p className="text-sm text-gray-600">Our chefs are preparing your delicious food</p>
-            </div>
-          </li>
-          <li className="flex">
-            <div className="bg-primary text-text h-8 w-8 rounded-full flex items-center justify-center font-bold mr-3 flex-shrink-0">2</div>
-            <div>
-              <p className="font-medium">Delivery</p>
-              <p className="text-sm text-gray-600">Your order will be on its way to you soon</p>
-            </div>
-          </li>
-          <li className="flex">
-            <div className="bg-primary text-text h-8 w-8 rounded-full flex items-center justify-center font-bold mr-3 flex-shrink-0">3</div>
-            <div>
-              <p className="font-medium">Enjoy!</p>
-              <p className="text-sm text-gray-600">Time to enjoy your meal!</p>
-            </div>
-          </li>
-        </ol>
-      </div>
+      <p className="mt-8 text-gray-500 text-sm max-w-md text-center">
+        A confirmation email has been sent to your email address. If you have any questions, please contact our customer service.
+      </p>
     </div>
   );
 };

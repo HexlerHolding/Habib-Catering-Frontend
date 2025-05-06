@@ -38,7 +38,7 @@ export const orderService = {
    */
   async getBranchTaxes(branchId) {
     try {
-      const response = await fetch(`${API_URL}/api/public/branch/${branchId}/taxes`);
+      const response = await fetch(`${API_URL}/api/public/menu/branch/${branchId}/taxes`);
       
       if (!response.ok) {
         throw new Error('Failed to fetch tax information');

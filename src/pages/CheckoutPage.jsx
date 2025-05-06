@@ -1,13 +1,109 @@
-import React, { useState } from 'react';
-import { useSelector } from 'react-redux';
+import React, { useEffect, useState } from 'react';
+import { FaArrowLeft, FaCreditCard, FaMapMarkerAlt, FaMoneyBillWave, FaStore } from 'react-icons/fa';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { FaCreditCard, FaMoneyBillWave, FaArrowLeft } from 'react-icons/fa';
-import { selectCartItems, selectCartTotalAmount } from '../redux/slices/cartSlice';
+import { branchService } from '../../Services/branchService';
+import { orderService } from '../../Services/orderService';
+import { clearCart, selectCartItems, selectCartTotalAmount } from '../redux/slices/cartSlice';
 
+// Component for displaying a single branch optionW
+const BranchOption = ({ branch, isSelected, onChange }) => (
+  <label 
+    className={`border rounded-md p-4 cursor-pointer transition-all ${
+      isSelected 
+        ? 'border-primary bg-primary/10' 
+        : 'border-gray-300 hover:border-gray-400'
+    }`}
+  >
+    <div className="flex items-center">
+      <input
+        type="radio"
+        name="branch"
+        value={branch.id}
+        checked={isSelected}
+        onChange={onChange}
+        className="sr-only" // Hide the default radio button
+      />
+      <div className="h-5 w-5 rounded-full border border-gray-400 mr-3 flex items-center justify-center">
+        {isSelected && (
+          <div className="h-3 w-3 rounded-full bg-primary"></div>
+        )}
+      </div>
+      <div className="flex-1">
+        <div className="flex items-center">
+          <FaStore className="text-gray-700 mr-2" />
+          <p className="font-medium">{branch.name}</p>
+        </div>
+        <div className="mt-1 flex items-start">
+          <FaMapMarkerAlt className="text-gray-600 mr-2 mt-1" />
+          <p className="text-sm text-gray-600">{branch.address}, {branch.city}</p>
+        </div>
+        {branch.status === 'closed' && (
+          <p className="text-red-600 text-sm mt-1">
+            This branch is currently closed
+          </p>
+        )}
+      </div>
+    </div>
+  </label>
+);
+
+// Component for displaying a payment method option
+const PaymentMethodOption = ({ id, icon: Icon, title, description, isSelected, onClick }) => (
+  <div 
+    className={`border rounded-md p-4 cursor-pointer flex items-center ${
+      isSelected 
+        ? 'border-primary bg-primary/10' 
+        : 'border-gray-300 hover:border-gray-400'
+    }`}
+    onClick={onClick}
+  >
+    <div className="h-5 w-5 rounded-full border border-gray-400 mr-3 flex items-center justify-center">
+      {isSelected && (
+        <div className="h-3 w-3 rounded-full bg-primary"></div>
+      )}
+    </div>
+    <Icon className="text-gray-700 text-xl mr-3" />
+    <div>
+      <p className="font-medium">{title}</p>
+      <p className="text-sm text-gray-500">{description}</p>
+    </div>
+  </div>
+);
+
+// Component for displaying a single cart item
+const CartItem = ({ item }) => (
+  <div className="flex items-start py-2 border-b">
+    <img 
+      src={item.image} 
+      alt={item.name} 
+      className="w-16 h-16 object-cover rounded"
+      onError={(e) => {
+        e.target.src = '/menu1.jpg';
+      }}
+    />
+    <div className="ml-3 flex-1">
+      <p className="font-medium">{item.name}</p>
+      <p className="text-sm text-gray-600">Qty: {item.quantity}</p>
+      <p className="font-medium">Rs. {item.price.toFixed(2)}</p>
+    </div>
+    <div className="font-medium">
+      Rs. {(item.price * item.quantity).toFixed(2)}
+    </div>
+  </div>
+);
+
+// Main CheckoutPage component
 const CheckoutPage = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const cartItems = useSelector(selectCartItems);
-  const totalAmount = useSelector(selectCartTotalAmount);
+  const subtotal = useSelector(selectCartTotalAmount);
+  
+  // Branch states
+  const [branches, setBranches] = useState([]);
+  const [selectedBranchId, setSelectedBranchId] = useState('');
+  const [branchLoading, setBranchLoading] = useState(true);
   
   // Form states
   const [formData, setFormData] = useState({
@@ -15,23 +111,99 @@ const CheckoutPage = () => {
     email: '',
     phone: '',
     address: '',
-    city: '',
+    city: 'Islamabad', // Default city set to Islamabad
     zipCode: '',
     notes: ''
   });
   
-  // Payment method state
-  const [paymentMethod, setPaymentMethod] = useState('card');
+  // Payment and delivery states
+  const [paymentMethod, setPaymentMethod] = useState('cash');
+  const [orderType, setOrderType] = useState('delivery');
+  
+  // Tax state and calculations
+  const [taxRate, setTaxRate] = useState(0);
+  const [deliveryFee, setDeliveryFee] = useState(100);
   
   // Form validation state
   const [errors, setErrors] = useState({});
   
-  // Loading state for submission
+  // Loading and error states
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState('');
   
-  // Delivery fee and total calculation
-  const deliveryFee = 150;
-  const finalTotal = totalAmount + deliveryFee;
+  // Fetch branches on component mount
+  useEffect(() => {
+    const fetchBranches = async () => {
+      try {
+        setBranchLoading(true);
+        const fetchedBranches = await branchService.getBranches();
+        
+        if (fetchedBranches.length > 0) {
+          setBranches(fetchedBranches);
+          
+          // Set default branch if none selected
+          if (!selectedBranchId && fetchedBranches.length > 0) {
+            setSelectedBranchId(fetchedBranches[0].id);
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching branches:', error);
+      } finally {
+        setBranchLoading(false);
+      }
+    };
+    
+    fetchBranches();
+  }, []);
+  
+  // Get tax rates when payment method or branch changes
+  useEffect(() => {
+    const fetchTaxRate = async () => {
+      try {
+        if (selectedBranchId) {
+          const taxInfo = await orderService.getBranchTaxes(selectedBranchId);
+          
+          // Apply appropriate tax rate based on payment method
+          if (paymentMethod === 'card') {
+            setTaxRate(taxInfo.card_tax || 0);
+          } else {
+            setTaxRate(taxInfo.cash_tax || 0);
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching tax rate:', error);
+        setTaxRate(0);
+      }
+    };
+    
+    fetchTaxRate();
+  }, [paymentMethod, selectedBranchId]);
+  
+  // Calculate tax amount and final total
+  const taxAmount = subtotal * (taxRate / 100);
+  const finalTotal = subtotal + taxAmount + (orderType === 'delivery' ? deliveryFee : 0);
+  
+  // Define order type options
+  const orderTypeOptions = [
+    { id: 'delivery', label: 'Delivery', description: 'Delivered to your address' },
+    { id: 'takeaway', label: 'Takeaway', description: 'Pickup from restaurant' }
+  ];
+  
+  // Define payment method options
+  const paymentMethodOptions = [
+    { 
+      id: 'cash', 
+      icon: FaMoneyBillWave, 
+      title: 'Cash on Delivery', 
+      description: 'Pay when you receive your order' 
+    },
+    { 
+      id: 'card', 
+      icon: FaCreditCard, 
+      title: 'Credit/Debit Card', 
+      description: 'Pay with your card' 
+    }
+  ];
   
   // Handle input changes
   const handleChange = (e) => {
@@ -73,6 +245,19 @@ const CheckoutPage = () => {
     }
   };
   
+  // Handle branch selection
+  const handleBranchChange = (e) => {
+    setSelectedBranchId(e.target.value);
+    
+    // Clear branch error if exists
+    if (errors.branch) {
+      setErrors({
+        ...errors,
+        branch: null
+      });
+    }
+  };
+  
   // Validate form
   const validateForm = () => {
     const newErrors = {};
@@ -97,48 +282,79 @@ const CheckoutPage = () => {
       newErrors.zipCode = 'Please enter a valid 5-digit zip code';
     }
     
+    // Validate branch selection
+    if (!selectedBranchId) {
+      newErrors.branch = 'Please select a branch';
+    }
+    
     return newErrors;
   };
   
   // Handle form submission
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log("Place order button clicked");
     
     // Validate form first
     const formErrors = validateForm();
     if (Object.keys(formErrors).length > 0) {
+      console.log("Form validation errors:", formErrors);
       setErrors(formErrors);
+      
       // Scroll to the first error
       const firstErrorField = Object.keys(formErrors)[0];
-      document.getElementsByName(firstErrorField)[0]?.scrollIntoView({ behavior: 'smooth' });
+      document.getElementsByName(firstErrorField)?.[0]?.scrollIntoView({ behavior: 'smooth' });
       return;
     }
     
-    // Proceed with checkout
+    // Clear any previous submission errors
+    setSubmitError('');
+    
+    // Start submission
     setIsSubmitting(true);
     
-    // Simulate API call
-    setTimeout(() => {
-      // Create order object
+    try {
+      // Prepare order data for the API
       const orderData = {
         items: cartItems,
-        customerDetails: formData,
-        paymentMethod,
-        orderTotal: totalAmount,
-        deliveryFee,
-        finalTotal,
-        orderDate: new Date(),
-        status: 'pending'
+        customerName: formData.fullName,
+        email: formData.email,
+        phone: formData.phone,
+        address: `${formData.address}, ${formData.city}, ${formData.zipCode}`,
+        notes: formData.notes,
+        paymentMethod: paymentMethod,
+        orderType: orderType,
+        branchId: selectedBranchId,
       };
       
-      // Here you would typically send this data to your backend
-      console.log('Order submitted:', orderData);
+      console.log("Submitting order data:", orderData);
       
-      // Navigate to success page (this would be created separately)
-      navigate('/order-success', { state: { orderId: 'ORD-' + Date.now() } });
+      // Submit order to API
+      const response = await orderService.submitOrder(orderData);
+      console.log("API response:", response);
       
+      // Check for successful response
+      if (response.success) {
+        // Clear the cart
+        dispatch(clearCart());
+        
+        // Navigate to success page with order details
+        navigate('/order-success', { 
+          state: { 
+            orderId: response.orderId,
+            orderDetails: response.orderDetails
+          }
+        });
+      } else {
+        // Handle API error
+        setSubmitError(response.message || 'Failed to place your order. Please try again.');
+      }
+    } catch (error) {
+      console.error('Order submission error:', error);
+      setSubmitError(error.message || 'An error occurred while placing your order. Please try again.');
+    } finally {
       setIsSubmitting(false);
-    }, 1500);
+    }
   };
   
   // Early return if cart is empty
@@ -150,7 +366,7 @@ const CheckoutPage = () => {
           <p className="mb-6">Please add some items to your cart before proceeding to checkout.</p>
           <button 
             onClick={() => navigate('/menu')}
-            className="btn-primary"
+            className="bg-primary text-text py-3 px-8 rounded-lg font-bold hover:bg-primary/80 transition"
           >
             Browse Menu
           </button>
@@ -169,16 +385,62 @@ const CheckoutPage = () => {
         >
           <FaArrowLeft className="mr-2" /> Back to Cart
         </button>
-        <h1 className="section-heading">Checkout</h1>
+        <h1 className="text-3xl font-bold">Checkout</h1>
       </div>
+      
+      {/* Display submission error if any */}
+      {submitError && (
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6" role="alert">
+          <p className="font-medium">Order Error</p>
+          <p>{submitError}</p>
+        </div>
+      )}
       
       <div className="grid md:grid-cols-3 gap-8">
         {/* Customer information form - 2/3 width */}
         <div className="md:col-span-2">
+          {/* Branch Selection Section */}
+          <div className="bg-secondary rounded-lg shadow-md p-6 mb-6">
+            <h2 className="text-xl font-bold mb-4">Select Branch</h2>
+            
+            {branchLoading ? (
+              <div className="flex items-center justify-center py-4">
+                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary"></div>
+                <span className="ml-2">Loading branches...</span>
+              </div>
+            ) : branches.length > 0 ? (
+              <div>
+                <p className="text-sm text-gray-600 mb-4">
+                  Please select the branch you want to order from:
+                </p>
+                
+                <div className="grid grid-cols-1 gap-3">
+                  {branches.map((branch) => (
+                    <BranchOption
+                      key={branch.id}
+                      branch={branch}
+                      isSelected={selectedBranchId === branch.id}
+                      onChange={handleBranchChange}
+                    />
+                  ))}
+                </div>
+                
+                {errors.branch && (
+                  <p className="text-red-500 text-sm mt-2">{errors.branch}</p>
+                )}
+              </div>
+            ) : (
+              <div className="text-center py-4">
+                <p className="text-gray-600">No branches available. Please try again later.</p>
+              </div>
+            )}
+          </div>
+          
+          {/* Customer Information Section */}
           <div className="bg-secondary rounded-lg shadow-md p-6 mb-6">
             <h2 className="text-xl font-bold mb-4">Shipping Information</h2>
             
-            <form onSubmit={handleSubmit}>
+            <form id="checkout-form" onSubmit={handleSubmit}>
               <div className="grid md:grid-cols-2 gap-4 mb-4">
                 {/* Full Name */}
                 <div className="col-span-2 md:col-span-1">
@@ -261,7 +523,7 @@ const CheckoutPage = () => {
                     value={formData.city}
                     onChange={handleChange}
                     className={`w-full p-3 border rounded-md ${errors.city ? 'border-red-500' : 'border-gray-300'}`}
-                    placeholder="Karachi"
+                    placeholder="Islamabad"
                   />
                   {errors.city && <p className="text-red-500 text-sm mt-1">{errors.city}</p>}
                 </div>
@@ -279,9 +541,42 @@ const CheckoutPage = () => {
                     onChange={handleChange}
                     maxLength={5}
                     className={`w-full p-3 border rounded-md ${errors.zipCode ? 'border-red-500' : 'border-gray-300'}`}
-                    placeholder="12345"
+                    placeholder="44000"
                   />
                   {errors.zipCode && <p className="text-red-500 text-sm mt-1">{errors.zipCode}</p>}
+                </div>
+                
+                {/* Order Type Selection */}
+                <div className="col-span-2">
+                  <label className="block text-sm font-medium mb-3">
+                    Order Type
+                  </label>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    {orderTypeOptions.map(option => (
+                      <div
+                        key={option.id}
+                        className={`border rounded-md p-3 cursor-pointer transition-all ${
+                          orderType === option.id 
+                            ? 'border-primary bg-primary/10' 
+                            : 'border-gray-300 hover:border-gray-400'
+                        }`}
+                        onClick={() => setOrderType(option.id)}
+                      >
+                        <div className="flex items-center">
+                          <div className="h-5 w-5 rounded-full border border-gray-400 mr-3 flex items-center justify-center flex-shrink-0">
+                            {orderType === option.id && (
+                              <div className="h-3 w-3 rounded-full bg-primary"></div>
+                            )}
+                          </div>
+                          <div>
+                            <p className="font-medium">{option.label}</p>
+                            <p className="text-sm text-gray-500">{option.description}</p>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 </div>
                 
                 {/* Additional Notes */}
@@ -306,47 +601,17 @@ const CheckoutPage = () => {
                 <h2 className="text-xl font-bold mb-4">Payment Method</h2>
                 
                 <div className="space-y-4">
-                  {/* Credit Card Option */}
-                  <div 
-                    className={`border rounded-md p-4 cursor-pointer flex items-center ${
-                      paymentMethod === 'card' 
-                      ? 'border-primary bg-primary/10' 
-                      : 'border-gray-300 hover:border-gray-400'
-                    }`}
-                    onClick={() => setPaymentMethod('card')}
-                  >
-                    <div className="h-5 w-5 rounded-full border border-gray-400 mr-3 flex items-center justify-center">
-                      {paymentMethod === 'card' && (
-                        <div className="h-3 w-3 rounded-full bg-primary"></div>
-                      )}
-                    </div>
-                    <FaCreditCard className="text-gray-700 text-xl mr-3" />
-                    <div>
-                      <p className="font-medium">Credit/Debit Card</p>
-                      <p className="text-sm text-gray-500">Pay with your card (secure payment)</p>
-                    </div>
-                  </div>
-                  
-                  {/* Cash on Delivery Option */}
-                  <div 
-                    className={`border rounded-md p-4 cursor-pointer flex items-center ${
-                      paymentMethod === 'cash' 
-                      ? 'border-primary bg-primary/10' 
-                      : 'border-gray-300 hover:border-gray-400'
-                    }`}
-                    onClick={() => setPaymentMethod('cash')}
-                  >
-                    <div className="h-5 w-5 rounded-full border border-gray-400 mr-3 flex items-center justify-center">
-                      {paymentMethod === 'cash' && (
-                        <div className="h-3 w-3 rounded-full bg-primary"></div>
-                      )}
-                    </div>
-                    <FaMoneyBillWave className="text-gray-700 text-xl mr-3" />
-                    <div>
-                      <p className="font-medium">Cash on Delivery</p>
-                      <p className="text-sm text-gray-500">Pay when you receive your order</p>
-                    </div>
-                  </div>
+                  {paymentMethodOptions.map(option => (
+                    <PaymentMethodOption
+                      key={option.id}
+                      id={option.id}
+                      icon={option.icon}
+                      title={option.title}
+                      description={option.description}
+                      isSelected={paymentMethod === option.id}
+                      onClick={() => setPaymentMethod(option.id)}
+                    />
+                  ))}
                 </div>
               </div>
             </form>
@@ -360,22 +625,8 @@ const CheckoutPage = () => {
             
             {/* Product list */}
             <div className="space-y-4 mb-6 max-h-64 overflow-y-auto pr-2">
-              {cartItems.map((item) => (
-                <div key={item.id} className="flex items-start py-2 border-b">
-                  <img 
-                    src={item.image} 
-                    alt={item.name} 
-                    className="w-16 h-16 object-cover rounded"
-                  />
-                  <div className="ml-3 flex-1">
-                    <p className="font-medium">{item.name}</p>
-                    <p className="text-sm text-gray-600">Qty: {item.quantity}</p>
-                    <p className="font-medium">Rs. {item.price.toFixed(2)}</p>
-                  </div>
-                  <div className="font-medium">
-                    Rs. {(item.price * item.quantity).toFixed(2)}
-                  </div>
-                </div>
+              {cartItems.map(item => (
+                <CartItem key={item.id} item={item} />
               ))}
             </div>
             
@@ -383,11 +634,17 @@ const CheckoutPage = () => {
             <div className="space-y-2 py-4 border-t border-b">
               <div className="flex justify-between">
                 <span className="text-gray-600">Subtotal</span>
-                <span>Rs. {totalAmount.toFixed(2)}</span>
+                <span>Rs. {subtotal.toFixed(2)}</span>
               </div>
+              {orderType === 'delivery' && (
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Delivery Fee</span>
+                  <span>Rs. {deliveryFee.toFixed(2)}</span>
+                </div>
+              )}
               <div className="flex justify-between">
-                <span className="text-gray-600">Delivery Fee</span>
-                <span>Rs. {deliveryFee.toFixed(2)}</span>
+                <span className="text-gray-600">Tax ({taxRate}%)</span>
+                <span>Rs. {taxAmount.toFixed(2)}</span>
               </div>
               <div className="flex justify-between font-bold pt-2">
                 <span>Total</span>
@@ -397,12 +654,13 @@ const CheckoutPage = () => {
             
             {/* Place Order Button */}
             <button
-              onClick={handleSubmit}
-              disabled={isSubmitting}
+              type="submit"
+              form="checkout-form"
+              disabled={isSubmitting || branchLoading || branches.length === 0}
               className={`w-full mt-6 py-3 rounded-md text-center font-bold text-text transition-all ${
-                isSubmitting
+                isSubmitting || branchLoading || branches.length === 0
                   ? 'bg-gray-400 cursor-not-allowed'
-                  : 'bg-primary hover:bg-primary/90 hover:brightness-105'
+                  : 'bg-primary hover:bg-primary/90'
               }`}
             >
               {isSubmitting ? 'Processing...' : 'Place Order'}

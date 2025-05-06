@@ -6,19 +6,8 @@ import { menuService } from '../../Services/menuService';
 import CartNotification from '../components/CartNotification';
 import { addToCart } from '../redux/slices/cartSlice';
 
-const MenuItem = ({ item, onAddToCart, onToggleFavorite }) => {
-  const dispatch = useDispatch();
-  const isFavorited = useSelector((state) => selectIsFavorite(state, item.id));
-  
-  const handleToggleFavorite = () => {
-    if (isFavorited) {
-      dispatch(removeFromFavorites(item.id));
-      onToggleFavorite(item, true); // true means removing from favorites
-    } else {
-      dispatch(addToFavorites(item));
-      onToggleFavorite(item, false); // false means adding to favorites
-    }
-  };
+const MenuItem = ({ item, onAddToCart }) => {
+  const [isLiked, setIsLiked] = useState(false);
   
   return (
     <div className="bg-secondary rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all p-4">
@@ -26,9 +15,9 @@ const MenuItem = ({ item, onAddToCart, onToggleFavorite }) => {
         {/* Heart icon */}
         <button 
           className="absolute top-2 right-2 "
-          onClick={handleToggleFavorite}
+          onClick={() => setIsLiked(!isLiked)}
         >
-          <FaHeart className={`w-6 h-6 ${isFavorited ? 'text-accent fill-current' : 'text-secondary'}`} />
+          <FaHeart className={`w-6 h-6  ${isLiked ? 'text-accent fill-current' : 'text-secondary'}`} />
         </button>
         
         {/* Image container with slate background */}
@@ -144,7 +133,7 @@ const MenuPage = () => {
   // Handle adding item to cart
   const handleAddToCart = (item) => {
     dispatch(addToCart(item));
-    setAddedItem(item); // Set the added item to show notification
+    setAddedItem(item);
   };
   
   return (
@@ -157,17 +146,8 @@ const MenuPage = () => {
         />
       )}
       
-      {/* Show notification when item is added/removed from favorites */}
-      {favoriteItem && (
-        <FavoriteNotification 
-          item={favoriteItem} 
-          onClose={() => setFavoriteItem(null)}
-          isRemoving={isRemovingFavorite}
-        />
-      )}
-      
       <div className="container mx-auto">
-        <div className="top-0 pt-12 pb-6 px-4 bg-background z-10">
+        <div className="sticky top-0 pt-12 pb-6 px-4 bg-background z-10">
           <h1 className="text-3xl md:text-4xl font-bold mb-8 text-center text-black">
             Our Menu
           </h1>

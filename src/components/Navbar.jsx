@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { FaBars, FaShoppingCart, FaUser, FaTrash, FaPlus, FaMinus, FaSpinner } from 'react-icons/fa';
 import { useSelector, useDispatch } from 'react-redux';
 import { removeFromCart, increaseQuantity, decreaseQuantity, selectCartItems, selectCartTotalAmount, selectCartTotalQuantity } from '../redux/slices/cartSlice';
+import { selectIsAuthenticated } from '../redux/slices/authSlice';
 
 const Navbar = ({ toggleSidebar }) => {
   const [isCartOpen, setIsCartOpen] = useState(false);
@@ -15,6 +16,7 @@ const Navbar = ({ toggleSidebar }) => {
   const cartItems = useSelector(selectCartItems);
   const totalQuantity = useSelector(selectCartTotalQuantity);
   const totalAmount = useSelector(selectCartTotalAmount);
+  const isAuthenticated = useSelector(selectIsAuthenticated);
 
   // Simulate loading effect when cart is opened
   useEffect(() => {
@@ -106,7 +108,7 @@ const Navbar = ({ toggleSidebar }) => {
       <div className="hidden items-center space-x-8 absolute left-1/2 transform -translate-x-1/2">
       </div>
       
-      {/* Cart and Login buttons */}
+      {/* Cart and Login/Account buttons */}
       <div className="flex items-center space-x-2">
         {/* Cart button with dropdown */}
         <div 
@@ -218,14 +220,24 @@ const Navbar = ({ toggleSidebar }) => {
           </div>
         </div>
         
-        {/* Login button */}
-        <Link 
-          to="/login"
-          className={`flex items-center justify-center px-4 py-2 rounded-xl font-bold bg-primary hover:bg-primary/80 hover:brightness-105 transitio`}
-        >
-          <FaUser className="text-xl sm:mr-2" />
-          <span className="hidden sm:inline">LOGIN</span>
-        </Link>
+        {/* Login/Account button */}
+        {isAuthenticated ? (
+          <Link 
+            to="/account"
+            className={`flex items-center justify-center px-4 py-2 rounded-xl font-bold bg-primary hover:bg-primary/80 hover:brightness-105 transitio`}
+          >
+            <FaUser className="text-xl sm:mr-2" />
+            <span className="hidden sm:inline">ACCOUNT</span>
+          </Link>
+        ) : (
+          <Link 
+            to="/login"
+            className={`flex items-center justify-center px-4 py-2 rounded-xl font-bold bg-primary hover:bg-primary/80 hover:brightness-105 transitio`}
+          >
+            <FaUser className="text-xl sm:mr-2" />
+            <span className="hidden sm:inline">LOGIN</span>
+          </Link>
+        )}
       </div>
     </nav>
   );

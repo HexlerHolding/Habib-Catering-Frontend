@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import { selectIsAuthenticated, selectCurrentUser, logout } from "./redux/slices/authSlice";
 import Navbar from "./components/Navbar";
 import Sidebar from "./components/Sidebar";
 import HomePage from "./pages/HomePage";
 import MenuPage from "./pages/MenuPage";
-import CartPage from "./pages/CartPage"; // Import new CartPage
-import CheckoutPage from "./pages/CheckoutPage"; // Import CheckoutPage
-import OrderSuccessPage from "./pages/OrderSuccessPage"; // Import OrderSuccessPage
+import CartPage from "./pages/CartPage";
+import CheckoutPage from "./pages/CheckoutPage";
+import OrderSuccessPage from "./pages/OrderSuccessPage";
 import "./App.css";
 import Login from "./pages/Login";
 import Footer from "./components/Footer";
@@ -27,16 +29,18 @@ const MainLayout = ({
   isSidebarOpen,
   toggleSidebar,
   closeSidebar,
-  isLoggedIn,
-  user,
 }) => {
+  const isAuthenticated = useSelector(selectIsAuthenticated);
+  console.log("isAuthenticated", isAuthenticated);
+  const user = useSelector(selectCurrentUser);
+  
   return (
     <>
       <Navbar toggleSidebar={toggleSidebar} />
       <Sidebar 
         isOpen={isSidebarOpen} 
         closeSidebar={closeSidebar}
-        isLoggedIn={isLoggedIn}
+        isLoggedIn={isAuthenticated}
         user={user}
       />
       <main className="content">{children}</main>
@@ -46,45 +50,53 @@ const MainLayout = ({
   );
 };
 
+// New component to debug and ensure authenticated access
+const ProtectedAccountRoutes = ({ isSidebarOpen, toggleSidebar, closeSidebar }) => {
+  const isAuthenticated = useSelector(selectIsAuthenticated);
+  const user = useSelector(selectCurrentUser);
+  
+  console.log("Protected Account Route Check:", { isAuthenticated, user });
+  
+  // If not authenticated, redirect to login
+  if (!isAuthenticated) {
+    console.log("User not authenticated, redirecting to login");
+    return <Navigate to="/login" />;
+  }
+  
+  return (
+    <MainLayout
+      isSidebarOpen={isSidebarOpen}
+      toggleSidebar={toggleSidebar}
+      closeSidebar={closeSidebar}
+    >
+      <AccountLayout />
+    </MainLayout>
+  );
+};
+
 function App() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(true);
-  const [user, setUser] = useState(null);
+  const dispatch = useDispatch();
+  const isAuthenticated = useSelector(selectIsAuthenticated);
+  const user = useSelector(selectCurrentUser);
 
-  // Check for authentication status on component mount
+  // Add effect to log authentication state on app mount
   useEffect(() => {
-    // Check if user data exists in localStorage
-    const storedUser = localStorage.getItem('user');
-    if (storedUser) {
-      const userData = JSON.parse(storedUser);
-      setUser(userData);
-      setIsLoggedIn(true);
-    }
-  }, []);
+    console.log("App mounted - Auth state:", { isAuthenticated, user });
+  }, [isAuthenticated, user]);
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
 
-  // Login function (call this when user successfully logs in)
-  const handleLogin = (userData) => {
-    setUser(userData);
-    setIsLoggedIn(true);
-    // Store user data in localStorage
-    localStorage.setItem('user', JSON.stringify(userData));
-  };
-
   // Logout function
   const handleLogout = () => {
-    setUser(null);
-    setIsLoggedIn(false);
-    localStorage.removeItem('user');
+    dispatch(logout());
     // Navigate to home page after logout
     window.location.href = '/';
   };
 
   return (
-   
       <div className="app">
         <Routes>
           {/* Routes with Navbar and Footer */}
@@ -95,8 +107,6 @@ function App() {
                 isSidebarOpen={isSidebarOpen}
                 toggleSidebar={toggleSidebar}
                 closeSidebar={() => setIsSidebarOpen(false)}
-                isLoggedIn={isLoggedIn}
-                user={user}
               >
                 <HomePage />
               </MainLayout>
@@ -109,14 +119,11 @@ function App() {
                 isSidebarOpen={isSidebarOpen}
                 toggleSidebar={toggleSidebar}
                 closeSidebar={() => setIsSidebarOpen(false)}
-                isLoggedIn={isLoggedIn}
-                user={user}
               >
                 <MenuPage />
               </MainLayout>
             }
           />
-          {/* Add Cart Route */}
           <Route
             path="/cart"
             element={
@@ -124,8 +131,6 @@ function App() {
                 isSidebarOpen={isSidebarOpen}
                 toggleSidebar={toggleSidebar}
                 closeSidebar={() => setIsSidebarOpen(false)}
-                isLoggedIn={isLoggedIn}
-                user={user}
               >
                 <CartPage />
               </MainLayout>
@@ -138,8 +143,6 @@ function App() {
                 isSidebarOpen={isSidebarOpen}
                 toggleSidebar={toggleSidebar}
                 closeSidebar={() => setIsSidebarOpen(false)}
-                isLoggedIn={isLoggedIn}
-                user={user}
               >
                 <BranchLocator />
               </MainLayout>
@@ -152,8 +155,6 @@ function App() {
                 isSidebarOpen={isSidebarOpen}
                 toggleSidebar={toggleSidebar}
                 closeSidebar={() => setIsSidebarOpen(false)}
-                isLoggedIn={isLoggedIn}
-                user={user}
               >
                 <BlogsPage />
               </MainLayout>
@@ -166,15 +167,11 @@ function App() {
                 isSidebarOpen={isSidebarOpen}
                 toggleSidebar={toggleSidebar}
                 closeSidebar={() => setIsSidebarOpen(false)}
-                isLoggedIn={isLoggedIn}
-                user={user}
               >
                 <BlogDetail />
               </MainLayout>
             }
           />
-
-          {/* Add Checkout Route */}
           <Route
             path="/checkout"
             element={
@@ -182,35 +179,26 @@ function App() {
                 isSidebarOpen={isSidebarOpen}
                 toggleSidebar={toggleSidebar}
                 closeSidebar={() => setIsSidebarOpen(false)}
-                isLoggedIn={isLoggedIn}
-                user={user}
               >
                 <CheckoutPage />
               </MainLayout>
             }
           />
-          
-          {/* Add Order Success Route */}
           <Route
             path="/order-success"
             element={
               <OrderSuccessPage />
             }
           />
-
-          {/* Account routes - fixed to avoid nesting Routes */}
+          {/* Modified account routes with explicit protection */}
           <Route
             path="/account"
             element={
-              <MainLayout
+              <ProtectedAccountRoutes
                 isSidebarOpen={isSidebarOpen}
                 toggleSidebar={toggleSidebar}
                 closeSidebar={() => setIsSidebarOpen(false)}
-                isLoggedIn={isLoggedIn}
-                user={user}
-              >
-                <AccountLayout isLoggedIn={isLoggedIn} user={user} />
-              </MainLayout>
+              />
             }
           >
             <Route index element={<EditProfilePage />} />
@@ -218,24 +206,20 @@ function App() {
             <Route path="orders" element={<OrderHistoryPage />} />
             <Route path="favorites" element={<FavoritesPage />} />
           </Route>
-
-          {/* Login route without Navbar and Footer */}
           <Route 
             path="/login" 
-            element={<Login onLogin={handleLogin} />} 
+            element={<Login />} 
           />
           <Route 
             path="/login/phone-number" 
-            element={<LoginPhone onLogin={handleLogin} />} 
+            element={<LoginPhone />} 
           />
           <Route 
             path="/login/otp" 
-            element={<LoginOTP onLogin={handleLogin} />} 
+            element={<LoginOTP />} 
           />
-
         </Routes>
       </div>
-
   );
 }
 

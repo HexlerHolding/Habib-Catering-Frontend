@@ -19,9 +19,11 @@ const Sidebar = ({ isOpen, closeSidebar, isLoggedIn, user }) => {
     // Reload the page to update the app state
     window.location.reload();
   };
+  console.log("user", {user, isLoggedIn});
 
   return (
     <>
+c  
       {/* Overlay */}
       {isOpen && (
         <div 
@@ -111,7 +113,7 @@ const Sidebar = ({ isOpen, closeSidebar, isLoggedIn, user }) => {
             {isLoggedIn && (
               <li>
                 <Link 
-                  to="/account"
+                  to="/account/profile"
                   className="flex items-center text-text py-2"
                   onClick={closeSidebar}
                 >
@@ -167,4 +169,4 @@ const Sidebar = ({ isOpen, closeSidebar, isLoggedIn, user }) => {
   );
 };
 
-export default Sidebar;
+export default Sidebar;// //  SidebarSidebarexport default Sidebar;

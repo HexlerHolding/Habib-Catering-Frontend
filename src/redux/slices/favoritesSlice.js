@@ -1,38 +1,35 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
-  items: [],
+  favorites: JSON.parse(localStorage.getItem('favorites')) || []
 };
 
-export const favoritesSlice = createSlice({
+const favoritesSlice = createSlice({
   name: 'favorites',
   initialState,
   reducers: {
-    // Add item to favorites
     addToFavorites: (state, action) => {
-      // Check if item already exists
-      const existingItem = state.items.find(item => item.id === action.payload.id);
-      if (!existingItem) {
-        state.items.push(action.payload);
+      if (!state.favorites.some(item => item.id === action.payload.id)) {
+        state.favorites.push(action.payload);
+        localStorage.setItem('favorites', JSON.stringify(state.favorites));
       }
     },
-    // Remove item from favorites
     removeFromFavorites: (state, action) => {
-      state.items = state.items.filter(item => item.id !== action.payload);
-    },
-    // Clear all favorites
-    clearFavorites: (state) => {
-      state.items = [];
-    },
-  },
+      state.favorites = state.favorites.filter(item => item.id !== action.payload);
+      localStorage.setItem('favorites', JSON.stringify(state.favorites));
+    }
+  }
 });
 
-export const { addToFavorites, removeFromFavorites, clearFavorites } = favoritesSlice.actions;
-
-// Selector to get all favorites
-export const selectFavorites = (state) => state.favorites.items;
-// Selector to check if an item is favorited
-export const selectIsFavorite = (state, itemId) => 
-  state.favorites.items.some(item => item.id === itemId);
-
+export const { addToFavorites, removeFromFavorites } = favoritesSlice.actions;
+// Fix the selectFavorites selector to correctly access the state
+export const selectFavorites = (state) => state.favorites.favorites;
+// Fix the selectIsFavorite selector to correctly access the state structure
+export const selectIsFavorite = (state, itemId) => {
+  // Check if the favorites slice and the favorites array exist
+  if (!state || !state.favorites || !state.favorites.favorites) return false;
+  
+  // Access the favorites array through the correct path
+  return state.favorites.favorites.some(item => item.id === itemId);
+}
 export default favoritesSlice.reducer;

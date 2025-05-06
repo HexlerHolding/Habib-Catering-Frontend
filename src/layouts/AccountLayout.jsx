@@ -1,17 +1,36 @@
 import React, { useEffect } from 'react';
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
+import { selectIsAuthenticated } from '../redux/slices/authSlice';
 import { FaUser, FaHistory, FaHeart, FaSignOutAlt } from 'react-icons/fa';
+import { logout } from '../redux/slices/authSlice';
 
-const AccountLayout = ({ isLoggedIn, user }) => {
+const AccountLayout = () => {
+  const isAuthenticated = useSelector(selectIsAuthenticated);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   
-  // Redirect if not logged in
   useEffect(() => {
-    if (!isLoggedIn) {
-      navigate('/login', { replace: true });
+    console.log("AccountLayout mounted - Auth state:", isAuthenticated);
+    
+    // Double check auth status and navigate if not authenticated
+    if (!isAuthenticated) {
+      console.log("Not authenticated in AccountLayout, redirecting");
+      navigate('/login');
     }
-  }, [isLoggedIn, navigate]);
-  
+  }, [isAuthenticated, navigate]);
+
+  // Ensure we're authenticated before rendering
+  if (!isAuthenticated) {
+    console.log("Not rendering AccountLayout - not authenticated");
+    return null;
+  }
+
+  const handleLogout = () => {
+    dispatch(logout());
+    navigate('/login');
+  };
+
   const navLinkClass = ({ isActive }) => 
     `flex items-center py-2 px-4 rounded-lg transition-all ${
       isActive 
@@ -42,7 +61,10 @@ const AccountLayout = ({ isLoggedIn, user }) => {
                   Favorites
                 </NavLink>
               </div>
-              <button className="flex items-center py-2 px-4 rounded-lg text-white bg-accent hover:bg-accent/80 hover:brightness-105 transition-all mt-2 sm:mt-0">
+              <button 
+                onClick={handleLogout}
+                className="flex items-center py-2 px-4 rounded-lg text-white bg-accent hover:bg-accent/80 hover:brightness-105 transition-all mt-2 sm:mt-0"
+              >
                 <FaSignOutAlt className="mr-2" />
                 Sign Out
               </button>

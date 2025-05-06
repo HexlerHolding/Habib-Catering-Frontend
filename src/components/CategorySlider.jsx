@@ -1,28 +1,31 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
+import { FaArrowLeft, FaArrowRight } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
-import { FaArrowRight, FaArrowLeft } from 'react-icons/fa';
-import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation } from 'swiper/modules';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { menuService } from '../../Services/menuService';
 
 // Import Swiper styles
 import 'swiper/css';
 import 'swiper/css/navigation';
 
-const CategoryItem = ({ image, title, link }) => {
-
-  
+const CategoryItem = ({ image, title, id }) => {
   return (
-    <Link to={link} className="block">
-      <div className={`rounded-lg overflow-hidden border-2 border-primary/60 hover:shadow-lg transition-shadow`}>
-        <div className="relative pb-[75%]">
+    <Link to={`/menu?category=${id}`} className="block">
+      <div className="rounded-lg overflow-hidden border-2 border-primary/60 hover:shadow-lg transition-shadow inline-block min-w-[150px] max-w-[300px]">
+        <div className="relative h-[150px]">
           <img 
             src={image} 
             alt={title}
             className="absolute top-0 left-0 w-full h-full object-cover"
+            onError={(e) => {
+              // Fallback to a placeholder if image fails to load
+              e.target.src = '/menu1.jpg';
+            }}
           />
         </div>
-        <div className="p-4 text-center">
-          <h3 className={`font-semibold text-lg uppercase `}>
+        <div className="p-4 text-center h-[60px] flex items-center justify-center">
+          <h3 className="font-semibold text-lg uppercase break-words overflow-hidden">
             {title}
           </h3>
         </div>
@@ -32,89 +35,129 @@ const CategoryItem = ({ image, title, link }) => {
 };
 
 const CategorySlider = () => {
-
   const [swiperRef, setSwiperRef] = useState(null);
-  
-  const categories = [
-    { id: 1, image: '/menu1.jpg', title: 'PASTAS', link: '/menu/pastas' },
-    { id: 2, image: '/menu2.jpg', title: 'BURGERZ', link: '/menu/burgers' },
-    { id: 3, image: '/menu3.jpg', title: 'SIDE ORDERS', link: '/menu/sides' },
-    { id: 4, image: '/menu1.jpg', title: 'ADDONS', link: '/menu/addons' },
-    { id: 5, image: '/menu2.jpg', title: 'DRINKS', link: '/menu/drinks' },
-    { id: 6, image: '/menu3.jpg', title: 'DESSERTS', link: '/menu/desserts' },
-  ];
+  const [categories, setCategories] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        setIsLoading(true);
+        const fetchedCategories = await menuService.getMenuCategories();
+        
+        // Filter out the "All" category if it exists
+        const filteredCategories = fetchedCategories.filter(
+          category => category.id !== 'all'
+        );
+        
+        setCategories(filteredCategories);
+        setError(null);
+      } catch (err) {
+        console.error('Error fetching categories:', err);
+        setError('Failed to load categories');
+        // Set fallback categories
+        setCategories([
+          { id: 'pizzas', name: 'PIZZAS', image: '/menu1.jpg' },
+          { id: 'burgers', name: 'BURGERS', image: '/menu2.jpg' },
+          { id: 'sides', name: 'SIDE ORDERS', image: '/menu3.jpg' }
+        ]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchCategories();
+  }, []);
   
   return (
     <section className="py-12 px-4 relative">
       <div className="container mx-auto">
         <div className="flex justify-between items-center mb-8">
-          <h2 className={`text-2xl md:text-3xl font-bold text-text`}>
+          <h2 className="text-2xl md:text-3xl font-bold text-text">
             Explore Menu
           </h2>
           <Link 
             to="/menu"
             className="flex items-center text-sm font-medium text-accent"
-         
           >
             VIEW ALL
             <FaArrowRight className="ml-1" />
           </Link>
         </div>
         
-        <div className="relative category-slider-container">
-          {/* Custom navigation buttons */}
-          <button 
-            className="absolute z-10 left-0 top-1/2 -translate-y-1/2 -translate-x-1/2 bg-background rounded-full w-10 h-10 shadow-md flex items-center justify-center category-prev-button"
-            aria-label="Scroll left"
-          >
-            <FaArrowLeft className="text-text/80" />
-          </button>
-          
-          {/* Category items with Swiper */}
-          <Swiper
-            modules={[Navigation]}
-            onSwiper={setSwiperRef}
-            slidesPerView={1}
-            spaceBetween={24}
-            navigation={{
-              prevEl: '.category-prev-button',
-              nextEl: '.category-next-button',
-            }}
-            breakpoints={{
-              640: {
-                slidesPerView: 2,
-              },
-              768: {
-                slidesPerView: 3,
-              },
-              1024: {
-                slidesPerView: 4,
-              },
-              1280: {
-                slidesPerView: 5,
-              }
-            }}
-            className="category-swiper"
-          >
-            {categories.map((category) => (
-              <SwiperSlide key={category.id} className="py-2">
-                <CategoryItem
-                  image={category.image}
-                  title={category.title}
-                  link={category.link}
-                />
-              </SwiperSlide>
-            ))}
-          </Swiper>
-          
-          {/* Right custom navigation button */}
-          <button 
-            className="absolute z-10 right-0 top-1/2 -translate-y-1/2 translate-x-1/2 bg-background rounded-full w-10 h-10 shadow-md flex items-center justify-center category-next-button"
-            aria-label="Scroll right"
-          >
-            <FaArrowRight className="text-text/80" />
-          </button>
-        </div>
+        {/* Loading state */}
+        {isLoading && (
+          <div className="text-center py-8">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-accent mx-auto mb-4"></div>
+            <p className="text-gray-600">Loading categories...</p>
+          </div>
+        )}
+        
+        {/* Error state */}
+        {error && !isLoading && (
+          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-8 mx-4" role="alert">
+            <span className="block sm:inline">{error}</span>
+          </div>
+        )}
+        
+        {/* Categories carousel */}
+        {!isLoading && categories.length > 0 && (
+          <div className="relative category-slider-container">
+            {/* Custom navigation buttons */}
+            <button 
+              className="absolute z-10 left-0 top-1/2 -translate-y-1/2 -translate-x-1/2 bg-background rounded-full w-10 h-10 shadow-md flex items-center justify-center category-prev-button"
+              aria-label="Scroll left"
+            >
+              <FaArrowLeft className="text-text/80" />
+            </button>
+            
+            {/* Category items with Swiper */}
+            <Swiper
+              modules={[Navigation]}
+              onSwiper={setSwiperRef}
+              slidesPerView={1}
+              spaceBetween={24}
+              navigation={{
+                prevEl: '.category-prev-button',
+                nextEl: '.category-next-button',
+              }}
+              breakpoints={{
+                640: {
+                  slidesPerView: 2,
+                },
+                768: {
+                  slidesPerView: 3,
+                },
+                1024: {
+                  slidesPerView: 4,
+                },
+                1280: {
+                  slidesPerView: 5,
+                }
+              }}
+              className="category-swiper"
+            >
+              {categories.map((category) => (
+                <SwiperSlide key={category.id} className="py-2 flex justify-center">
+                  <CategoryItem
+                    image={category.image || category.placeholderImage}
+                    title={category.name}
+                    id={category.id}
+                  />
+                </SwiperSlide>
+              ))}
+            </Swiper>
+            
+            {/* Right custom navigation button */}
+            <button 
+              className="absolute z-10 right-0 top-1/2 -translate-y-1/2 translate-x-1/2 bg-background rounded-full w-10 h-10 shadow-md flex items-center justify-center category-next-button"
+              aria-label="Scroll right"
+            >
+              <FaArrowRight className="text-text/80" />
+            </button>
+          </div>
+        )}
       </div>
       
       {/* Custom styles for Swiper */}
@@ -124,6 +167,10 @@ const CategorySlider = () => {
         }
         .category-slider-container {
           padding: 0 20px;
+        }
+        .swiper-slide {
+          display: flex;
+          justify-content: center;
         }
       `}</style>
     </section>

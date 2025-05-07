@@ -41,9 +41,9 @@ const OrderSuccessPage = () => {
   return (
     <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4">
       <div className="max-w-md w-full bg-secondary rounded-lg shadow-lg p-8 text-center">
-        <div className="mb-6">
-          <FaCheckCircle className="text-accent text-6xl mx-auto" />
-        </div>
+      <div className="mb-6">
+  <FaCheckCircle className="text-green-500 text-6xl mx-auto" />
+</div>
         
         <h1 className="text-3xl font-bold mb-4 text-text font-poppins">Order Successful!</h1>
         

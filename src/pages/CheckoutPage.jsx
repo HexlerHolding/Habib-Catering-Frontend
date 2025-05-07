@@ -6,13 +6,13 @@ import { branchService } from '../../Services/branchService';
 import { orderService } from '../../Services/orderService';
 import { clearCart, selectCartItems, selectCartTotalAmount } from '../redux/slices/cartSlice';
 
-// Component for displaying a single branch optionW
+// Component for displaying a single branch option
 const BranchOption = ({ branch, isSelected, onChange }) => (
   <label 
-    className={`border rounded-md p-4 cursor-pointer transition-all ${
+    className={`border rounded-md p-4 cursor-pointer transition-all font-montserrat ${
       isSelected 
         ? 'border-primary bg-primary/10' 
-        : 'border-gray-300 hover:border-gray-400'
+        : 'border-text/20 hover:border-text/30'
     }`}
   >
     <div className="flex items-center">
@@ -22,24 +22,24 @@ const BranchOption = ({ branch, isSelected, onChange }) => (
         value={branch.id}
         checked={isSelected}
         onChange={onChange}
-        className="sr-only" // Hide the default radio button
+        className="sr-only"
       />
-      <div className="h-5 w-5 rounded-full border border-gray-400 mr-3 flex items-center justify-center">
+      <div className="h-5 w-5 rounded-full border border-text/30 mr-3 flex items-center justify-center">
         {isSelected && (
           <div className="h-3 w-3 rounded-full bg-primary"></div>
         )}
       </div>
       <div className="flex-1">
         <div className="flex items-center">
-          <FaStore className="text-gray-700 mr-2" />
-          <p className="font-medium">{branch.name}</p>
+          <FaStore className="text-text/70 mr-2" />
+          <p className="font-medium text-text">{branch.name}</p>
         </div>
         <div className="mt-1 flex items-start">
-          <FaMapMarkerAlt className="text-gray-600 mr-2 mt-1" />
-          <p className="text-sm text-gray-600">{branch.address}, {branch.city}</p>
+          <FaMapMarkerAlt className="text-text/70 mr-2 mt-1" />
+          <p className="text-sm text-text/70">{branch.address}, {branch.city}</p>
         </div>
         {branch.status === 'closed' && (
-          <p className="text-red-600 text-sm mt-1">
+          <p className="text-accent text-sm mt-1">
             This branch is currently closed
           </p>
         )}
@@ -51,29 +51,29 @@ const BranchOption = ({ branch, isSelected, onChange }) => (
 // Component for displaying a payment method option
 const PaymentMethodOption = ({ id, icon: Icon, title, description, isSelected, onClick }) => (
   <div 
-    className={`border rounded-md p-4 cursor-pointer flex items-center ${
+    className={`border rounded-md p-4 cursor-pointer flex items-center font-montserrat ${
       isSelected 
         ? 'border-primary bg-primary/10' 
-        : 'border-gray-300 hover:border-gray-400'
+        : 'border-text/20 hover:border-text/30'
     }`}
     onClick={onClick}
   >
-    <div className="h-5 w-5 rounded-full border border-gray-400 mr-3 flex items-center justify-center">
+    <div className="h-5 w-5 rounded-full border border-text/30 mr-3 flex items-center justify-center">
       {isSelected && (
         <div className="h-3 w-3 rounded-full bg-primary"></div>
       )}
     </div>
-    <Icon className="text-gray-700 text-xl mr-3" />
+    <Icon className="text-text/70 text-xl mr-3" />
     <div>
-      <p className="font-medium">{title}</p>
-      <p className="text-sm text-gray-500">{description}</p>
+      <p className="font-medium text-text">{title}</p>
+      <p className="text-sm text-text/50">{description}</p>
     </div>
   </div>
 );
 
 // Component for displaying a single cart item
 const CartItem = ({ item }) => (
-  <div className="flex items-start py-2 border-b">
+  <div className="flex items-start py-2 border-b border-text/20 font-montserrat">
     <img 
       src={item.image} 
       alt={item.name} 
@@ -83,11 +83,11 @@ const CartItem = ({ item }) => (
       }}
     />
     <div className="ml-3 flex-1">
-      <p className="font-medium">{item.name}</p>
-      <p className="text-sm text-gray-600">Qty: {item.quantity}</p>
-      <p className="font-medium">Rs. {item.price.toFixed(2)}</p>
+      <p className="font-medium text-text">{item.name}</p>
+      <p className="text-sm text-text/70">Qty: {item.quantity}</p>
+      <p className="font-medium text-text">Rs. {item.price.toFixed(2)}</p>
     </div>
-    <div className="font-medium">
+    <div className="font-medium text-text">
       Rs. {(item.price * item.quantity).toFixed(2)}
     </div>
   </div>
@@ -111,7 +111,7 @@ const CheckoutPage = () => {
     email: '',
     phone: '',
     address: '',
-    city: 'Islamabad', // Default city set to Islamabad
+    city: 'Islamabad',
     zipCode: '',
     notes: ''
   });
@@ -140,8 +140,6 @@ const CheckoutPage = () => {
         
         if (fetchedBranches.length > 0) {
           setBranches(fetchedBranches);
-          
-          // Set default branch if none selected
           if (!selectedBranchId && fetchedBranches.length > 0) {
             setSelectedBranchId(fetchedBranches[0].id);
           }
@@ -162,8 +160,6 @@ const CheckoutPage = () => {
       try {
         if (selectedBranchId) {
           const taxInfo = await orderService.getBranchTaxes(selectedBranchId);
-          
-          // Apply appropriate tax rate based on payment method
           if (paymentMethod === 'card') {
             setTaxRate(taxInfo.card_tax || 0);
           } else {
@@ -209,9 +205,7 @@ const CheckoutPage = () => {
   const handleChange = (e) => {
     const { name, value } = e.target;
     
-    // Special handling for phone and zipCode fields
     if (name === 'phone') {
-      // Only allow digits and limit to 11 characters
       const digitsOnly = value.replace(/\D/g, '');
       if (digitsOnly.length <= 11) {
         setFormData({
@@ -220,7 +214,6 @@ const CheckoutPage = () => {
         });
       }
     } else if (name === 'zipCode') {
-      // Only allow digits and limit to 5 characters
       const digitsOnly = value.replace(/\D/g, '');
       if (digitsOnly.length <= 5) {
         setFormData({
@@ -229,14 +222,12 @@ const CheckoutPage = () => {
         });
       }
     } else {
-      // Normal handling for other fields
       setFormData({
         ...formData,
         [name]: value
       });
     }
     
-    // Clear error when field is being edited
     if (errors[name]) {
       setErrors({
         ...errors,
@@ -249,7 +240,6 @@ const CheckoutPage = () => {
   const handleBranchChange = (e) => {
     setSelectedBranchId(e.target.value);
     
-    // Clear branch error if exists
     if (errors.branch) {
       setErrors({
         ...errors,
@@ -262,7 +252,6 @@ const CheckoutPage = () => {
   const validateForm = () => {
     const newErrors = {};
     
-    // Required fields
     if (!formData.fullName.trim()) newErrors.fullName = 'Full name is required';
     if (!formData.email.trim()) {
       newErrors.email = 'Email is required';
@@ -282,7 +271,6 @@ const CheckoutPage = () => {
       newErrors.zipCode = 'Please enter a valid 5-digit zip code';
     }
     
-    // Validate branch selection
     if (!selectedBranchId) {
       newErrors.branch = 'Please select a branch';
     }
@@ -295,26 +283,19 @@ const CheckoutPage = () => {
     e.preventDefault();
     console.log("Place order button clicked");
     
-    // Validate form first
     const formErrors = validateForm();
     if (Object.keys(formErrors).length > 0) {
       console.log("Form validation errors:", formErrors);
       setErrors(formErrors);
-      
-      // Scroll to the first error
       const firstErrorField = Object.keys(formErrors)[0];
       document.getElementsByName(firstErrorField)?.[0]?.scrollIntoView({ behavior: 'smooth' });
       return;
     }
     
-    // Clear any previous submission errors
     setSubmitError('');
-    
-    // Start submission
     setIsSubmitting(true);
     
     try {
-      // Prepare order data for the API
       const orderData = {
         items: cartItems,
         customerName: formData.fullName,
@@ -327,18 +308,13 @@ const CheckoutPage = () => {
         branchId: selectedBranchId,
       };
       
-      console.log("Submitting order data:", orderData);
+      console.log(" submitting order data:", orderData);
       
-      // Submit order to API
       const response = await orderService.submitOrder(orderData);
       console.log("API response:", response);
       
-      // Check for successful response
       if (response.success) {
-        // Clear the cart
         dispatch(clearCart());
-        
-        // Navigate to success page with order details
         navigate('/order-success', { 
           state: { 
             orderId: response.orderId,
@@ -346,7 +322,6 @@ const CheckoutPage = () => {
           }
         });
       } else {
-        // Handle API error
         setSubmitError(response.message || 'Failed to place your order. Please try again.');
       }
     } catch (error) {
@@ -360,13 +335,13 @@ const CheckoutPage = () => {
   // Early return if cart is empty
   if (cartItems.length === 0) {
     return (
-      <div className="max-w-4xl mx-auto px-4 py-8">
+      <div className="max-w-4xl mx-auto px-4 py-8 bg-background">
         <div className="text-center py-16">
-          <h2 className="text-2xl font-bold mb-4">Your cart is empty</h2>
-          <p className="mb-6">Please add some items to your cart before proceeding to checkout.</p>
+          <h2 className="text-2xl font-bold mb-4 text-text font-poppins">Your cart is empty</h2>
+          <p className="mb-6 text-text/70 font-montserrat">Please add some items to your cart before proceeding to checkout.</p>
           <button 
             onClick={() => navigate('/menu')}
-            className="bg-primary text-text py-3 px-8 rounded-lg font-bold hover:bg-primary/80 transition"
+            className="bg-primary text-text py-3 px-8 rounded-lg font-bold hover:bg-primary/80 transition font-poppins"
           >
             Browse Menu
           </button>
@@ -376,23 +351,23 @@ const CheckoutPage = () => {
   }
   
   return (
-    <div className="max-w-6xl mx-auto px-4 py-8">
+    <div className="max-w-6xl mx-auto px-4 py-8 bg-background">
       {/* Checkout header */}
       <div className="mb-8">
         <button 
           onClick={() => navigate('/cart')}
-          className="flex items-center text-sm font-medium mb-4 hover:text-accent transition-colors"
+          className="flex items-center text-sm font-medium mb-4 text-text hover:text-accent transition-colors font-montserrat"
         >
           <FaArrowLeft className="mr-2" /> Back to Cart
         </button>
-        <h1 className="text-3xl font-bold">Checkout</h1>
+        <h1 className="text-3xl font-bold text-text font-poppins">Checkout</h1>
       </div>
       
       {/* Display submission error if any */}
       {submitError && (
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6" role="alert">
-          <p className="font-medium">Order Error</p>
-          <p>{submitError}</p>
+        <div className="bg-accent/10 border border-accent text-accent px-4 py-3 rounded mb-6" role="alert">
+          <p className="font-medium text-accent font-poppins">Order Error</p>
+          <p className="text-accent font-montserrat">{submitError}</p>
         </div>
       )}
       
@@ -400,17 +375,17 @@ const CheckoutPage = () => {
         {/* Customer information form - 2/3 width */}
         <div className="md:col-span-2">
           {/* Branch Selection Section */}
-          <div className="bg-secondary rounded-lg shadow-md p-6 mb-6">
-            <h2 className="text-xl font-bold mb-4">Select Branch</h2>
+          <div className="bg-secondary rounded-lg shadow-md p-6 mb-6 border border-primary/20">
+            <h2 className="text-xl font-bold mb-4 text-text font-poppins">Select Branch</h2>
             
             {branchLoading ? (
               <div className="flex items-center justify-center py-4">
                 <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary"></div>
-                <span className="ml-2">Loading branches...</span>
+                <span className="ml-2 text-text/70 font-montserrat">Loading branches...</span>
               </div>
             ) : branches.length > 0 ? (
               <div>
-                <p className="text-sm text-gray-600 mb-4">
+                <p className="text-sm text-text/70 mb-4 font-montserrat">
                   Please select the branch you want to order from:
                 </p>
                 
@@ -426,25 +401,25 @@ const CheckoutPage = () => {
                 </div>
                 
                 {errors.branch && (
-                  <p className="text-red-500 text-sm mt-2">{errors.branch}</p>
+                  <p className="text-accent text-sm mt-2 font-montserrat">{errors.branch}</p>
                 )}
               </div>
             ) : (
               <div className="text-center py-4">
-                <p className="text-gray-600">No branches available. Please try again later.</p>
+                <p className="text-text/70 font-montserrat">No branches available. Please try again later.</p>
               </div>
             )}
           </div>
           
           {/* Customer Information Section */}
-          <div className="bg-secondary rounded-lg shadow-md p-6 mb-6">
-            <h2 className="text-xl font-bold mb-4">Shipping Information</h2>
+          <div className="bg-secondary rounded-lg shadow-md p-6 mb-6 border border-primary/20">
+            <h2 className="text-xl font-bold mb-4 text-text font-poppins">Shipping Information</h2>
             
             <form id="checkout-form" onSubmit={handleSubmit}>
               <div className="grid md:grid-cols-2 gap-4 mb-4">
                 {/* Full Name */}
                 <div className="col-span-2 md:col-span-1">
-                  <label htmlFor="fullName" className="block text-sm font-medium mb-1">
+                  <label htmlFor="fullName" className="block text-sm font-medium mb-1 text-text font-montserrat">
                     Full Name *
                   </label>
                   <input
@@ -453,15 +428,15 @@ const CheckoutPage = () => {
                     name="fullName"
                     value={formData.fullName}
                     onChange={handleChange}
-                    className={`w-full p-3 border rounded-md ${errors.fullName ? 'border-red-500' : 'border-gray-300'}`}
+                    className={`w-full p-3 border rounded-md ${errors.fullName ? 'border-accent' : 'border-text/20'}`}
                     placeholder="John Doe"
                   />
-                  {errors.fullName && <p className="text-red-500 text-sm mt-1">{errors.fullName}</p>}
+                  {errors.fullName && <p className="text-accent text-sm mt-1 font-montserrat">{errors.fullName}</p>}
                 </div>
                 
                 {/* Email */}
                 <div className="col-span-2 md:col-span-1">
-                  <label htmlFor="email" className="block text-sm font-medium mb-1">
+                  <label htmlFor="email" className="block text-sm font-medium mb-1 text-text font-montserrat">
                     Email Address *
                   </label>
                   <input
@@ -470,15 +445,15 @@ const CheckoutPage = () => {
                     name="email"
                     value={formData.email}
                     onChange={handleChange}
-                    className={`w-full p-3 border rounded-md ${errors.email ? 'border-red-500' : 'border-gray-300'}`}
+                    className={`w-full p-3 border rounded-md ${errors.email ? 'border-accent' : 'border-text/20'}`}
                     placeholder="email@example.com"
                   />
-                  {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
+                  {errors.email && <p className="text-accent text-sm mt-1 font-montserrat">{errors.email}</p>}
                 </div>
                 
                 {/* Phone */}
                 <div className="col-span-2 md:col-span-1">
-                  <label htmlFor="phone" className="block text-sm font-medium mb-1">
+                  <label htmlFor="phone" className="block text-sm font-medium mb-1 text-text font-montserrat">
                     Phone Number *
                   </label>
                   <input
@@ -488,15 +463,15 @@ const CheckoutPage = () => {
                     value={formData.phone}
                     onChange={handleChange}
                     maxLength={11}
-                    className={`w-full p-3 border rounded-md ${errors.phone ? 'border-red-500' : 'border-gray-300'}`}
+                    className={`w-full p-3 border rounded-md ${errors.phone ? 'border-accent' : 'border-text/20'}`}
                     placeholder="03XX1234567"
                   />
-                  {errors.phone && <p className="text-red-500 text-sm mt-1">{errors.phone}</p>}
+                  {errors.phone && <p className="text-accent text-sm mt-1 font-montserrat">{errors.phone}</p>}
                 </div>
                 
                 {/* Address */}
                 <div className="col-span-2">
-                  <label htmlFor="address" className="block text-sm font-medium mb-1">
+                  <label htmlFor="address" className="block text-sm font-medium mb-1 text-text font-montserrat">
                     Address *
                   </label>
                   <input
@@ -505,15 +480,15 @@ const CheckoutPage = () => {
                     name="address"
                     value={formData.address}
                     onChange={handleChange}
-                    className={`w-full p-3 border rounded-md ${errors.address ? 'border-red-500' : 'border-gray-300'}`}
+                    className={`w-full p-3 border rounded-md ${errors.address ? 'border-accent' : 'border-text/20'}`}
                     placeholder="123 Main Street, Apartment 4B"
                   />
-                  {errors.address && <p className="text-red-500 text-sm mt-1">{errors.address}</p>}
+                  {errors.address && <p className="text-accent text-sm mt-1 font-montserrat">{errors.address}</p>}
                 </div>
                 
                 {/* City */}
                 <div className="col-span-2 md:col-span-1">
-                  <label htmlFor="city" className="block text-sm font-medium mb-1">
+                  <label htmlFor="city" className="block text-sm font-medium mb-1 text-text font-montserrat">
                     City *
                   </label>
                   <input
@@ -522,15 +497,15 @@ const CheckoutPage = () => {
                     name="city"
                     value={formData.city}
                     onChange={handleChange}
-                    className={`w-full p-3 border rounded-md ${errors.city ? 'border-red-500' : 'border-gray-300'}`}
+                    className={`w-full p-3 border rounded-md ${errors.city ? 'border-accent' : 'border-text/20'}`}
                     placeholder="Islamabad"
                   />
-                  {errors.city && <p className="text-red-500 text-sm mt-1">{errors.city}</p>}
+                  {errors.city && <p className="text-accent text-sm mt-1 font-montserrat">{errors.city}</p>}
                 </div>
                 
                 {/* Zip Code */}
                 <div className="col-span-2 md:col-span-1">
-                  <label htmlFor="zipCode" className="block text-sm font-medium mb-1">
+                  <label htmlFor="zipCode" className="block text-sm font-medium mb-1 text-text font-montserrat">
                     Zip Code *
                   </label>
                   <input
@@ -540,15 +515,15 @@ const CheckoutPage = () => {
                     value={formData.zipCode}
                     onChange={handleChange}
                     maxLength={5}
-                    className={`w-full p-3 border rounded-md ${errors.zipCode ? 'border-red-500' : 'border-gray-300'}`}
+                    className={`w-full p-3 border rounded-md ${errors.zipCode ? 'border-accent' : 'border-text/20'}`}
                     placeholder="44000"
                   />
-                  {errors.zipCode && <p className="text-red-500 text-sm mt-1">{errors.zipCode}</p>}
+                  {errors.zipCode && <p className="text-accent text-sm mt-1 font-montserrat">{errors.zipCode}</p>}
                 </div>
                 
                 {/* Order Type Selection */}
                 <div className="col-span-2">
-                  <label className="block text-sm font-medium mb-3">
+                  <label className="block text-sm font-medium mb-3 text-text font-montserrat">
                     Order Type
                   </label>
                   
@@ -556,22 +531,22 @@ const CheckoutPage = () => {
                     {orderTypeOptions.map(option => (
                       <div
                         key={option.id}
-                        className={`border rounded-md p-3 cursor-pointer transition-all ${
+                        className={`border rounded-md p-3 cursor-pointer transition-all font-montserrat ${
                           orderType === option.id 
                             ? 'border-primary bg-primary/10' 
-                            : 'border-gray-300 hover:border-gray-400'
+                            : 'border-text/20 hover:border-text/30'
                         }`}
                         onClick={() => setOrderType(option.id)}
                       >
                         <div className="flex items-center">
-                          <div className="h-5 w-5 rounded-full border border-gray-400 mr-3 flex items-center justify-center flex-shrink-0">
+                          <div className="h-5 w-5 rounded-full border border-text/30 mr-3 flex items-center justify-center flex-shrink-0">
                             {orderType === option.id && (
                               <div className="h-3 w-3 rounded-full bg-primary"></div>
                             )}
                           </div>
                           <div>
-                            <p className="font-medium">{option.label}</p>
-                            <p className="text-sm text-gray-500">{option.description}</p>
+                            <p className="font-medium text-text">{option.label}</p>
+                            <p className="text-sm text-text/50">{option.description}</p>
                           </div>
                         </div>
                       </div>
@@ -581,7 +556,7 @@ const CheckoutPage = () => {
                 
                 {/* Additional Notes */}
                 <div className="col-span-2">
-                  <label htmlFor="notes" className="block text-sm font-medium mb-1">
+                  <label htmlFor="notes" className="block text-sm font-medium mb-1 text-text font-montserrat">
                     Order Notes (Optional)
                   </label>
                   <textarea
@@ -590,7 +565,7 @@ const CheckoutPage = () => {
                     value={formData.notes}
                     onChange={handleChange}
                     rows="3"
-                    className="w-full p-3 border border-gray-300 rounded-md"
+                    className="w-full p-3 border border-text/20 rounded-md"
                     placeholder="Special instructions for delivery or food preparation..."
                   ></textarea>
                 </div>
@@ -598,7 +573,7 @@ const CheckoutPage = () => {
               
               {/* Payment Methods */}
               <div className="mt-8 mb-8">
-                <h2 className="text-xl font-bold mb-4">Payment Method</h2>
+                <h2 className="text-xl font-bold mb-4 text-text font-poppins">Payment Method</h2>
                 
                 <div className="space-y-4">
                   {paymentMethodOptions.map(option => (
@@ -620,8 +595,8 @@ const CheckoutPage = () => {
         
         {/* Order Summary - 1/3 width */}
         <div className="md:col-span-1">
-          <div className="bg-secondary rounded-lg shadow-md p-6 sticky top-20">
-            <h2 className="text-xl font-bold mb-4">Order Summary</h2>
+          <div className="bg-secondary rounded-lg shadow-md p-6 sticky top-20 border border-primary/20">
+            <h2 className="text-xl font-bold mb-4 text-text font-poppins">Order Summary</h2>
             
             {/* Product list */}
             <div className="space-y-4 mb-6 max-h-64 overflow-y-auto pr-2">
@@ -631,24 +606,24 @@ const CheckoutPage = () => {
             </div>
             
             {/* Totals */}
-            <div className="space-y-2 py-4 border-t border-b">
+            <div className="space-y-2 py-4 border-t border-b border-text/20">
               <div className="flex justify-between">
-                <span className="text-gray-600">Subtotal</span>
-                <span>Rs. {subtotal.toFixed(2)}</span>
+                <span className="text-text/70 font-montserrat">Subtotal</span>
+                <span className="text-text font-montserrat">Rs. {subtotal.toFixed(2)}</span>
               </div>
               {orderType === 'delivery' && (
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Delivery Fee</span>
-                  <span>Rs. {deliveryFee.toFixed(2)}</span>
+                  <span className="text-text/70 font-montserrat">Delivery Fee</span>
+                  <span className="text-text font-montserrat">Rs. {deliveryFee.toFixed(2)}</span>
                 </div>
               )}
               <div className="flex justify-between">
-                <span className="text-gray-600">Tax ({taxRate}%)</span>
-                <span>Rs. {taxAmount.toFixed(2)}</span>
+                <span className="text-text/70 font-montserrat">Tax ({taxRate}%)</span>
+                <span className="text-text font-montserrat">Rs. {taxAmount.toFixed(2)}</span>
               </div>
               <div className="flex justify-between font-bold pt-2">
-                <span>Total</span>
-                <span>Rs. {finalTotal.toFixed(2)}</span>
+                <span className="text-text font-poppins">Total</span>
+                <span className="text-text font-poppins">Rs. {finalTotal.toFixed(2)}</span>
               </div>
             </div>
             
@@ -657,16 +632,16 @@ const CheckoutPage = () => {
               type="submit"
               form="checkout-form"
               disabled={isSubmitting || branchLoading || branches.length === 0}
-              className={`w-full mt-6 py-3 rounded-md text-center font-bold text-text transition-all ${
+              className={`w-full mt-6 py-3 rounded-md text-center font-bold text-text transition-all font-poppins ${
                 isSubmitting || branchLoading || branches.length === 0
-                  ? 'bg-gray-400 cursor-not-allowed'
+                  ? 'bg-text/20 cursor-not-allowed'
                   : 'bg-primary hover:bg-primary/90'
               }`}
             >
               {isSubmitting ? 'Processing...' : 'Place Order'}
             </button>
             
-            <p className="text-xs text-gray-500 text-center mt-4">
+            <p className="text-xs text-text/50 text-center mt-4 font-montserrat">
               By placing your order, you agree to our Terms of Service and Privacy Policy
             </p>
           </div>

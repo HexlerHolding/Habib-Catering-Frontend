@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
+import { BsArrowRight } from "react-icons/bs"; // Import arrow icon from react-icons
 
 const LoginOTP = () => {
   const location = useLocation();
@@ -85,10 +86,10 @@ const LoginOTP = () => {
       </Link>
 
       {/* Left Section */}
-      <div className="w-full h-full md:w-1/2 p-4 md:p-8 flex flex-col justify-center items-center bg-white pt-20 md:pt-8">
+      <div className="w-full h-full md:w-1/2 p-4 md:p-8 flex flex-col justify-center items-center bg-background pt-20 md:pt-8">
         <div className="max-w-md w-full text-center">
-          <h1 className="text-xl md:text-2xl font-bold mb-2 md:mb-4 text-gray-800">Enter The Code We Sent</h1>
-          <p className="text-gray-500 mb-6 md:mb-10">To your cell phone number +92{phoneNumber}</p>
+          <h1 className="text-xl md:text-2xl font-bold mb-2 md:mb-4 text-text/90">Enter The Code We Sent</h1>
+          <p className="text-text/60 mb-6 md:mb-10">To your cell phone number +92{phoneNumber}</p>
           
           <div className="flex justify-between w-full mb-6 gap-2">
             {otp.map((digit, index) => (
@@ -100,31 +101,29 @@ const LoginOTP = () => {
                 onChange={(e) => handleOtpChange(index, e)}
                 onKeyDown={(e) => handleKeyDown(index, e)}
                 maxLength={1}
-                className="w-12 h-12 text-center text-xl font-bold bg-gray-100 rounded focus:outline-none focus:ring-2 focus:ring-yellow-300"
+                className="w-12 h-12 text-center text-xl font-bold bg-text/5 rounded focus:outline-none focus:ring-2 focus:ring-primary/70"
               />
             ))}
           </div>
           
           <div className="text-center mb-6">
-            <p className="text-gray-600">
+            <p className="text-text/50">
               Didn't Receive OTP Code? 
               <button 
                 onClick={handleResendOTP}
-                className={`ml-1 font-bold ${isResendActive ? 'text-yellow-500 cursor-pointer' : 'text-gray-400 cursor-not-allowed'}`}
+                className={`ml-1 font-bold ${isResendActive ? 'text-primary cursor-pointer' : 'text-text/70 cursor-not-allowed'}`}
               >
                 Resend
               </button>
             </p>
-            <p className="text-gray-500 mt-1">{formatTime(timer)}</p>
+            <p className="text-text/60 mt-1">{formatTime(timer)}</p>
           </div>
           
           <button
-            className="flex justify-center items-center w-full py-3 md:py-4 bg-yellow-300 text-gray-800 font-bold rounded hover:bg-yellow-400 transition-colors"
+            className="flex justify-center items-center w-full py-3 md:py-4 bg-primary text-text/80 font-bold rounded hover:bg-primary/80 hover:brightness-105 transition-colors"
           >
             <span className="mr-2">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
+              <BsArrowRight size={20} />
             </span>
             VERIFY
           </button>

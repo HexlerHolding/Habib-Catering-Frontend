@@ -45,16 +45,16 @@ const Login = () => {
             </Link>
 
             {/* Left Section */}
-            <div className="w-full md:w-1/2 h-full p-4 md:p-8 flex flex-col justify-center items-center bg-white pt-20 md:pt-8">
+            <div className="w-full md:w-1/2 h-full p-4 md:p-8 flex flex-col justify-center items-center bg-background pt-20 md:pt-8">
                 <div className="max-w-md w-full text-center">
-                    <h1 className="text-xl md:text-2xl font-bold mb-2 md:mb-4 text-gray-800">Hey there, feeling hungry?</h1>
-                    <p className="text-gray-500 mb-6 md:mb-10">Let's enjoy your food with cheezious!</p>
+                    <h1 className="text-xl md:text-2xl font-bold mb-2 md:mb-4 text-text/90">Hey there, feeling hungry?</h1>
+                    <p className="text-text/60 mb-6 md:mb-10">Let's enjoy your food with cheezious!</p>
                     
-                    <Link to='/login/phone-number' className="flex justify-center items-center w-full py-3 md:py-4 bg-yellow-300 text-gray-800 font-bold rounded mb-4 hover:bg-yellow-400 transition-colors">
+                    <Link to='/login/phone-number' className="flex justify-center items-center w-full py-3 md:py-4 bg-primary text-text/90 font-bold rounded mb-4 hover:bg-primary/80 hover:brightness-105 transition-colors">
                         <FaPhone className="mr-2 text-lg" /> CONTINUE WITH PHONE
                     </Link>
                     
-                    <button className="flex justify-center items-center w-full py-3 md:py-4 bg-white text-gray-800 font-bold rounded border border-gray-300 hover:bg-gray-50 transition-colors">
+                    <button className="flex justify-center items-center w-full py-3 md:py-4 bg-background text-text/90 font-bold rounded border border-text/20 hover:bg-text/10 transition-colors">
                         <FaUser className="mr-2 text-lg" /> CONTINUE AS A GUEST
                     </button>
                 </div>

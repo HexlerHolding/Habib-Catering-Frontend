@@ -91,13 +91,13 @@ const CategorySlider = () => {
         {isLoading && (
           <div className="text-center py-8">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-accent mx-auto mb-4"></div>
-            <p className="text-gray-600">Loading categories...</p>
+            <p className="text-text/70">Loading categories...</p>
           </div>
         )}
         
         {/* Error state */}
         {error && !isLoading && (
-          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-8 mx-4" role="alert">
+          <div className="bg-accent/20 border border-accent/40 text-accent px-4 py-3 rounded relative mb-8 mx-4" role="alert">
             <span className="block sm:inline">{error}</span>
           </div>
         )}

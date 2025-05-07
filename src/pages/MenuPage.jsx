@@ -194,7 +194,7 @@ const MenuPage = () => {
 
         {/* Error State */}
         {error && !isLoading && (
-          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-8 mx-4" role="alert">
+          <div className="bg-accent/50 border border-accent/70 text-accent px-4 py-3 rounded relative mb-8 mx-4" role="alert">
             <span className="block sm:inline">{error}</span>
           </div>
         )}

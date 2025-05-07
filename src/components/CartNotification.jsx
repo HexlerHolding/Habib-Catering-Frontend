@@ -22,7 +22,7 @@ const CartNotification = ({ item, onClose }) => {
   
   return (
     <div 
-      className={`fixed bottom-4 right-4 bg-secondary shadow-lg rounded-lg p-4 max-w-xs w-full z-50 transition-all duration-300 ${
+      className={`fixed bottom-4 right-4 bg-background shadow-lg rounded-lg p-4 max-w-xs w-full z-50 transition-all duration-300 ${
         isVisible ? 'opacity-100 transform translate-y-0' : 'opacity-0 transform translate-y-4'
       }`}
     >

@@ -40,29 +40,29 @@ const OrderHistoryPage = () => {
       
       {orders.length > 0 ? (
         <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
+          <table className="min-w-full divide-y divide-text/20">
+            <thead className="bg-text/10">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-text/50 uppercase tracking-wider">
                   Order ID
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-text/50 uppercase tracking-wider">
                   Date
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-text/50 uppercase tracking-wider">
                   Items
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-text/50 uppercase tracking-wider">
                   Total
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-text/50 uppercase tracking-wider">
                   Status
                 </th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+            <tbody className="bg-background divide-y divide-text/20">
               {orders.map((order) => (
-                <tr key={order.id} className="hover:bg-gray-50">
+                <tr key={order.id} className="hover:bg-text/5">
                   <td className="px-6 py-4 whitespace-nowrap">
                     #{order.id}
                   </td>
@@ -76,7 +76,7 @@ const OrderHistoryPage = () => {
                     Rs.{order.total}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                    <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-accent/20 text-accent">
                       {order.status}
                     </span>
                   </td>
@@ -87,8 +87,8 @@ const OrderHistoryPage = () => {
         </div>
       ) : (
         <div className="text-center py-8">
-          <p className="text-gray-500 mb-4">You haven't placed any orders yet.</p>
-          <a href="/menu" className="inline-block bg-primary text-white px-6 py-2 rounded-lg font-medium">
+          <p className="text-text/50 mb-4">You haven't placed any orders yet.</p>
+          <a href="/menu" className="inline-block bg-primary text-secondary px-6 py-2 rounded-lg font-medium">
             Browse Menu
           </a>
         </div>

@@ -102,10 +102,10 @@ const CartPage = () => {
                       {/* Quantity Controls and Price */}
                       <div className="sm:w-2/5 flex items-start justify-between">
                         {/* Quantity Controls */}
-                        <div className="inline-flex items-center border border-gray-200 rounded-lg">
+                        <div className="inline-flex items-center border border-text/40 rounded-lg">
                           <button 
                             onClick={() => handleDecreaseQuantity(item)}
-                            className="px-3 py-1 border-r border-gray-200 text-text hover:bg-gray-100"
+                            className="px-3 py-1 border-r border-text/40 text-text hover:bg-text/10"
                           >
                             <FaMinus size={12} />
                           </button>
@@ -114,7 +114,7 @@ const CartPage = () => {
                           </span>
                           <button 
                             onClick={() => dispatch(increaseQuantity(item.id))}
-                            className="px-3 py-1 border-l border-gray-200 text-text hover:bg-gray-100"
+                            className="px-3 py-1 border-l border-text/40 text-text hover:bg-text/10"
                           >
                             <FaPlus size={12} />
                           </button>

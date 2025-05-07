@@ -34,13 +34,13 @@ const LoginPhone = () => {
       </Link>
 
       {/* Left Section */}
-      <div className="w-full md:w-1/2 h-full p-4 md:p-8 flex flex-col justify-center items-center bg-white pt-20 md:pt-8">
+      <div className="w-full md:w-1/2 h-full p-4 md:p-8 flex flex-col justify-center items-center bg-background pt-20 md:pt-8">
         <div className="max-w-md w-full text-center">
-          <h1 className="text-xl md:text-2xl font-bold mb-2 md:mb-4 text-gray-800">Enter Your Phone Number</h1>
-          <p className="text-gray-500 mb-6 md:mb-10">We will send you the code to confirm it.</p>
+          <h1 className="text-xl md:text-2xl font-bold mb-2 md:mb-4 text-text/90">Enter Your Phone Number</h1>
+          <p className="text-text/60 mb-6 md:mb-10">We will send you the code to confirm it.</p>
           
           <div className="flex w-full mb-6">
-            <div className="bg-gray-100 p-3 rounded-l-lg flex items-center justify-center font-medium">
+            <div className="bg-text/5 p-3 rounded-l-lg flex items-center justify-center font-medium">
               +92
             </div>
             <input
@@ -49,13 +49,13 @@ const LoginPhone = () => {
               value={phoneNumber}
               onChange={handlePhoneNumberChange}
               maxLength={10}
-              className="flex-grow p-3 bg-gray-100 rounded-r-lg focus:outline-none"
+              className="flex-grow p-3 bg-text/5 rounded-r-lg focus:outline-none"
             />
           </div>
           
           <button
             onClick={handleSendOTP}
-            className="flex justify-center items-center w-full py-3 md:py-4 bg-yellow-300 text-gray-800 font-bold rounded hover:bg-yellow-400 transition-colors"
+            className="flex justify-center items-center w-full py-3 md:py-4 bg-primary text-text/90 font-bold rounded hover:bg-primary/80 hover:brightness-105 transition-colors"
           >
             <span className="mr-2">
               <FaEnvelope size={20} />

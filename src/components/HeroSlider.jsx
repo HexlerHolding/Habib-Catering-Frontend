@@ -89,7 +89,7 @@ const HeroSlider = () => {
           <button
             key={index}
             className={`h-3 rounded-full transition-all ${
-              index === currentSlide ? 'w-6 bg-white' : 'w-3 bg-white bg-opacity-50'
+              index === currentSlide ? 'w-6 bg-background' : 'w-3 bg-background bg-opacity-50'
             }`}
             onClick={() => goToSlide(index)}
           />

@@ -156,7 +156,7 @@ const Navbar = ({ toggleSidebar }) => {
                         </div>
                         <div className="flex items-center space-x-2">
                           {/* Quantity controls */}
-                          <div className="flex items-center bg-gray-100 rounded">
+                          <div className="flex items-center bg-text/10 rounded">
                             <button 
                               onClick={(e) => handleDecreaseQuantity(item.id, e)}
                               className="px-2 py-1 text-xs"
@@ -192,7 +192,7 @@ const Navbar = ({ toggleSidebar }) => {
                   <div className="mt-4 grid grid-cols-2 gap-2">
                     <Link 
                       to="/cart" 
-                      className="bg-gray-200 hover:bg-gray-300 text-center py-2 rounded font-medium text-sm"
+                      className="bg-text/10 hover:bg-text/20 text-center py-2 rounded font-medium text-sm"
                     >
                       View Cart
                     </Link>

@@ -45,7 +45,7 @@ const AccountLayout = () => {
       <div className="flex flex-col gap-6">
         {/* Top Navigation */}
         <div className="w-full">
-          <div className="bg-secondary rounded-lg shadow-sm p-3">
+          <div className="bg-background rounded-lg shadow-sm p-3">
             <nav className="flex flex-col sm:flex-row flex-wrap gap-2 justify-between w-full">
               <div className="flex flex-wrap gap-2">
                 <NavLink to="/account/profile" className={navLinkClass}>
@@ -63,7 +63,7 @@ const AccountLayout = () => {
               </div>
               <button 
                 onClick={handleLogout}
-                className="flex items-center py-2 px-4 rounded-lg text-white bg-accent hover:bg-accent/80 hover:brightness-105 transition-all mt-2 sm:mt-0"
+                className="flex items-center py-2 px-4 rounded-lg text-secondary bg-accent hover:bg-accent/80 hover:brightness-105 transition-all mt-2 sm:mt-0"
               >
                 <FaSignOutAlt className="mr-2" />
                 Sign Out
@@ -74,7 +74,7 @@ const AccountLayout = () => {
         
         {/* Content Area - Full Width */}
         <div className="w-full">
-          <div className="bg-secondary rounded-lg shadow-sm p-6">
+          <div className="bg-background rounded-lg shadow-sm p-6">
             <Outlet />
           </div>
         </div>

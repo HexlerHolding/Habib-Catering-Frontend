@@ -106,8 +106,8 @@ const BranchDetail = () => {
     return (
       <div className="max-w-7xl mx-auto px-4 py-8 flex justify-center items-center min-h-screen">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#E6B91E] mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading branch information...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
+          <p className="mt-4 text-text/70">Loading branch information...</p>
         </div>
       </div>
     );
@@ -118,18 +118,18 @@ const BranchDetail = () => {
     return (
       <div className="max-w-7xl mx-auto px-4 py-8">
         <div className="mb-6">
-          <Link to='/branches' className="inline-flex items-center text-[#E6B91E] hover:text-[#D1A61B]">
+          <Link to='/branches' className="inline-flex items-center text-primary hover:text-primary/80">
             <FaArrowLeft className="mr-2" />
             Back to Branches
           </Link>
         </div>
         
-        <div className="bg-white rounded-lg shadow p-6 text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">Branch Not Found</h1>
-          <p className="text-gray-600 mb-6">The branch you're looking for doesn't exist or has been moved.</p>
+        <div className="bg-background rounded-lg shadow p-6 text-center">
+          <h1 className="text-2xl font-bold text-text mb-4">Branch Not Found</h1>
+          <p className="text-text/70 mb-6">The branch you're looking for doesn't exist or has been moved.</p>
           <Link 
             to="/branches" 
-            className="inline-flex items-center px-4 py-2 border border-transparent text-base font-medium rounded-md text-white bg-[#E6B91E] hover:bg-[#D1A61B]"
+            className="inline-flex items-center px-4 py-2 border border-transparent text-base font-medium rounded-md text-secondary bg-primary hover:bg-primary/80"
           >
             View All Branches
           </Link>
@@ -186,7 +186,7 @@ const BranchDetail = () => {
         
         {/* Map */}
         <div className="md:col-span-2 z-10">
-          <div className="bg-white rounded-lg shadow overflow-hidden h-96">
+          <div className="bg-background rounded-lg shadow overflow-hidden h-96">
             <div ref={mapRef} className="h-full w-full"></div>
           </div>
         </div>

@@ -2,6 +2,7 @@ import { configureStore } from '@reduxjs/toolkit';
 import cartReducer from './slices/cartSlice';
 import favoritesReducer from './slices/favoritesSlice';
 import authReducer from './slices/authSlice';
+import locationReducer from './slices/locationSlice'; // Import the location slice
 
 // Load state from localStorage
 const loadState = () => {
@@ -34,6 +35,7 @@ export const store = configureStore({
     cart: cartReducer,
     favorites: favoritesReducer,
     auth: authReducer,
+    location: locationReducer, // Add this line
   },
   preloadedState
 });

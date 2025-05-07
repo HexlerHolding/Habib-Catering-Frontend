@@ -337,10 +337,10 @@ const BranchLocator = () => {
       </div>
       
       {/* Branch Listings and Map Container */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 h-[27rem]">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Branch Listings */}
         <div className="bg-background rounded-lg shadow overflow-hidden">
-          <div className="h-full overflow-y-auto" style={{ maxHeight: '600px' }}>
+          <div className="overflow-y-auto h-[27rem]" >
             {filteredBranches.map((branch) => (
               <div key={branch.id} className="border-b border-text/20 last:border-b-0">
                 <div className="px-4 py-5 sm:px-6">

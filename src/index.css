@@ -18,6 +18,11 @@
 
 }
 
+.leaflet-container {
+  width: 100%;
+  height: 100%;
+}
+
 /* Font utility classes */
 .font-poppins {
   font-family: 'Poppins', sans-serif;

@@ -4,6 +4,7 @@ import { FaBars, FaShoppingCart, FaUser, FaTrash, FaPlus, FaMinus, FaSpinner } f
 import { useSelector, useDispatch } from 'react-redux';
 import { removeFromCart, increaseQuantity, decreaseQuantity, selectCartItems, selectCartTotalAmount, selectCartTotalQuantity } from '../redux/slices/cartSlice';
 import { selectIsAuthenticated } from '../redux/slices/authSlice';
+import AddressSelector from './AddressSelector';
 
 const Navbar = ({ toggleSidebar }) => {
   const [isCartOpen, setIsCartOpen] = useState(false);
@@ -102,6 +103,9 @@ const Navbar = ({ toggleSidebar }) => {
           />
           <h1 className='hidden sm:block font-bold font-montserrat text-2xl ml-2 text-text'>Cheezious</h1>
         </Link>
+
+        {/* Add the AddressSelector component here */}
+  <AddressSelector />
       </div>
       
       {/* Desktop navigation - hidden */}

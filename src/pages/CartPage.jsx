@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { 
@@ -10,7 +10,7 @@ import {
   selectCartTotalAmount,
   selectCartTotalQuantity
 } from '../redux/slices/cartSlice';
-import { FaTrash, FaPlus, FaMinus, FaArrowLeft, FaCreditCard, FaMoneyBill, FaShoppingCart } from 'react-icons/fa';
+import { FaTrash, FaPlus, FaMinus, FaArrowLeft, FaCreditCard, FaMoneyBill, FaShoppingCart, FaTimes, FaTicketAlt } from 'react-icons/fa';
 
 const CartPage = () => {
   const dispatch = useDispatch();
@@ -21,11 +21,52 @@ const CartPage = () => {
   const totalQuantity = useSelector(selectCartTotalQuantity);
   const subtotal = useSelector(selectCartTotalAmount);
   
+  // Voucher state
+  const [showVoucherModal, setShowVoucherModal] = useState(false);
+  const [voucherCode, setVoucherCode] = useState('');
+  const [appliedVoucher, setAppliedVoucher] = useState(null);
+  const [voucherError, setVoucherError] = useState('');
+  
   // Calculate additional costs
   const deliveryFee = 100; // Fixed delivery fee
   const taxRate = 0.05; // 5% tax
   const taxAmount = subtotal * taxRate;
-  const grandTotal = subtotal + deliveryFee + taxAmount;
+  
+  // Calculate discount if voucher is applied
+  const discountAmount = appliedVoucher ? 
+    (appliedVoucher.type === 'percentage' ? (subtotal * appliedVoucher.value / 100) : appliedVoucher.value) : 0;
+  
+  // Calculate grand total with discount
+  const grandTotal = subtotal + deliveryFee + taxAmount - discountAmount;
+  
+  // Handle applying voucher
+  const handleApplyVoucher = () => {
+    // Mock voucher validation - in a real app, this would be an API call to backend
+    setVoucherError('');
+    
+    // Example vouchers for demonstration - in production, these would come from backend
+    const availableVouchers = [
+      { code: 'SAVE10', type: 'percentage', value: 10, description: '10% off your order' },
+      { code: 'FREESHIP', type: 'fixed', value: 100, description: 'Free delivery' },
+      { code: 'DISCOUNT50', type: 'fixed', value: 50, description: 'Rs. 50 off your order' }
+    ];
+    
+    const foundVoucher = availableVouchers.find(v => v.code === voucherCode.trim());
+    
+    if (foundVoucher) {
+      setAppliedVoucher(foundVoucher);
+      setShowVoucherModal(false);
+      // Reset voucher code input
+      setVoucherCode('');
+    } else {
+      setVoucherError('Invalid voucher code. Please try again.');
+    }
+  };
+  
+  // Handle removing applied voucher
+  const handleRemoveVoucher = () => {
+    setAppliedVoucher(null);
+  };
   
   // Handle removing item from cart with confirmation
   const handleRemoveItem = (id) => {
@@ -137,6 +178,35 @@ const CartPage = () => {
                   ))}
                 </div>
                 
+                {/* Voucher Section */}
+                <div className="mt-8 border-t pt-6">
+                  <button 
+                    onClick={() => setShowVoucherModal(true)}
+                    className="flex items-center text-xl md:text-2xl text-accent font-medium hover:text-primary/80 transition-colors"
+                  >
+                    <FaTicketAlt className="mr-2" /> Apply a voucher
+                  </button>
+                  
+                  {appliedVoucher && (
+                    <div className="mt-4 bg-primary/10 p-3 rounded-lg flex justify-between items-center">
+                      <div>
+                        <p className="font-medium text-text">
+                          {appliedVoucher.code} - {appliedVoucher.description}
+                        </p>
+                        <p className="text-sm text-text/70">
+                          Discount: Rs. {discountAmount.toFixed(2)}
+                        </p>
+                      </div>
+                      <button 
+                        onClick={handleRemoveVoucher} 
+                        className="text-accent hover:text-accent/80"
+                      >
+                        <FaTimes />
+                      </button>
+                    </div>
+                  )}
+                </div>
+                
                 {/* Continue Shopping Link */}
                 <div className="mt-8">
                   <Link 
@@ -168,6 +238,15 @@ const CartPage = () => {
                     <span className="text-text/70">Tax (5%)</span>
                     <span className="text-text font-medium">Rs. {taxAmount.toFixed(2)}</span>
                   </div>
+                  
+                  {/* Show discount if voucher is applied */}
+                  {appliedVoucher && (
+                    <div className="flex justify-between text-primary">
+                      <span className="font-medium">Discount</span>
+                      <span className="font-medium">- Rs. {discountAmount.toFixed(2)}</span>
+                    </div>
+                  )}
+                  
                   <div className="border-t pt-4 flex justify-between">
                     <span className="text-text font-bold">Total</span>
                     <span className="text-accent font-bold text-xl">Rs. {grandTotal.toFixed(2)}</span>
@@ -215,6 +294,66 @@ const CartPage = () => {
           </div>
         )}
       </div>
+      
+      {/* Voucher Modal */}
+      {showVoucherModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-4">
+          <div className="bg-secondary rounded-lg p-6 w-full max-w-md">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-bold text-text">Apply Voucher</h3>
+              <button 
+                onClick={() => setShowVoucherModal(false)}
+                className="text-text/60 hover:text-text"
+              >
+                <FaTimes />
+              </button>
+            </div>
+            
+            <div className="mb-4">
+              <label htmlFor="voucherCode" className="block text-sm font-medium text-text/70 mb-1">
+                Enter your voucher code
+              </label>
+              <input
+                type="text"
+                id="voucherCode"
+                value={voucherCode}
+                onChange={(e) => setVoucherCode(e.target.value)}
+                placeholder="e.g. SAVE10"
+                className="w-full p-3 border border-text/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50"
+              />
+              {voucherError && (
+                <p className="text-accent text-sm mt-1">{voucherError}</p>
+              )}
+            </div>
+            
+            <div className="flex justify-end space-x-3">
+              <button
+                onClick={() => setShowVoucherModal(false)}
+                className="px-4 py-2 text-text/70 hover:text-text"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleApplyVoucher}
+                disabled={!voucherCode.trim()}
+                className="px-4 py-2 bg-primary text-text rounded-lg disabled:opacity-50 hover:bg-primary/80 transition"
+              >
+                Apply
+              </button>
+            </div>
+            
+            {/* Example vouchers for testing - this would be removed in production */}
+            <div className="mt-4 pt-4 border-t border-text/10">
+              <p className="text-xs text-text/50 mb-2">Example vouchers (for testing):</p>
+              <div className="text-xs text-text/70 space-y-1">
+                <p>SAVE10 - 10% off your order</p>
+                <p>FREESHIP - Free delivery</p>
+                <p>DISCOUNT50 - Rs. 50 off your order</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

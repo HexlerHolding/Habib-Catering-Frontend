@@ -5,9 +5,8 @@ import { useNavigate } from 'react-router-dom';
 import { branchService } from '../../Services/branchService';
 import { orderService } from '../../Services/orderService';
 import { clearCart, selectCartItems, selectCartTotalAmount } from '../redux/slices/cartSlice';
-
 import { selectSavedAddresses, selectSelectedAddress, setSelectedAddress } from '../redux/slices/locationSlice';
-
+import CardDetailsModal from '../components/CardDetailsModal';
 
 // Component for displaying a single branch option
 const BranchOption = ({ branch, isSelected, onChange }) => (
@@ -158,6 +157,8 @@ const CheckoutPage = () => {
   // Payment and delivery states
   const [paymentMethod, setPaymentMethod] = useState('cash');
   const [orderType, setOrderType] = useState('delivery');
+  const [showCardModal, setShowCardModal] = useState(false);
+  const [cardDetails, setCardDetails] = useState(null);
   
   // Tax state and calculations
   const [taxRate, setTaxRate] = useState(0);
@@ -255,7 +256,9 @@ const CheckoutPage = () => {
       id: 'card', 
       icon: FaCreditCard, 
       title: 'Credit/Debit Card', 
-      description: 'Pay with your card' 
+      description: cardDetails 
+        ? `Card ending in ${cardDetails.cardNumber.slice(-4)}` 
+        : 'Pay with your card' 
     }
   ];
   
@@ -306,6 +309,21 @@ const CheckoutPage = () => {
     }
   };
   
+  // Handle payment method selection
+  const handlePaymentMethodSelect = (method) => {
+    setPaymentMethod(method);
+    
+    if (method === 'card' && !cardDetails) {
+      setShowCardModal(true);
+    }
+  };
+  
+  // Handle card details submission
+  const handleCardDetailsSave = (cardData) => {
+    setCardDetails(cardData);
+    setShowCardModal(false);
+  };
+  
   // Validate form
   const validateForm = () => {
     const newErrors = {};
@@ -350,6 +368,12 @@ const CheckoutPage = () => {
       return;
     }
     
+    // Check if card payment is selected but no card details are provided
+    if (paymentMethod === 'card' && !cardDetails) {
+      setShowCardModal(true);
+      return;
+    }
+    
     setSubmitError('');
     setIsSubmitting(true);
     
@@ -364,6 +388,13 @@ const CheckoutPage = () => {
         paymentMethod: paymentMethod,
         orderType: orderType,
         branchId: selectedBranchId,
+        // Only include card details if payment method is card
+        ...(paymentMethod === 'card' && { 
+          cardDetails: {
+            lastFour: cardDetails.cardNumber.slice(-4),
+            expiryDate: cardDetails.expiry
+          }
+        })
       };
       
       console.log(" submitting order data:", orderData);
@@ -420,6 +451,16 @@ const CheckoutPage = () => {
         </button>
         <h1 className="text-3xl font-bold text-text font-poppins">Checkout</h1>
       </div>
+      
+      {/* Card Details Modal */}
+      <CardDetailsModal 
+        isOpen={showCardModal} 
+        onClose={() => {
+          setShowCardModal(false);
+          if (!cardDetails) setPaymentMethod('cash');
+        }}
+        onSave={handleCardDetailsSave}
+      />
       
       {/* Display submission error if any */}
       {submitError && (
@@ -690,9 +731,21 @@ const CheckoutPage = () => {
                       title={option.title}
                       description={option.description}
                       isSelected={paymentMethod === option.id}
-                      onClick={() => setPaymentMethod(option.id)}
+                      onClick={() => handlePaymentMethodSelect(option.id)}
                     />
                   ))}
+                  
+                  {paymentMethod === 'card' && cardDetails && (
+                    <div className="mt-2 flex justify-end">
+                      <button
+                        type="button"
+                        onClick={() => setShowCardModal(true)}
+                        className="text-primary hover:text-primary/80 text-sm font-medium font-montserrat"
+                      >
+                        Change card details
+                      </button>
+                    </div>
+                  )}
                 </div>
               </div>
             </form>

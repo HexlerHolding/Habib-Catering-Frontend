@@ -25,7 +25,7 @@ const CategoryItem = ({ image, title, id }) => {
           />
         </div>
         <div className="p-3 text-center flex-1 flex items-center justify-center min-h-[60px]">
-          <h3 className="font-semibold text-lg uppercase line-clamp-2">
+          <h3 className="font-semibold text-base uppercase line-clamp-2">
             {title}
           </h3>
         </div>
@@ -113,48 +113,40 @@ const CategorySlider = () => {
             
             {/* Category items with Swiper */}
             <Swiper
-              modules={[Navigation]}
-              onSwiper={setSwiperRef}
-              slidesPerView={1}
-              spaceBetween={20}
-              navigation={{
-                prevEl: '.category-prev-button',
-                nextEl: '.category-next-button',
-              }}
-              breakpoints={{
-                480: {
-                  slidesPerView: 2,
-                  spaceBetween: 15,
-                },
-                640: {
-                  slidesPerView: 2,
-                  spaceBetween: 20,
-                },
-                768: {
-                  slidesPerView: 3,
-                  spaceBetween: 20,
-                },
-                1024: {
-                  slidesPerView: 4,
-                  spaceBetween: 24,
-                },
-                1280: {
-                  slidesPerView: 5,
-                  spaceBetween: 24,
-                }
-              }}
-              className="category-swiper px-2"
-            >
-              {categories.map((category) => (
-                <SwiperSlide key={category.id} className="py-2 h-auto">
-                  <CategoryItem
-                    image={category.image || category.placeholderImage}
-                    title={category.name}
-                    id={category.id}
-                  />
-                </SwiperSlide>
-              ))}
-            </Swiper>
+  modules={[Navigation]}
+  onSwiper={setSwiperRef}
+  slidesPerView={1}
+  spaceBetween={20}
+  navigation={{
+    prevEl: '.category-prev-button',
+    nextEl: '.category-next-button',
+  }}
+  breakpoints={{
+    480: {
+      slidesPerView: 2,
+      spaceBetween: 16,
+    },
+    768: {
+      slidesPerView: 3,
+      spaceBetween: 20,
+    },
+    1024: {
+      slidesPerView: 4,
+      spaceBetween: 24,
+    },
+  }}
+  className="category-swiper px-2"
+>
+  {categories.map((category) => (
+    <SwiperSlide key={category.id} className="py-2 h-auto">
+      <CategoryItem
+        image={category.image || category.placeholderImage}
+        title={category.name}
+        id={category.id}
+      />
+    </SwiperSlide>
+  ))}
+</Swiper>
             
             {/* Right custom navigation button */}
             <button 
@@ -169,17 +161,19 @@ const CategorySlider = () => {
       
       {/* Custom styles for Swiper */}
       <style jsx>{`
-        .category-swiper {
-          padding: 10px 0;
-        }
-        .category-slider-container {
-          padding: 0 15px;
-        }
-        .swiper-slide {
-          height: auto;
-          display: flex;
-        }
-      `}</style>
+  .category-swiper {
+    padding: 10px 0;
+  }
+  .category-slider-container {
+    padding: 0 15px;
+    margin: 0 auto;
+    max-width: 1200px;
+  }
+  .swiper-slide {
+    height: auto;
+    display: flex;
+  }
+`}</style>
     </section>
   );
 };

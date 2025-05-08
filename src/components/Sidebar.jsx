@@ -2,8 +2,7 @@ import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { FaTimes, FaPhoneAlt } from 'react-icons/fa';
 import { BiUser } from 'react-icons/bi';
-import { BsGrid } from 'react-icons/bs';
-import { MdLocationOn } from 'react-icons/md';
+import { MdLocationOn, MdRestaurantMenu, MdHistory } from 'react-icons/md';
 
 const Sidebar = ({ isOpen, closeSidebar, isLoggedIn, user }) => {
   const navigate = useNavigate();
@@ -23,7 +22,7 @@ const Sidebar = ({ isOpen, closeSidebar, isLoggedIn, user }) => {
 
   return (
     <>
-c  
+  
       {/* Overlay */}
       {isOpen && (
         <div 
@@ -105,7 +104,7 @@ c
                 onClick={closeSidebar}
               >
                 <div className="mr-3">
-                  <BsGrid className="w-6 h-6" />
+                  <MdRestaurantMenu className="w-6 h-6" />
                 </div>
                 <span className="font-medium text-text">Explore Menu</span>
               </Link>
@@ -118,7 +117,7 @@ c
                   onClick={closeSidebar}
                 >
                   <div className="mr-3">
-                    <BsGrid className="w-6 h-6" />
+                    <MdHistory className="w-6 h-6" />
                   </div>
                   <span className="font-medium text-text">Order History</span>
                 </Link>
@@ -140,7 +139,7 @@ c
               <Link to='/blogs' className="px-9 py-2 hover:underline text-text">
                 <span>Blog</span>
               </Link>
-              <Link className="px-9 py-2 hover:underline text-text">
+              <Link to='/privacy-policy' className="px-9 py-2 hover:underline text-text" onClick={closeSidebar}>
                 <span>Privacy Policy</span>
               </Link>
             </div>
@@ -169,4 +168,4 @@ c
   );
 };
 
-export default Sidebar;// //  SidebarSidebarexport default Sidebar;
+export default Sidebar;

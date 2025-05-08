@@ -21,6 +21,7 @@ import AccountLayout from "./layouts/AccountLayout";
 import EditProfilePage from "./pages/account/EditProfilePage";
 import OrderHistoryPage from "./pages/account/OrderHistoryPage";
 import FavoritesPage from "./pages/account/FavoritesPage";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
 
 function App() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -108,6 +109,14 @@ function App() {
             element={
               <MainLayout {...layoutProps}>
                 <BlogDetail />
+              </MainLayout>
+            }
+          />
+          <Route
+            path="/privacy-policy"
+            element={
+              <MainLayout {...layoutProps}>
+                <PrivacyPolicy />
               </MainLayout>
             }
           />

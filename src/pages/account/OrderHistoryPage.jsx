@@ -9,7 +9,21 @@ const OrderHistoryPage = () => {
     console.log("OrderHistoryPage mounted - Auth state:", isAuthenticated);
   }, [isAuthenticated]);
 
-  // Sample order data (replace with actual data fetching logic)
+  // Function to determine status styling
+  const getStatusStyle = (status) => {
+    switch(status.toLowerCase()) {
+      case 'delivered':
+        return 'bg-green-100 text-green-800';
+      case 'processing':
+        return 'bg-blue-100 text-blue-800';
+      case 'canceled':
+        return 'bg-red-100 text-red-800';
+      default:
+        return 'bg-accent/20 text-accent';
+    }
+  };
+
+  // Sample order data with the three statuses
   const orders = [
     {
       id: '1001',
@@ -23,14 +37,14 @@ const OrderHistoryPage = () => {
       date: '2023-04-28',
       items: 2,
       total: 850,
-      status: 'Delivered'
+      status: 'Processing'
     },
     {
       id: '1003',
       date: '2023-04-10',
       items: 4,
       total: 1650,
-      status: 'Delivered'
+      status: 'Canceled'
     }
   ];
 
@@ -76,7 +90,7 @@ const OrderHistoryPage = () => {
                     Rs.{order.total}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-accent/20 text-accent">
+                    <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusStyle(order.status)}`}>
                       {order.status}
                     </span>
                   </td>

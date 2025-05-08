@@ -105,7 +105,10 @@ const Navbar = ({ toggleSidebar }) => {
         </Link>
 
         {/* Add the AddressSelector component here */}
+        <div className='!ml-10'>
+
   <AddressSelector />
+        </div>
       </div>
       
       {/* Desktop navigation - hidden */}

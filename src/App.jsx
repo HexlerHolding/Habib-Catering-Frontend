@@ -21,6 +21,7 @@ import AccountLayout from "./layouts/AccountLayout";
 import EditProfilePage from "./pages/account/EditProfilePage";
 import OrderHistoryPage from "./pages/account/OrderHistoryPage";
 import FavoritesPage from "./pages/account/FavoritesPage";
+import SavedAddressesPage from "./pages/account/SavedAddressesPage";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 
 function App() {
@@ -145,6 +146,7 @@ function App() {
             <Route index element={<EditProfilePage />} />
             <Route path="profile" element={<EditProfilePage />} />
             <Route path="orders" element={<OrderHistoryPage />} />
+            <Route path="addresses" element={<SavedAddressesPage />} />
             <Route path="favorites" element={<FavoritesPage />} />
           </Route>
           

@@ -1,9 +1,14 @@
 // src/components/AddressSelector.jsx
 import React, { useState, useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { FaMapMarkerAlt, FaTimes } from 'react-icons/fa';
+import { FaMapMarkerAlt, FaTimes, FaSave } from 'react-icons/fa';
 import { selectIsAuthenticated } from '../redux/slices/authSlice';
-import { setSelectedAddress, selectSelectedAddress } from '../redux/slices/locationSlice';
+import { 
+  setSelectedAddress, 
+  selectSelectedAddress,
+  addSavedAddress,
+  selectSavedAddresses
+} from '../redux/slices/locationSlice';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 
@@ -19,9 +24,14 @@ const AddressSelector = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [addressName, setAddressName] = useState('');
+  const [showSaveOption, setShowSaveOption] = useState(false);
+
   const dispatch = useDispatch();
   const selectedAddress = useSelector(selectSelectedAddress);
+  const savedAddresses = useSelector(selectSavedAddresses);
   const isAuthenticated = useSelector(selectIsAuthenticated);
+
   const modalRef = useRef(null);
   const inputRef = useRef(null);
   const mapRef = useRef(null);
@@ -166,6 +176,8 @@ const AddressSelector = () => {
   
   const setSelectedAddressLocal = (address) => {
     setLocalSelectedAddress(address);
+    // When a new address is selected, show the save option
+    setShowSaveOption(true);
   };
   
   // Get current location
@@ -219,11 +231,57 @@ const AddressSelector = () => {
   // Save selected address to Redux
   const handleSelectAddress = () => {
     if (localSelectedAddress) {
-      dispatch(setSelectedAddress(localSelectedAddress));
+      // Create a unique ID if this is a new address
+      const addressToSave = {
+        ...localSelectedAddress,
+        id: localSelectedAddress.id || Date.now().toString()
+      };
+      
+      dispatch(setSelectedAddress(addressToSave));
       setIsModalOpen(false);
+      setShowSaveOption(false);
+      setAddressName('');
     }
   };
   
+  // Save address to saved addresses list
+  const handleSaveAddress = () => {
+    if (!localSelectedAddress) return;
+    
+    // Safely check if address is already saved by ensuring savedAddresses exists
+    const addressList = savedAddresses || [];
+    const isAlreadySaved = addressList.some(addr => 
+      addr && // Check that the address item exists
+      Math.abs(addr.lat - localSelectedAddress.lat) < 0.0001 && 
+      Math.abs(addr.lng - localSelectedAddress.lng) < 0.0001
+    );
+    
+    if (isAlreadySaved) {
+      alert('This address is already saved.');
+      return;
+    }
+    
+    // Create a new address object with name and ID
+    const newAddress = {
+      ...localSelectedAddress,
+      name: addressName.trim() || 'Unnamed Location',
+      id: Date.now().toString()
+    };
+    
+    // Save to Redux
+    dispatch(addSavedAddress(newAddress));
+    // Also set as selected address
+    dispatch(setSelectedAddress(newAddress));
+    
+    // Reset states
+    setShowSaveOption(false);
+    setAddressName('');
+    setIsModalOpen(false);
+    
+    // Show success message
+    alert('Address saved successfully!');
+  };
+
   // Handle Enter key in search input
   const handleKeyDown = (e) => {
     if (e.key === 'Enter') {
@@ -253,6 +311,7 @@ const AddressSelector = () => {
       {/* Address Button in Navbar */}
       <button
         onClick={() => setIsModalOpen(true)}
+        data-testid="address-selector-btn"
         className="flex items-center text-text mr-4 hover:text-accent transition-colors"
       >
         <FaMapMarkerAlt className="mr-1" />
@@ -266,7 +325,7 @@ const AddressSelector = () => {
         <div className="fixed inset-0 bg-text/70 z-50 flex items-center justify-center p-4">
           <div
             ref={modalRef}
-            className="bg-background rounded-lg w-full max-w-xl shadow-xl overflow-hidden"
+            className="bg-background rounded-lg w-full h-[90vh] overflow-auto max-w-xl shadow-xl "
           >
             {/* Modal Header */}
             <div className="flex justify-between items-center p-4">
@@ -341,6 +400,31 @@ const AddressSelector = () => {
                     className="bg-primary text-text px-4 py-2 rounded-lg font-bold hover:bg-primary/80 flex-shrink-0"
                   >
                     SELECT
+                  </button>
+                </div>
+              </div>
+            )}
+            
+            {/* Save Address Option */}
+            {showSaveOption && localSelectedAddress && (
+              <div className="px-4 pb-4">
+                <div className="border border-primary/20 rounded-lg p-4">
+                  <div className="flex items-center mb-3">
+                    <FaSave className="text-primary mr-2" />
+                    <h3 className="font-medium">Save this address for later</h3>
+                  </div>
+                  <input
+                    type="text"
+                    value={addressName}
+                    onChange={(e) => setAddressName(e.target.value)}
+                    placeholder="Location name (e.g. Home, Office)"
+                    className="w-full p-3 border border-primary/20 rounded-lg focus:outline-none focus:ring-1 focus:ring-primary mb-3"
+                  />
+                  <button
+                    onClick={handleSaveAddress}
+                    className="w-full bg-accent text-white py-2 rounded-lg font-medium hover:bg-accent/90"
+                  >
+                    Save Address
                   </button>
                 </div>
               </div>

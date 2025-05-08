@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { selectIsAuthenticated } from '../redux/slices/authSlice';
-import { FaUser, FaHistory, FaHeart, FaSignOutAlt } from 'react-icons/fa';
+import { FaUser, FaHistory, FaHeart, FaSignOutAlt, FaMapMarkerAlt } from 'react-icons/fa';
 import { logout } from '../redux/slices/authSlice';
 
 const AccountLayout = () => {
@@ -55,6 +55,10 @@ const AccountLayout = () => {
                 <NavLink to="/account/orders" className={navLinkClass}>
                   <FaHistory className="mr-2" />
                   Order History
+                </NavLink>
+                <NavLink to="/account/addresses" className={navLinkClass}>
+                  <FaMapMarkerAlt className="mr-2" />
+                  Saved Addresses
                 </NavLink>
                 <NavLink to="/account/favorites" className={navLinkClass}>
                   <FaHeart className="mr-2" />

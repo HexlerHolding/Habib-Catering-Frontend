@@ -6,6 +6,9 @@ import { branchService } from '../../Services/branchService';
 import { orderService } from '../../Services/orderService';
 import { clearCart, selectCartItems, selectCartTotalAmount } from '../redux/slices/cartSlice';
 
+import { selectSavedAddresses, selectSelectedAddress, setSelectedAddress } from '../redux/slices/locationSlice';
+
+
 // Component for displaying a single branch option
 const BranchOption = ({ branch, isSelected, onChange }) => (
   <label 
@@ -46,6 +49,37 @@ const BranchOption = ({ branch, isSelected, onChange }) => (
       </div>
     </div>
   </label>
+);
+// Component for displaying a saved address option
+const SavedAddressOption = ({ address, isSelected, onClick }) => (
+  <div 
+    className={`border rounded-md p-4 cursor-pointer flex items-center font-montserrat ${
+      isSelected 
+        ? 'border-primary bg-primary/10' 
+        : 'border-text/20 hover:border-text/30'
+    }`}
+    onClick={onClick}
+  >
+    <div className="h-5 w-5 rounded-full border border-text/30 mr-3 flex items-center justify-center">
+      {isSelected && (
+        <div className="h-3 w-3 rounded-full bg-primary"></div>
+      )}
+    </div>
+    <div className="flex-1">
+      <div className="flex items-center">
+        <p className="font-medium text-text">{address.name || 'Unnamed Location'}</p>
+        {address.isDefault && (
+          <span className="ml-2 bg-primary/20 text-primary text-xs px-2 py-1 rounded-full">
+            Default
+          </span>
+        )}
+      </div>
+      <p className="text-sm text-text/70 mt-1">
+        <FaMapMarkerAlt className="inline-block mr-1 text-primary" />
+        {address.address}
+      </p>
+    </div>
+  </div>
 );
 
 // Component for displaying a payment method option
@@ -104,7 +138,12 @@ const CheckoutPage = () => {
   const [branches, setBranches] = useState([]);
   const [selectedBranchId, setSelectedBranchId] = useState('');
   const [branchLoading, setBranchLoading] = useState(true);
-  
+
+  // Address states
+  const [useSelectedAddress, setUseSelectedAddress] = useState(false);
+  const savedAddresses = useSelector(selectSavedAddresses);
+  const selectedAddressFromStore = useSelector(selectSelectedAddress);
+    
   // Form states
   const [formData, setFormData] = useState({
     fullName: '',
@@ -174,7 +213,26 @@ const CheckoutPage = () => {
     
     fetchTaxRate();
   }, [paymentMethod, selectedBranchId]);
-  
+
+
+  // Handle saved address selection
+  useEffect(() => {
+    // Initialize the checkbox state based on whether we have saved addresses
+    setUseSelectedAddress(savedAddresses && savedAddresses.length > 0);
+    
+    // Update form data when a saved address is selected
+    if (useSelectedAddress && selectedAddressFromStore) {
+      // Extract address parts - assuming format "street, city, zipCode"
+      const addressParts = selectedAddressFromStore.address.split(',');
+      setFormData(prev => ({
+        ...prev,
+        address: addressParts[0] ? addressParts[0].trim() : prev.address,
+        city: addressParts[1] ? addressParts[1].trim() : prev.city,
+        zipCode: addressParts[2] ? addressParts[2].trim().replace(/\D/g, '') : prev.zipCode
+      }));
+    }
+  }, [selectedAddressFromStore, useSelectedAddress, savedAddresses]);
+    
   // Calculate tax amount and final total
   const taxAmount = subtotal * (taxRate / 100);
   const finalTotal = subtotal + taxAmount + (orderType === 'delivery' ? deliveryFee : 0);
@@ -408,6 +466,54 @@ const CheckoutPage = () => {
               <div className="text-center py-4">
                 <p className="text-text/70 font-montserrat">No branches available. Please try again later.</p>
               </div>
+            )}
+          </div>
+
+          {/* Saved Addresses Section */}
+          <div className="bg-secondary rounded-lg shadow-md p-6 mb-6 border border-primary/20">
+            <h2 className="text-xl font-bold mb-4 text-text font-poppins">Delivery Address</h2>
+            
+            {savedAddresses && savedAddresses.length > 0 ? (
+              <div>
+                <div className="mb-4">
+                  <label className="flex items-center cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={useSelectedAddress}
+                      onChange={(e) => setUseSelectedAddress(e.target.checked)}
+                      className="sr-only"
+                    />
+                    <div className="h-5 w-5 rounded-full border border-text/30 mr-3 flex items-center justify-center">
+                      {useSelectedAddress && (
+                        <div className="h-3 w-3 rounded-full bg-primary"></div>
+                      )}
+                    </div>
+                    <span className="font-medium text-text">Use saved address</span>
+                  </label>
+                </div>
+                
+                {useSelectedAddress && (
+                  <div className="space-y-3">
+                    {savedAddresses.map((address) => (
+                      <SavedAddressOption
+                        key={address.id}
+                        address={address}
+                        isSelected={selectedAddressFromStore && selectedAddressFromStore.id === address.id}
+                        onClick={() => dispatch(setSelectedAddress(address))}
+                      />
+                    ))}
+                    
+                    <p className="text-sm text-text/70 mt-2">
+                      <FaMapMarkerAlt className="inline-block mr-1" />
+                      You can manage your saved addresses in your account settings.
+                    </p>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <p className="text-text/70 mb-2 font-montserrat">
+                You don't have any saved addresses yet. Fill in the address details below.
+              </p>
             )}
           </div>
           

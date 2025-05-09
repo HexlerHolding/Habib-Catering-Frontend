@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from "react-router-dom";
+import { Toaster } from 'react-hot-toast';
 import { useSelector, useDispatch } from "react-redux";
 import { selectIsAuthenticated, selectCurrentUser, logout } from "./redux/slices/authSlice";
 import MainLayout from "./components/MainLayout";
@@ -11,8 +12,9 @@ import CheckoutPage from "./pages/CheckoutPage";
 import OrderSuccessPage from "./pages/OrderSuccessPage";
 import "./App.css";
 import Login from "./pages/Login";
+import Register from "./pages/Register";
 import LoginPhone from "./pages/LoginPhone";
-import LoginOTP from "./pages/LoginOTP";
+import LoginPassword from "./pages/LoginPassword";
 import BranchLocator from "./pages/BranchLocator";
 import BranchDetail from "./pages/BranchDetail";
 import BlogDetail from "./pages/BlogDetail";
@@ -30,6 +32,7 @@ function App() {
   const dispatch = useDispatch();
   const isAuthenticated = useSelector(selectIsAuthenticated);
   const user = useSelector(selectCurrentUser);
+  const navigate = useNavigate();
 
   // Add effect to log authentication state on app mount
   useEffect(() => {
@@ -43,8 +46,8 @@ function App() {
   // Logout function
   const handleLogout = () => {
     dispatch(logout());
-    // Navigate to home page after logout
-    window.location.href = '/';
+    // Let the component handle navigation instead of forcing a page reload
+    navigate('/login');
   };
 
   // Layout props
@@ -53,9 +56,19 @@ function App() {
     toggleSidebar,
     closeSidebar: () => setIsSidebarOpen(false)
   };
-
   return (
       <div className="app">
+        <Toaster
+          position="top-center"
+          reverseOrder={false}
+          toastOptions={{
+            duration: 3000,
+            style: {
+              background: '#363636',
+              color: '#fff',
+            },
+          }}
+        />
         <Routes>
           {/* Public Routes with Navbar and Footer */}
           <Route
@@ -151,11 +164,18 @@ function App() {
             <Route path="addresses" element={<SavedAddressesPage />} />
             <Route path="favorites" element={<FavoritesPage />} />
           </Route>
-          
-          {/* Authentication Routes */}
-          <Route path="/login" element={<Login />} />
-          <Route path="/login/phone-number" element={<LoginPhone />} />
-          <Route path="/login/otp" element={<LoginOTP />} />
+            {/* Authentication Routes */}          <Route path="/login" element={
+            isAuthenticated ? <Navigate to="/" /> : <Login />
+          } />
+          <Route path="/register" element={
+            isAuthenticated ? <Navigate to="/" /> : <Register />
+          } />
+          <Route path="/login/phone-number" element={
+            isAuthenticated ? <Navigate to="/" /> : <LoginPhone />
+          } />
+          <Route path="/login/password" element={
+            isAuthenticated ? <Navigate to="/" /> : <LoginPassword />
+          } />
         </Routes>
       </div>
   );

@@ -3,20 +3,23 @@ import { Link, useNavigate } from 'react-router-dom';
 import { FaTimes, FaPhoneAlt } from 'react-icons/fa';
 import { BiUser } from 'react-icons/bi';
 import { MdLocationOn, MdRestaurantMenu, MdHistory } from 'react-icons/md';
+import { useDispatch } from 'react-redux';
+import { logout } from '../redux/slices/authSlice';
 
 const Sidebar = ({ isOpen, closeSidebar, isLoggedIn, user }) => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   // Logout handler
   const handleLogout = () => {
-    // Clear user data from localStorage
-    localStorage.removeItem('user');
+    // Use Redux logout action instead of direct localStorage manipulation
+    dispatch(logout());
+    
     // Close sidebar
     closeSidebar();
-    // Redirect to home page
-    navigate('/');
-    // Reload the page to update the app state
-    window.location.reload();
+    
+    // Redirect to login page
+    navigate('/login');
   };
   console.log("user", {user, isLoggedIn});
 
@@ -46,10 +49,10 @@ const Sidebar = ({ isOpen, closeSidebar, isLoggedIn, user }) => {
               {isLoggedIn ? (
                 <>
                   <div className="font-bold text-text">
-                    {user?.name || 'HAIDER ALI'}
+                    {user?.name || 'User'}
                   </div>
                   <div className="text-sm text-text">
-                    {user?.phone || '+923128319979'}
+                    {user?.phone || 'No phone'}
                   </div>
                 </>
               ) : (

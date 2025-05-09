@@ -40,62 +40,22 @@ const cartSlice = createSlice({
     // Add item to cart
     addToCart: (state, action) => {
       const newItem = action.payload;
-      const existingItemIndex = state.items.findIndex(item => item.id === newItem.id);
+      const existingItem = state.items.find(item => item.id === newItem.id);
       
-      if (existingItemIndex >= 0) {
-        // Item exists, increase quantity
-        state.items[existingItemIndex].quantity += 1;
+      if (existingItem) {
+        existingItem.quantity++;
+        existingItem.totalPrice = existingItem.price * existingItem.quantity;
       } else {
-        // Add new item
-        state.items.push({ ...newItem, quantity: 1 });
+        state.items.push({
+          ...newItem,
+          quantity: 1,
+          totalPrice: newItem.price,
+        });
       }
       
-      // Update totals
-      const { totalQuantity, totalAmount } = calculateTotals(state.items);
-      state.totalQuantity = totalQuantity;
-      state.totalAmount = totalAmount;
-      
-      // Save to localStorage
-      localStorage.setItem('cart', JSON.stringify(state));
-    },
-    
-    // Increase item quantity
-    increaseQuantity: (state, action) => {
-      const id = action.payload;
-      const itemIndex = state.items.findIndex(item => item.id === id);
-      
-      if (itemIndex >= 0) {
-        state.items[itemIndex].quantity += 1;
-      }
-      
-      // Update totals
-      const { totalQuantity, totalAmount } = calculateTotals(state.items);
-      state.totalQuantity = totalQuantity;
-      state.totalAmount = totalAmount;
-      
-      // Save to localStorage
-      localStorage.setItem('cart', JSON.stringify(state));
-    },
-    
-    // Decrease item quantity
-    decreaseQuantity: (state, action) => {
-      const id = action.payload;
-      const itemIndex = state.items.findIndex(item => item.id === id);
-      
-      if (itemIndex >= 0) {
-        if (state.items[itemIndex].quantity === 1) {
-          // Remove item if quantity becomes 0
-          state.items = state.items.filter(item => item.id !== id);
-        } else {
-          // Decrease quantity
-          state.items[itemIndex].quantity -= 1;
-        }
-      }
-      
-      // Update totals
-      const { totalQuantity, totalAmount } = calculateTotals(state.items);
-      state.totalQuantity = totalQuantity;
-      state.totalAmount = totalAmount;
+      const totals = calculateTotals(state.items);
+      state.totalQuantity = totals.totalQuantity;
+      state.totalAmount = totals.totalAmount;
       
       // Save to localStorage
       localStorage.setItem('cart', JSON.stringify(state));
@@ -104,15 +64,77 @@ const cartSlice = createSlice({
     // Remove item from cart
     removeFromCart: (state, action) => {
       const id = action.payload;
-      state.items = state.items.filter(item => item.id !== id);
+      const existingItem = state.items.find(item => item.id === id);
       
-      // Update totals
-      const { totalQuantity, totalAmount } = calculateTotals(state.items);
-      state.totalQuantity = totalQuantity;
-      state.totalAmount = totalAmount;
+      if (existingItem) {
+        if (existingItem.quantity === 1) {
+          state.items = state.items.filter(item => item.id !== id);
+        } else {
+          existingItem.quantity--;
+          existingItem.totalPrice = existingItem.price * existingItem.quantity;
+        }
+        
+        const totals = calculateTotals(state.items);
+        state.totalQuantity = totals.totalQuantity;
+        state.totalAmount = totals.totalAmount;
+      }
       
       // Save to localStorage
       localStorage.setItem('cart', JSON.stringify(state));
+    },
+    
+    // Increase quantity of a specific item
+    increaseQuantity: (state, action) => {
+      const id = action.payload;
+      const item = state.items.find(item => item.id === id);
+      
+      if (item) {
+        item.quantity++;
+        item.totalPrice = item.price * item.quantity;
+        
+        const totals = calculateTotals(state.items);
+        state.totalQuantity = totals.totalQuantity;
+        state.totalAmount = totals.totalAmount;
+        
+        localStorage.setItem('cart', JSON.stringify(state));
+      }
+    },
+    
+    // Decrease quantity of a specific item
+    decreaseQuantity: (state, action) => {
+      const id = action.payload;
+      const item = state.items.find(item => item.id === id);
+      
+      if (item) {
+        if (item.quantity === 1) {
+          state.items = state.items.filter(item => item.id !== id);
+        } else {
+          item.quantity--;
+          item.totalPrice = item.price * item.quantity;
+        }
+        
+        const totals = calculateTotals(state.items);
+        state.totalQuantity = totals.totalQuantity;
+        state.totalAmount = totals.totalAmount;
+        
+        localStorage.setItem('cart', JSON.stringify(state));
+      }
+    },
+    
+    // Remove item completely regardless of quantity
+    removeItemCompletely: (state, action) => {
+      const id = action.payload;
+      const item = state.items.find(item => item.id === id);
+      
+      if (item) {
+        state.items = state.items.filter(item => item.id !== id);
+        
+        const totals = calculateTotals(state.items);
+        state.totalQuantity = totals.totalQuantity;
+        state.totalAmount = totals.totalAmount;
+        
+        localStorage.setItem('cart', JSON.stringify(state));
+      }
     },
     
     // Clear cart
@@ -130,9 +152,10 @@ const cartSlice = createSlice({
 // Export actions
 export const { 
   addToCart, 
+  removeFromCart, 
   increaseQuantity, 
   decreaseQuantity, 
-  removeFromCart, 
+  removeItemCompletely, 
   clearCart 
 } = cartSlice.actions;
 

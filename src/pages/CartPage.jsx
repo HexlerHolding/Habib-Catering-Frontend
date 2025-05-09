@@ -27,17 +27,12 @@ const CartPage = () => {
   const [appliedVoucher, setAppliedVoucher] = useState(null);
   const [voucherError, setVoucherError] = useState('');
   
-  // Calculate additional costs
-  const deliveryFee = 100; // Fixed delivery fee
-  const taxRate = 0.05; // 5% tax
-  const taxAmount = subtotal * taxRate;
-  
   // Calculate discount if voucher is applied
   const discountAmount = appliedVoucher ? 
     (appliedVoucher.type === 'percentage' ? (subtotal * appliedVoucher.value / 100) : appliedVoucher.value) : 0;
   
   // Calculate grand total with discount
-  const grandTotal = subtotal + deliveryFee + taxAmount - discountAmount;
+  const grandTotal = subtotal - discountAmount;
   
   // Handle applying voucher
   const handleApplyVoucher = () => {
@@ -47,8 +42,8 @@ const CartPage = () => {
     // Example vouchers for demonstration - in production, these would come from backend
     const availableVouchers = [
       { code: 'SAVE10', type: 'percentage', value: 10, description: '10% off your order' },
-      { code: 'FREESHIP', type: 'fixed', value: 100, description: 'Free delivery' },
-      { code: 'DISCOUNT50', type: 'fixed', value: 50, description: 'Rs. 50 off your order' }
+      { code: 'DISCOUNT50', type: 'fixed', value: 50, description: 'Rs. 50 off your order' },
+      { code: 'EXTRA20', type: 'percentage', value: 20, description: '20% off your order' }
     ];
     
     const foundVoucher = availableVouchers.find(v => v.code === voucherCode.trim());
@@ -163,9 +158,7 @@ const CartPage = () => {
                         
                         {/* Total Price and Remove Button */}
                         <div className="text-right">
-                          <div className="font-bold text-text mb-1">
-                            Rs. {(item.price * item.quantity).toFixed(2)}
-                          </div>
+                      
                           <button 
                             onClick={() => handleRemoveItem(item.id)}
                             className="text-accent hover:text-accent/80 text-sm flex items-center ml-auto"
@@ -226,18 +219,7 @@ const CartPage = () => {
                 
                 {/* Price breakdown */}
                 <div className="space-y-4 mb-6">
-                  <div className="flex justify-between">
-                    <span className="text-text/70">Subtotal</span>
-                    <span className="text-text font-medium">Rs. {subtotal.toFixed(2)}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-text/70">Delivery Fee</span>
-                    <span className="text-text font-medium">Rs. {deliveryFee.toFixed(2)}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-text/70">Tax (5%)</span>
-                    <span className="text-text font-medium">Rs. {taxAmount.toFixed(2)}</span>
-                  </div>
+                 
                   
                   {/* Show discount if voucher is applied */}
                   {appliedVoucher && (
@@ -249,8 +231,10 @@ const CartPage = () => {
                   
                   <div className="border-t pt-4 flex justify-between">
                     <span className="text-text font-bold">Total</span>
-                    <span className="text-accent font-bold text-xl">Rs. {grandTotal.toFixed(2)}</span>
+                    <span className="text-accent font-bold text-xl">Rs. {(subtotal - discountAmount).toFixed(2)}</span>
                   </div>
+                  
+                 
                 </div>
                 
                 {/* Checkout button */}
@@ -347,8 +331,8 @@ const CartPage = () => {
               <p className="text-xs text-text/50 mb-2">Example vouchers (for testing):</p>
               <div className="text-xs text-text/70 space-y-1">
                 <p>SAVE10 - 10% off your order</p>
-                <p>FREESHIP - Free delivery</p>
                 <p>DISCOUNT50 - Rs. 50 off your order</p>
+                <p>EXTRA20 - 20% off your order</p>
               </div>
             </div>
           </div>

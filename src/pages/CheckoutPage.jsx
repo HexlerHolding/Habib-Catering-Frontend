@@ -162,7 +162,6 @@ const CheckoutPage = () => {
   
   // Tax state and calculations
   const [taxRate, setTaxRate] = useState(0);
-  const [deliveryFee, setDeliveryFee] = useState(100);
   
   // Form validation state
   const [errors, setErrors] = useState({});
@@ -236,7 +235,7 @@ const CheckoutPage = () => {
     
   // Calculate tax amount and final total
   const taxAmount = subtotal * (taxRate / 100);
-  const finalTotal = subtotal + taxAmount + (orderType === 'delivery' ? deliveryFee : 0);
+  const finalTotal = subtotal + taxAmount;
   
   // Define order type options
   const orderTypeOptions = [
@@ -770,12 +769,6 @@ const CheckoutPage = () => {
                 <span className="text-text/70 font-montserrat">Subtotal</span>
                 <span className="text-text font-montserrat">Rs. {subtotal.toFixed(2)}</span>
               </div>
-              {orderType === 'delivery' && (
-                <div className="flex justify-between">
-                  <span className="text-text/70 font-montserrat">Delivery Fee</span>
-                  <span className="text-text font-montserrat">Rs. {deliveryFee.toFixed(2)}</span>
-                </div>
-              )}
               <div className="flex justify-between">
                 <span className="text-text/70 font-montserrat">Tax ({taxRate}%)</span>
                 <span className="text-text font-montserrat">Rs. {taxAmount.toFixed(2)}</span>

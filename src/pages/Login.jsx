@@ -53,10 +53,16 @@ const Login = () => {
                     <Link to='/login/phone-number' className="flex justify-center items-center w-full py-3 md:py-4 bg-primary text-text/90 font-bold rounded mb-4 hover:bg-primary/80 hover:brightness-105 transition-colors">
                         <FaPhone className="mr-2 text-lg" /> CONTINUE WITH PHONE
                     </Link>
-                    
-                    <button className="flex justify-center items-center w-full py-3 md:py-4 bg-background text-text/90 font-bold rounded border border-text/20 hover:bg-text/10 transition-colors">
+                      <Link to='/' className="flex justify-center items-center w-full py-3 md:py-4 bg-background text-text/90 font-bold rounded border border-text/20 hover:bg-text/10 transition-colors">
                         <FaUser className="mr-2 text-lg" /> CONTINUE AS A GUEST
-                    </button>
+                    </Link>
+
+                    <p className="mt-6 text-center text-text/60">
+                        Don't have an account?{' '}
+                        <Link to="/register" className="text-accent hover:underline font-semibold">
+                            Register here
+                        </Link>
+                    </p>
                 </div>
             </div>
 

@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { FaArrowLeft, FaCreditCard, FaMapMarkerAlt, FaMoneyBillWave, FaStore } from 'react-icons/fa';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { branchService } from '../../Services/branchService';
 import { orderService } from '../../Services/orderService';
+import CardDetailsModal from '../components/CardDetailsModal';
 import { clearCart, selectCartItems, selectCartTotalAmount } from '../redux/slices/cartSlice';
 import { selectSavedAddresses, selectSelectedAddress, setSelectedAddress } from '../redux/slices/locationSlice';
-import CardDetailsModal from '../components/CardDetailsModal';
 
 // Component for displaying a single branch option
 const BranchOption = ({ branch, isSelected, onChange }) => (

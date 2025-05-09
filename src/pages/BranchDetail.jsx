@@ -1,9 +1,9 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { useParams, Link } from 'react-router-dom';
-import { FaArrowLeft, FaPhone, FaClock, FaMapMarkerAlt, FaDirections } from 'react-icons/fa';
-import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
-import { branchesData } from './BranchLocator'; // Import the branch data from BranchLocator
+import 'leaflet/dist/leaflet.css';
+import { useEffect, useRef, useState } from 'react';
+import { FaArrowLeft, FaClock, FaDirections, FaMapMarkerAlt, FaPhone } from 'react-icons/fa';
+import { Link, useParams } from 'react-router-dom';
+import branchService from '../../Services/branchService';
 
 // Fix for Leaflet marker icons in React
 delete L.Icon.Default.prototype._getIconUrl;
@@ -17,38 +17,54 @@ const BranchDetail = () => {
   const { branchId } = useParams();
   const [branch, setBranch] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const mapRef = useRef(null);
-  
-  // Fetch branch data from the imported branchesData
+
+  // Fetch branch details from API
   useEffect(() => {
-    // Simulate API call with a short timeout for loading state demonstration
-    const fetchBranch = () => {
-      setLoading(true);
-      setTimeout(() => {
-        const foundBranch = branchesData.find(b => b.id === parseInt(branchId));
-        setBranch(foundBranch || null);
+    const fetchBranch = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const branchData = await branchService.getBranchDetails(branchId);
+        if (!branchData) {
+          throw new Error('Branch not found');
+        }
+        setBranch(branchData);
+      } catch (err) {
+        console.error('Error fetching branch details:', err);
+        setError(err.message);
+        setBranch(null);
+      } finally {
         setLoading(false);
-      }, 500);
+      }
     };
-    
+
     fetchBranch();
   }, [branchId]);
-  
+
   // Initialize map when branch data is available
   useEffect(() => {
     if (branch && mapRef.current) {
+      // Check if coordinates exist and are valid
+      if (!branch.coordinates || !branch.coordinates.lat || !branch.coordinates.lng) {
+        console.error('Invalid coordinates for branch:', branch.id);
+        setError('Branch location data is unavailable');
+        return;
+      }
+
       const { lat, lng } = branch.coordinates;
-      
+
       // Create map centered on branch location
       const map = L.map(mapRef.current).setView([lat, lng], 15);
-      
+
       // Add tile layer
       L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+        attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors © <a href="https://carto.com/attributions">CARTO</a>',
         subdomains: 'abcd',
-        maxZoom: 19
+        maxZoom: 19,
       }).addTo(map);
-      
+
       // Add marker for branch location with custom popup
       const popupContent = `
         <div style="min-width: 200px;">
@@ -56,23 +72,26 @@ const BranchDetail = () => {
           <p style="font-size: 0.9rem; margin-bottom: 8px;">${branch.address}</p>
         </div>
       `;
-      
+
       L.marker([lat, lng])
         .addTo(map)
         .bindPopup(popupContent)
         .openPopup();
-      
+
       // Clean up on unmount
       return () => {
         map.remove();
       };
     }
   }, [branch]);
-  
+
   // Function to open Google Maps directions
   const getDirections = () => {
-    if (!branch) return;
-    
+    if (!branch || !branch.coordinates || !branch.coordinates.lat || !branch.coordinates.lng) {
+      console.error('Cannot get directions: Invalid coordinates for branch');
+      return;
+    }
+
     // Get user's current location if available
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
@@ -100,7 +119,7 @@ const BranchDetail = () => {
       );
     }
   };
-  
+
   // Loading state
   if (loading) {
     return (
@@ -112,23 +131,24 @@ const BranchDetail = () => {
       </div>
     );
   }
-  
-  // Branch not found
-  if (!branch) {
+
+  // Error state
+  if (error || !branch) {
     return (
       <div className="max-w-7xl mx-auto px-4 py-8">
         <div className="mb-6">
-          <Link to='/branches' className="inline-flex items-center text-primary hover:text-primary/80">
+          <Link to="/branches" className="inline-flex items-center text-primary hover:text-primary/80">
             <FaArrowLeft className="mr-2" />
             Back to Branches
           </Link>
         </div>
-        
         <div className="bg-background rounded-lg shadow p-6 text-center">
           <h1 className="text-2xl font-bold text-text mb-4">Branch Not Found</h1>
-          <p className="text-text/70 mb-6">The branch you're looking for doesn't exist or has been moved.</p>
-          <Link 
-            to="/branches" 
+          <p className="text-text/70 mb-6">
+            {error || "The branch you're looking for doesn't exist or has been moved."}
+          </p>
+          <Link
+            to="/branches"
             className="inline-flex items-center px-4 py-2 border border-transparent text-base font-medium rounded-md text-secondary bg-primary hover:bg-primary/80"
           >
             View All Branches
@@ -137,17 +157,20 @@ const BranchDetail = () => {
       </div>
     );
   }
-  
+
+  // Check if coordinates are missing but branch data exists
+  const hasValidCoordinates = branch.coordinates && branch.coordinates.lat && branch.coordinates.lng;
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 z-10">
       {/* Back Button and Header */}
       <div className="mb-6">
-        <Link to='/branches' className="inline-flex items-center text-2xl font-bold text-text hover:underline"> 
+        <Link to="/branches" className="inline-flex items-center text-2xl font-bold text-text hover:underline">
           <FaArrowLeft className="mr-2" />
           Back to Branches
         </Link>
       </div>
-      
+
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* Branch Information */}
         <div className="md:col-span-1">
@@ -155,40 +178,58 @@ const BranchDetail = () => {
             <div className="p-6">
               <h1 className="text-2xl font-bold text-text/80 mb-2">{branch.name}</h1>
               <p className="text-text/60 mb-6">{branch.city}</p>
-              
+
               <div className="space-y-4">
                 <div className="flex items-start">
                   <FaMapMarkerAlt className="h-5 w-5 text-primary mt-1 mr-3" />
                   <p className="text-text/70">{branch.address}</p>
                 </div>
-                
+
                 <div className="flex items-center">
                   <FaPhone className="h-5 w-5 text-primary mr-3" />
                   <p className="text-text/70">{branch.phone}</p>
                 </div>
-                
+
                 <div className="flex items-center">
                   <FaClock className="h-5 w-5 text-primary mr-3" />
                   <p className="text-text/70">{branch.timings}</p>
                 </div>
               </div>
-              
-              <button
-                onClick={getDirections}
-                className="mt-6 w-full flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-base font-medium bg-primary hover:bg-primary/80 hover:brightness-105 transition duration-300 text-text"
-              >
-                <FaDirections className="mr-2" />
-                Get Directions
-              </button>
+
+              {hasValidCoordinates ? (
+                <button
+                  onClick={getDirections}
+                  className="mt-6 w-full flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-base font-medium bg-primary hover:bg-primary/80 hover:brightness-105 transition duration-300 text-text"
+                >
+                  <FaDirections className="mr-2" />
+                  Get Directions
+                </button>
+              ) : (
+                <div className="mt-6 p-3 bg-red-100 text-red-800 rounded-md text-sm">
+                  Location information is not available for this branch.
+                </div>
+              )}
             </div>
           </div>
         </div>
-        
+
         {/* Map */}
         <div className="md:col-span-2 z-10">
-          <div className="bg-background rounded-lg shadow overflow-hidden h-96">
-            <div ref={mapRef} className="h-full w-full"></div>
-          </div>
+          {hasValidCoordinates ? (
+            <div className="bg-background rounded-lg shadow overflow-hidden h-96">
+              <div ref={mapRef} className="h-full w-full"></div>
+            </div>
+          ) : (
+            <div className="bg-background rounded-lg shadow overflow-hidden h-96 flex items-center justify-center">
+              <div className="text-center p-6">
+                <FaMapMarkerAlt className="h-12 w-12 text-text/30 mx-auto mb-4" />
+                <h3 className="text-xl font-medium text-text/80 mb-2">Map Unavailable</h3>
+                <p className="text-text/60">
+                  Location coordinates are not available for this branch.
+                </p>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>

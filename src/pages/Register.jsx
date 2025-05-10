@@ -17,7 +17,8 @@ const Register = () => {
     const [loading, setLoading] = useState(false);
     
     const dispatch = useDispatch();
-    const navigate = useNavigate();    const handleChange = (e) => {
+    const navigate = useNavigate();    
+    const handleChange = (e) => {
         const { name, value } = e.target;
         
         // Phone number validation
@@ -38,7 +39,8 @@ const Register = () => {
         }
         
         setError(''); // Clear error when user types
-    };    const handleSubmit = async (e) => {
+    };    
+    const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
         setError('');
@@ -62,16 +64,15 @@ const Register = () => {
                 name: formData.name,
                 phone: formData.phone,
                 password: formData.password
-            });            if (response.token) {
-                console.log('Registration Response:', response); // Log the full response
+            });
+            
+            if (response.token) {
+                console.log('Registration Response:', response);
                 
-                // Store token and user data in Redux
+                // Store token and essential user data in Redux
                 dispatch(login({ 
                     token: response.token,
-                    user: {
-                        name: formData.name,
-                        phone: formData.phone
-                    }
+                    user: response.user // This will contain only essential data now
                 }));
 
                 // Show success message
@@ -135,7 +136,8 @@ const Register = () => {
                                 placeholder="Phone Number"
                                 className="w-full py-3 pl-10 pr-4 border border-text/20 rounded focus:outline-none focus:border-primary bg-background"
                             />
-                        </div>                        <div className="relative">
+                        </div>                        
+                        <div className="relative">
                             <FaLock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-text/60" />
                             <input
                                 type={showPassword ? "text" : "password"}
@@ -152,7 +154,8 @@ const Register = () => {
                             >
                                 {showPassword ? <FaEyeSlash /> : <FaEye />}
                             </button>
-                        </div><button
+                        </div>
+                        <button
                             type="submit"
                             disabled={loading}
                             className="w-full py-3 bg-primary text-text font-bold rounded hover:bg-primary/80 hover:brightness-105 transition-colors disabled:opacity-50"

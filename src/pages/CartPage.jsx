@@ -11,6 +11,7 @@ import {
   selectCartTotalQuantity
 } from '../redux/slices/cartSlice';
 import { FaTrash, FaPlus, FaMinus, FaArrowLeft, FaCreditCard, FaMoneyBill, FaShoppingCart, FaTimes, FaTicketAlt } from 'react-icons/fa';
+import ConfirmationModal from '../components/ConfirmationModal';
 
 const CartPage = () => {
   const dispatch = useDispatch();
@@ -27,6 +28,29 @@ const CartPage = () => {
   const [appliedVoucher, setAppliedVoucher] = useState(null);
   const [voucherError, setVoucherError] = useState('');
   
+  // Modal state for confirmation
+  const [confirmModal, setConfirmModal] = useState({
+    open: false,
+    title: '',
+    message: '',
+    onConfirm: null,
+  });
+
+  // Helper to open confirmation modal
+  const openConfirmModal = ({ title, message, onConfirm }) => {
+    setConfirmModal({
+      open: true,
+      title,
+      message,
+      onConfirm,
+    });
+  };
+
+  // Helper to close modal
+  const closeConfirmModal = () => {
+    setConfirmModal({ ...confirmModal, open: false });
+  };
+
   // Calculate discount if voucher is applied
   const discountAmount = appliedVoucher ? 
     (appliedVoucher.type === 'percentage' ? (subtotal * appliedVoucher.value / 100) : appliedVoucher.value) : 0;
@@ -63,26 +87,41 @@ const CartPage = () => {
     setAppliedVoucher(null);
   };
   
-  // Handle removing item from cart with confirmation
+  // Handle removing item from cart with confirmation modal
   const handleRemoveItem = (id) => {
-    if (window.confirm('Are you sure you want to remove this item from your cart?')) {
-      dispatch(removeFromCart(id));
-    }
+    openConfirmModal({
+      title: 'Remove Item',
+      message: 'Are you sure you want to remove this item from your cart?',
+      onConfirm: () => {
+        dispatch(removeFromCart(id)); // This removes the whole product from the cart
+        closeConfirmModal();
+      }
+    });
   };
   
-  // Handle clearing the entire cart with confirmation
+  // Handle clearing the entire cart with confirmation modal
   const handleClearCart = () => {
-    if (window.confirm('Are you sure you want to clear your entire cart?')) {
-      dispatch(clearCart());
-    }
+    openConfirmModal({
+      title: 'Clear Cart',
+      message: 'Are you sure you want to clear your entire cart?',
+      onConfirm: () => {
+        dispatch(clearCart());
+        closeConfirmModal();
+      }
+    });
   };
   
   // Handle decreasing quantity with confirmation when quantity is 1
   const handleDecreaseQuantity = (item) => {
     if (item.quantity === 1) {
-      if (window.confirm('Are you sure you want to remove this item from your cart?')) {
-        dispatch(decreaseQuantity(item.id));
-      }
+      openConfirmModal({
+        title: 'Remove Item',
+        message: 'Are you sure you want to remove this item from your cart?',
+        onConfirm: () => {
+          dispatch(removeFromCart(item.id)); // Remove the whole item if quantity is 1
+          closeConfirmModal();
+        }
+      });
     } else {
       dispatch(decreaseQuantity(item.id));
     }
@@ -158,7 +197,6 @@ const CartPage = () => {
                         
                         {/* Total Price and Remove Button */}
                         <div className="text-right">
-                      
                           <button 
                             onClick={() => handleRemoveItem(item.id)}
                             className="text-accent hover:text-accent/80 text-sm flex items-center ml-auto"
@@ -219,8 +257,6 @@ const CartPage = () => {
                 
                 {/* Price breakdown */}
                 <div className="space-y-4 mb-6">
-                 
-                  
                   {/* Show discount if voucher is applied */}
                   {appliedVoucher && (
                     <div className="flex justify-between text-primary">
@@ -233,8 +269,6 @@ const CartPage = () => {
                     <span className="text-text font-bold">Total</span>
                     <span className="text-accent font-bold text-xl">Rs. {(subtotal - discountAmount).toFixed(2)}</span>
                   </div>
-                  
-                 
                 </div>
                 
                 {/* Checkout button */}
@@ -338,6 +372,17 @@ const CartPage = () => {
           </div>
         </div>
       )}
+
+      {/* Confirmation Modal */}
+      <ConfirmationModal
+        open={confirmModal.open}
+        title={confirmModal.title}
+        message={confirmModal.message}
+        onConfirm={confirmModal.onConfirm}
+        onCancel={closeConfirmModal}
+        confirmText="Yes"
+        cancelText="No"
+      />
     </div>
   );
 };

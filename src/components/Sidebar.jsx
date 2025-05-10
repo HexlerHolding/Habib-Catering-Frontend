@@ -23,6 +23,10 @@ const Sidebar = ({ isOpen, closeSidebar, isLoggedIn, user }) => {
   };
   console.log("user", {user, isLoggedIn});
 
+  // Determine user name and phone to display
+  const displayName = user?.Name || user?.name || 'User';
+  const displayPhone = user?.Phone || user?.phone || 'No phone';
+
   return (
     <>
   
@@ -49,10 +53,10 @@ const Sidebar = ({ isOpen, closeSidebar, isLoggedIn, user }) => {
               {isLoggedIn ? (
                 <>
                   <div className="font-bold text-text">
-                    {user?.name || 'User'}
+                    {displayName}
                   </div>
                   <div className="text-sm text-text">
-                    {user?.phone || 'No phone'}
+                    {displayPhone}
                   </div>
                 </>
               ) : (

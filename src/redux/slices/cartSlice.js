@@ -63,24 +63,7 @@ const cartSlice = createSlice({
     
     // Remove item from cart
     removeFromCart: (state, action) => {
-      const id = action.payload;
-      const existingItem = state.items.find(item => item.id === id);
-      
-      if (existingItem) {
-        if (existingItem.quantity === 1) {
-          state.items = state.items.filter(item => item.id !== id);
-        } else {
-          existingItem.quantity--;
-          existingItem.totalPrice = existingItem.price * existingItem.quantity;
-        }
-        
-        const totals = calculateTotals(state.items);
-        state.totalQuantity = totals.totalQuantity;
-        state.totalAmount = totals.totalAmount;
-      }
-      
-      // Save to localStorage
-      localStorage.setItem('cart', JSON.stringify(state));
+      state.items = state.items.filter(item => item.id !== action.payload);
     },
     
     // Increase quantity of a specific item

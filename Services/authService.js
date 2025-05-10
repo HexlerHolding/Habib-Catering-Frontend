@@ -53,24 +53,45 @@ export const authService = {
         },
         body: JSON.stringify({
           name: userData.name,
-          phone: userData.phone, // Send phone number as is
+          phone: userData.phone,
           password: userData.password,
         }),
       });
 
       const data = await response.json();
+      console.log('Registration Response:', data);
 
       if (!response.ok) {
         throw new Error(data.error || 'Registration failed');
       }
 
+      // Extract user ID from the response - handle different response formats
+      let userId = '';
+      if (data.user && data.user._id) {
+        userId = data.user._id;
+      } else if (data._id) {
+        userId = data._id;
+      } else if (data.id) {
+        userId = data.id;
+      }
+
+      // Create essential user data object
+      const essentialUserData = {
+        _id: userId,
+        Name: userData.name,
+        Phone: userData.phone
+      };
+
+      console.log('Essential user data stored after registration:', essentialUserData);
+      
+      // Store only essential user data in localStorage
+      localStorage.setItem('userToken', data.token);
+      localStorage.setItem('user', JSON.stringify(essentialUserData));
+
       return {
         success: true,
         token: data.token,
-        user: {
-          name: userData.name,
-          phone: userData.phone
-        }
+        user: essentialUserData
       };
     } catch (error) {
       console.error('Registration error:', error);
@@ -117,23 +138,25 @@ export const authService = {
         throw new Error(data.error || 'Login failed');
       }
 
-      // If the API doesn't return user data, create a user object with the phone number
+      // Store only essential user data (id, name, phone)
       if (data.token) {
-        // Create a minimum user object if none was returned
-        if (!data.user) {
-          data.user = {
-            phone: credentials.phone,
-            name: "User" // Default name, will be updated later if available
-          };
-        }
+        // Extract essential user data from response
+        const userData = data.user || {};
         
-        // Ensure we have the phone number in the user data
-        if (!data.user.phone) {
-          data.user.phone = credentials.phone;
-        }
-
+        // Create a minimal user object with only essential fields
+        const essentialUserData = {
+          _id: userData._id || userData.id || '',
+          Name: userData.Name || userData.name || '',
+          Phone: userData.Phone || userData.phone || credentials.phone
+        };
+        
+        console.log('Essential user data stored:', essentialUserData);
+        
         localStorage.setItem('userToken', data.token);
-        localStorage.setItem('user', JSON.stringify(data.user));
+        localStorage.setItem('user', JSON.stringify(essentialUserData));
+        
+        // Add essential user data to the response for Redux store
+        data.essentialUserData = essentialUserData;
       }
 
       return data;

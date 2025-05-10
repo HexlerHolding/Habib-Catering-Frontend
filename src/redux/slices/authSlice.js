@@ -1,9 +1,9 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
-  token: localStorage.getItem('token') || null,
+  token: localStorage.getItem('userToken') || null,
   user: JSON.parse(localStorage.getItem('user')) || null,
-  isAuthenticated: !!localStorage.getItem('token')
+  isAuthenticated: !!localStorage.getItem('userToken')
 };
 
 const authSlice = createSlice({
@@ -11,50 +11,74 @@ const authSlice = createSlice({
   initialState,
   reducers: {
     login: (state, action) => {
-      // Check if we have both token and user in the payload
-      const { token, user = null } = action.payload;
+      // Extract token and user data from payload
+      const { token, user, essentialUserData } = action.payload;
+      
+      // Store token
       state.token = token;
       
-      // Ensure we have a user object with at least phone number
-      if (user) {
-        // Make sure we store the user data properly
-        state.user = user;
-        localStorage.setItem('user', JSON.stringify(user));
-      } else if (action.payload.phone) {
-        // If no user object but we have a phone, create minimal user object
-        state.user = { phone: action.payload.phone };
-        localStorage.setItem('user', JSON.stringify({ phone: action.payload.phone }));
+      // Store only essential user data (prefer essentialUserData if available)
+      if (essentialUserData) {
+        state.user = essentialUserData;
+        localStorage.setItem('user', JSON.stringify(essentialUserData));
+      } else if (user) {
+        // If we don't have essentialUserData, create it from user
+        const essentialData = {
+          _id: user._id || user.id || '',
+          Name: user.Name || user.name || '',
+          Phone: user.Phone || user.phone || ''
+        };
+        
+        state.user = essentialData;
+        localStorage.setItem('user', JSON.stringify(essentialData));
       }
       
       // Set authenticated state and store token
       state.isAuthenticated = true;
-      localStorage.setItem('token', token);
-      
-      console.log("User stored in Redux:", state.user);
+      localStorage.setItem('userToken', token);
     },
-    // Add a specific action for registration
     register: (state, action) => {
-      const { token, name, phone } = action.payload;
-      state.token = token;
-      state.user = { name, phone };
-      state.isAuthenticated = true;
+      const { token, user } = action.payload;
       
-      localStorage.setItem('token', token);
-      localStorage.setItem('user', JSON.stringify({ name, phone }));
+      // Store token
+      state.token = token;
+      
+      // Store only essential user data
+      if (user) {
+        const essentialData = {
+          _id: user._id || user.id || '',
+          Name: user.Name || user.name || '',
+          Phone: user.Phone || user.phone || ''
+        };
+        
+        state.user = essentialData;
+        localStorage.setItem('user', JSON.stringify(essentialData));
+      }
+      
+      state.isAuthenticated = true;
+      localStorage.setItem('userToken', token);
     },
     logout: (state) => {
       state.token = null;
       state.user = null;
       state.isAuthenticated = false;
       
-      // Remove from localStorage - handle both token keys
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
+      // Remove from localStorage
       localStorage.removeItem('userToken');
+      localStorage.removeItem('user');
+      localStorage.removeItem('token');
     },
     updateUser: (state, action) => {
-      state.user = action.payload;
-      localStorage.setItem('user', JSON.stringify(action.payload));
+      // Extract only essential data for updates
+      const userData = action.payload;
+      const essentialData = {
+        _id: userData._id || userData.id || state.user?._id || '',
+        Name: userData.Name || userData.name || state.user?.Name || '',
+        Phone: userData.Phone || userData.phone || state.user?.Phone || ''
+      };
+      
+      state.user = essentialData;
+      localStorage.setItem('user', JSON.stringify(essentialData));
     }
   }
 });

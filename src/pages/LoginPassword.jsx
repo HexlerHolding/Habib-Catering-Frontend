@@ -45,19 +45,18 @@ const LoginPassword = () => {
       });
 
       if (response.token) {
-        // Extract user data or create minimal user object if not available
-        const userData = response.user || { 
-          phone: formData.phone,
-          name: "User" // Default name if not provided
-        };
-        
-        // Login successful - update Redux store with token and user data
+        // Login successful - update Redux store with token and essential user data
         dispatch(login({
           token: response.token,
-          user: userData
+          user: response.user || {},
+          essentialUserData: response.essentialUserData || {
+            _id: response.user?._id || '',
+            Name: response.user?.Name || '',
+            Phone: response.user?.Phone || formData.phone
+          }
         }));
         
-        console.log("Login successful with user data:", userData);
+        console.log("Login successful with user data:", response.essentialUserData || response.user);
         toast.success('Login successful!');
         navigate('/');
       }

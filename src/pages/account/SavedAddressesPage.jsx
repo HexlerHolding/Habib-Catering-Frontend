@@ -9,6 +9,7 @@ import {
   removeAddress,
   updateAddressName
 } from '../../redux/slices/locationSlice';
+import ConfirmationModal from '../../components/ConfirmationModal';
 
 const SavedAddressesPage = () => {
   const dispatch = useDispatch();
@@ -20,6 +21,14 @@ const SavedAddressesPage = () => {
   const [editingId, setEditingId] = useState(null);
   const [editName, setEditName] = useState('');
   
+  // State for confirmation modal
+  const [confirmModal, setConfirmModal] = useState({
+    open: false,
+    title: '',
+    message: '',
+    onConfirm: null,
+  });
+
   useEffect(() => {
     console.log("SavedAddressesPage mounted - Auth state:", isAuthenticated);
   }, [isAuthenticated]);
@@ -31,11 +40,22 @@ const SavedAddressesPage = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
   
-  // Handle deleting an address
+  // Handle deleting an address (show confirmation modal)
   const handleDeleteAddress = (addressId) => {
-    if (window.confirm('Are you sure you want to delete this address?')) {
-      dispatch(removeAddress(addressId));
-    }
+    setConfirmModal({
+      open: true,
+      title: 'Delete Address',
+      message: 'Are you sure you want to delete this address?',
+      onConfirm: () => {
+        dispatch(removeAddress(addressId));
+        setConfirmModal({ ...confirmModal, open: false });
+      }
+    });
+  };
+
+  // Helper to close modal
+  const closeConfirmModal = () => {
+    setConfirmModal({ ...confirmModal, open: false });
   };
   
   // Handle editing address name
@@ -197,6 +217,15 @@ const SavedAddressesPage = () => {
           </button>
         </div>
       )}
+      <ConfirmationModal
+        open={confirmModal.open}
+        title={confirmModal.title}
+        message={confirmModal.message}
+        onConfirm={confirmModal.onConfirm}
+        onCancel={closeConfirmModal}
+        confirmText="Yes"
+        cancelText="No"
+      />
     </div>
   );
 };

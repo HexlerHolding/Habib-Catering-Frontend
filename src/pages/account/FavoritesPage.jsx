@@ -94,6 +94,7 @@ const FavoritesPage = () => {
       return;
     }
     dispatch(addToCart(item));
+    toast.success(`${item.name} has been added to your cart`);
   };
 
   const handleRemoveFromFavorites = async (item) => {

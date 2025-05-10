@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { FaUser, FaPhone, FaLock } from 'react-icons/fa';
+import { FaUser, FaPhone, FaLock, FaEye, FaEyeSlash } from 'react-icons/fa';
 import authService from '../../../Services/authService';
 import { toast } from 'react-hot-toast';
 
@@ -10,6 +10,7 @@ const EditProfilePage = () => {
     password: '',
   });
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   // Fetch user profile on mount
   useEffect(() => {
@@ -103,15 +104,23 @@ const EditProfilePage = () => {
                 <FaLock />
               </div>
               <input
-                type="password"
+                type={showPassword ? "text" : "password"}
                 id="password"
                 name="password"
                 value={userData.password}
                 onChange={handleChange}
-                className="bg-background border border-text/10 text-text rounded-lg block w-full pl-10 p-3 focus:outline-none focus:ring-2 focus:ring-primary"
+                className="bg-background border border-text/10 text-text rounded-lg block w-full pl-10 pr-12 p-3 focus:outline-none focus:ring-2 focus:ring-primary"
                 placeholder="Leave blank to keep current password"
                 autoComplete="new-password"
               />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-text/60 hover:text-text/80 focus:outline-none"
+                tabIndex={-1}
+              >
+                {showPassword ? <FaEyeSlash /> : <FaEye />}
+              </button>
             </div>
           </div>
         </div>

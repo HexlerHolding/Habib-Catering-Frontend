@@ -13,6 +13,38 @@ L.Icon.Default.mergeOptions({
   shadowUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png',
 });
 
+// Helper function to generate approximate coordinates for cities
+const getCityCoordinates = (city) => {
+  const cityCoordinates = {
+    'Lahore': { lat: 31.5204, lng: 74.3587 },
+    'Islamabad': { lat: 33.6844, lng: 73.0479 },
+    'Karachi': { lat: 24.8607, lng: 67.0011 },
+    'Rawalpindi': { lat: 33.6007, lng: 73.0679 },
+    'Faisalabad': { lat: 31.4180, lng: 73.0793 },
+    'Multan': { lat: 30.1959, lng: 71.4693 },
+    'Peshawar': { lat: 34.0081, lng: 71.5249 },
+    // Add more cities as needed
+  };
+  
+  // Normalize city name by converting to lowercase and removing extra spaces
+  const normalizedCity = city ? city.toLowerCase().trim() : '';
+  
+  // Find city in cityCoordinates (case-insensitive match)
+  for (const [key, value] of Object.entries(cityCoordinates)) {
+    if (key.toLowerCase() === normalizedCity) {
+      return value;
+    }
+  }
+  
+  // If we can extract a city name from the address, try that
+  if (normalizedCity.includes("islamabad")) {
+    return cityCoordinates["Islamabad"];
+  }
+  
+  // Default to Pakistan's center
+  return { lat: 30.3753, lng: 69.3451 };
+};
+
 const BranchDetail = () => {
   const { branchId } = useParams();
   const [branch, setBranch] = useState(null);
@@ -27,10 +59,38 @@ const BranchDetail = () => {
         setLoading(true);
         setError(null);
         const branchData = await branchService.getBranchDetails(branchId);
+        
         if (!branchData) {
           throw new Error('Branch not found');
         }
-        setBranch(branchData);
+        
+        // If coordinates are missing or invalid, add approximate ones based on city
+        if (!branchService.hasValidCoordinates(branchData)) {
+          // Create a deep copy to avoid mutating the original data
+          const branchWithCoords = { ...branchData };
+          
+          // Add coordinates based on city or address
+          if (branchWithCoords.city) {
+            branchWithCoords.coordinates = getCityCoordinates(branchWithCoords.city);
+            console.log(`Generated coordinates for ${branchWithCoords.name} based on city:`, branchWithCoords.coordinates);
+          } 
+          // If no city, try to extract from address
+          else if (branchWithCoords.address) {
+            const addressLower = branchWithCoords.address.toLowerCase();
+            // Check if address contains a known city
+            for (const city of Object.keys(getCityCoordinates(""))) {
+              if (addressLower.includes(city.toLowerCase())) {
+                branchWithCoords.coordinates = getCityCoordinates(city);
+                console.log(`Generated coordinates for ${branchWithCoords.name} based on address:`, branchWithCoords.coordinates);
+                break;
+              }
+            }
+          }
+          
+          setBranch(branchWithCoords);
+        } else {
+          setBranch(branchData);
+        }
       } catch (err) {
         console.error('Error fetching branch details:', err);
         setError(err.message);
@@ -46,14 +106,28 @@ const BranchDetail = () => {
   // Initialize map when branch data is available
   useEffect(() => {
     if (branch && mapRef.current) {
+      let coordinates;
+      
       // Check if coordinates exist and are valid
-      if (!branch.coordinates || !branch.coordinates.lat || !branch.coordinates.lng) {
-        console.error('Invalid coordinates for branch:', branch.id);
-        setError('Branch location data is unavailable');
-        return;
+      if (branchService.hasValidCoordinates(branch)) {
+        coordinates = branch.coordinates;
+      } 
+      // Use approximate coordinates based on city or address
+      else if (branch.city) {
+        coordinates = getCityCoordinates(branch.city);
+        console.log(`Using approximate coordinates for ${branch.name} based on city:`, coordinates);
+      } 
+      else if (branch.address && branch.address.toLowerCase().includes('islamabad')) {
+        coordinates = getCityCoordinates('Islamabad');
+        console.log(`Using approximate coordinates for ${branch.name} based on address:`, coordinates);
       }
-
-      const { lat, lng } = branch.coordinates;
+      else {
+        // Default coordinates (Pakistan center)
+        coordinates = { lat: 30.3753, lng: 69.3451 };
+        console.log(`Using default Pakistan coordinates for ${branch.name}:`, coordinates);
+      }
+      
+      const { lat, lng } = coordinates;
 
       // Create map centered on branch location
       const map = L.map(mapRef.current).setView([lat, lng], 15);
@@ -87,9 +161,24 @@ const BranchDetail = () => {
 
   // Function to open Google Maps directions
   const getDirections = () => {
-    if (!branch || !branch.coordinates || !branch.coordinates.lat || !branch.coordinates.lng) {
-      console.error('Cannot get directions: Invalid coordinates for branch');
-      return;
+    if (!branch) return;
+    
+    let coordinates;
+    
+    // Check if coordinates exist and are valid
+    if (branchService.hasValidCoordinates(branch)) {
+      coordinates = branch.coordinates;
+    } 
+    // Use approximate coordinates based on city or address
+    else if (branch.city) {
+      coordinates = getCityCoordinates(branch.city);
+    } 
+    else if (branch.address && branch.address.toLowerCase().includes('islamabad')) {
+      coordinates = getCityCoordinates('Islamabad');
+    }
+    else {
+      // Default coordinates (Pakistan center)
+      coordinates = { lat: 30.3753, lng: 69.3451 };
     }
 
     // Get user's current location if available
@@ -99,14 +188,14 @@ const BranchDetail = () => {
           const { latitude, longitude } = position.coords;
           // Open Google Maps with directions from current location to branch
           window.open(
-            `https://www.google.com/maps/dir/${latitude},${longitude}/${branch.coordinates.lat},${branch.coordinates.lng}`,
+            `https://www.google.com/maps/dir/${latitude},${longitude}/${coordinates.lat},${coordinates.lng}`,
             '_blank'
           );
         },
         // If geolocation fails, just open the branch location
         () => {
           window.open(
-            `https://www.google.com/maps/search/?api=1&query=${branch.coordinates.lat},${branch.coordinates.lng}`,
+            `https://www.google.com/maps/search/?api=1&query=${coordinates.lat},${coordinates.lng}`,
             '_blank'
           );
         }
@@ -114,7 +203,7 @@ const BranchDetail = () => {
     } else {
       // Fallback if geolocation is not supported
       window.open(
-        `https://www.google.com/maps/search/?api=1&query=${branch.coordinates.lat},${branch.coordinates.lng}`,
+        `https://www.google.com/maps/search/?api=1&query=${coordinates.lat},${coordinates.lng}`,
         '_blank'
       );
     }
@@ -158,9 +247,6 @@ const BranchDetail = () => {
     );
   }
 
-  // Check if coordinates are missing but branch data exists
-  const hasValidCoordinates = branch.coordinates && branch.coordinates.lat && branch.coordinates.lng;
-
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 z-10">
       {/* Back Button and Header */}
@@ -185,51 +271,37 @@ const BranchDetail = () => {
                   <p className="text-text/70">{branch.address}</p>
                 </div>
 
-                <div className="flex items-center">
-                  <FaPhone className="h-5 w-5 text-primary mr-3" />
-                  <p className="text-text/70">{branch.phone}</p>
-                </div>
+                {branch.contact && (
+                  <div className="flex items-center">
+                    <FaPhone className="h-5 w-5 text-primary mr-3" />
+                    <p className="text-text/70">{branch.contact}</p>
+                  </div>
+                )}
 
-                <div className="flex items-center">
-                  <FaClock className="h-5 w-5 text-primary mr-3" />
-                  <p className="text-text/70">{branch.timings}</p>
-                </div>
+                {(branch.openingTime && branch.closingTime) && (
+                  <div className="flex items-center">
+                    <FaClock className="h-5 w-5 text-primary mr-3" />
+                    <p className="text-text/70">{branch.openingTime} - {branch.closingTime}</p>
+                  </div>
+                )}
               </div>
 
-              {hasValidCoordinates ? (
-                <button
-                  onClick={getDirections}
-                  className="mt-6 w-full flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-base font-medium bg-primary hover:bg-primary/80 hover:brightness-105 transition duration-300 text-text"
-                >
-                  <FaDirections className="mr-2" />
-                  Get Directions
-                </button>
-              ) : (
-                <div className="mt-6 p-3 bg-red-100 text-red-800 rounded-md text-sm">
-                  Location information is not available for this branch.
-                </div>
-              )}
+              <button
+                onClick={getDirections}
+                className="mt-6 w-full flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-base font-medium bg-primary hover:bg-primary/80 hover:brightness-105 transition duration-300 text-text"
+              >
+                <FaDirections className="mr-2" />
+                Get Directions
+              </button>
             </div>
           </div>
         </div>
 
         {/* Map */}
         <div className="md:col-span-2 z-10">
-          {hasValidCoordinates ? (
-            <div className="bg-background rounded-lg shadow overflow-hidden h-96">
-              <div ref={mapRef} className="h-full w-full"></div>
-            </div>
-          ) : (
-            <div className="bg-background rounded-lg shadow overflow-hidden h-96 flex items-center justify-center">
-              <div className="text-center p-6">
-                <FaMapMarkerAlt className="h-12 w-12 text-text/30 mx-auto mb-4" />
-                <h3 className="text-xl font-medium text-text/80 mb-2">Map Unavailable</h3>
-                <p className="text-text/60">
-                  Location coordinates are not available for this branch.
-                </p>
-              </div>
-            </div>
-          )}
+          <div className="bg-background rounded-lg shadow overflow-hidden h-96">
+            <div ref={mapRef} className="h-full w-full"></div>
+          </div>
         </div>
       </div>
     </div>

@@ -33,10 +33,12 @@ function App() {
   const isAuthenticated = useSelector(selectIsAuthenticated);
   const user = useSelector(selectCurrentUser);
   const navigate = useNavigate();
+  const [authChecked, setAuthChecked] = useState(false);
 
   // Add effect to log authentication state on app mount
   useEffect(() => {
     console.log("App mounted - Auth state:", { isAuthenticated, user });
+    setAuthChecked(true);
   }, [isAuthenticated, user]);
 
   const toggleSidebar = () => {
@@ -56,6 +58,12 @@ function App() {
     toggleSidebar,
     closeSidebar: () => setIsSidebarOpen(false)
   };
+
+  // Show loading while auth state is being determined
+  if (!authChecked) {
+    return <div>Loading...</div>;
+  }
+
   return (
       <div className="app">
         <Toaster
@@ -156,7 +164,16 @@ function App() {
           />
           
           {/* Protected account routes */}
-          <Route path="/account" element={<ProtectedRoutes {...layoutProps}><AccountLayout /></ProtectedRoutes>}>
+          <Route
+            path="/account"
+            element={
+              <ProtectedRoutes {...layoutProps}>
+                <MainLayout {...layoutProps}>
+                  <AccountLayout />
+                </MainLayout>
+              </ProtectedRoutes>
+            }
+          >
             <Route index element={<EditProfilePage />} />
             <Route path="profile" element={<EditProfilePage />} />
             <Route path="orders" element={<OrderHistoryPage />} />

@@ -1,30 +1,21 @@
 import React from 'react';
-import { Navigate, Outlet } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { selectIsAuthenticated, selectCurrentUser } from '../redux/slices/authSlice';
-import MainLayout from './MainLayout';
+import { selectIsAuthenticated } from '../redux/slices/authSlice';
 
-const ProtectedRoutes = ({ isSidebarOpen, toggleSidebar, closeSidebar, children }) => {
+const ProtectedRoutes = ({ children }) => {
   const isAuthenticated = useSelector(selectIsAuthenticated);
-  const user = useSelector(selectCurrentUser);
-  
-  console.log("Protected Route Check:", { isAuthenticated, user });
-  
-  // If not authenticated, redirect to login
-  if (!isAuthenticated) {
-    console.log("User not authenticated, redirecting to login");
-    return <Navigate to="/login" />;
+
+  // Show loading if auth state is not determined yet
+  if (isAuthenticated === undefined || isAuthenticated === null) {
+    return <div>Loading...</div>;
   }
-  
-  return (
-    <MainLayout
-      isSidebarOpen={isSidebarOpen}
-      toggleSidebar={toggleSidebar}
-      closeSidebar={closeSidebar}
-    >
-      {children || <Outlet />}
-    </MainLayout>
-  );
+
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
+
+  return children;
 };
 
 export default ProtectedRoutes;

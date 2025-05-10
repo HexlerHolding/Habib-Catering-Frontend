@@ -61,7 +61,7 @@ const AppDownload = () => {
           </div>
           
           {/* App store buttons */}
-          <div className="flex gap-4">
+          <div className="flex flex-col sm:flex-row items gap-4">
             <a 
               href="https://play.google.com/store" 
               target="_blank" 

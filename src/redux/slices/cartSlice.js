@@ -64,6 +64,12 @@ const cartSlice = createSlice({
     // Remove item from cart
     removeFromCart: (state, action) => {
       state.items = state.items.filter(item => item.id !== action.payload);
+      // Recalculate totals after removal
+      const totals = calculateTotals(state.items);
+      state.totalQuantity = totals.totalQuantity;
+      state.totalAmount = totals.totalAmount;
+      // Update localStorage
+      localStorage.setItem('cart', JSON.stringify(state));
     },
     
     // Increase quantity of a specific item

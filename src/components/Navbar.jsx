@@ -95,13 +95,13 @@ const Navbar = ({ toggleSidebar }) => {
         </button>
         
         {/* Logo */}
-        <Link to="/" className="flex items-center">
+        <Link to="/" className=" hidden sm:flex items-center">
           <img 
             src='/logo.webp'
             alt="Cheezious Logo" 
             className="h-10"
           />
-          <h1 className='hidden sm:block font-bold font-montserrat text-2xl ml-2 text-text'>Cheezious</h1>
+          <h1 className=' font-bold font-montserrat text-2xl ml-2 text-text'>Cheezious</h1>
         </Link>
 
         {/* Add the AddressSelector component here */}

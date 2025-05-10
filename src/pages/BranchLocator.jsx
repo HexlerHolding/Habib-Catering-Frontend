@@ -1,9 +1,8 @@
-import L from 'leaflet';
-import 'leaflet/dist/leaflet.css';
-import { useEffect, useRef, useState } from 'react';
-import { FaArrowLeft, FaChevronDown, FaMapMarkerAlt, FaSearch } from 'react-icons/fa';
+import React, { useState, useRef, useEffect } from 'react';
+import { FaArrowLeft, FaChevronDown, FaSearch, FaMapMarkerAlt } from 'react-icons/fa';
 import { Link, useNavigate } from 'react-router-dom';
-import branchService from '../../Services/branchService';
+import 'leaflet/dist/leaflet.css';
+import L from 'leaflet';
 
 // Fix for Leaflet marker icons in React
 delete L.Icon.Default.prototype._getIconUrl;
@@ -13,52 +12,163 @@ L.Icon.Default.mergeOptions({
   shadowUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png',
 });
 
+// Branch data - centralized to use in both components
+// In a real app, this would come from an API 
+export const branchesData = [
+  {
+    id: 1,
+    name: 'Pine Avenue',
+    address: '96VX+PCQ, Pine Ave, Wocland Villas Block N Valencia, Lahore, Pakistan',
+    city: 'Lahore',
+    coordinates: { lat: 31.4740, lng: 74.3850 },
+    phone: '+92-321-1234567',
+    timings: '10:00 AM - 11:00 PM'
+  },
+  {
+    id: 2,
+    name: 'Bahria Civic Center',
+    address: 'Civic center Flat A-1, Al-Bahrain Complex, Block A, Civic Center Bahria Town, Islamabad, Punjab 46220, Pakistan',
+    city: 'Islamabad',
+    coordinates: { lat: 33.5269, lng: 73.1035 },
+    phone: '+92-321-1234568',
+    timings: '10:00 AM - 11:00 PM'
+  },
+  {
+    id: 3,
+    name: 'Allama Iqbal Town',
+    address: '6-D, Main Boulevard Allama Iqbal Town, Huma Block Allama Iqbal Town, Lahore, Punjab 54000, Pakistan',
+    city: 'Lahore',
+    coordinates: { lat: 31.5025, lng: 74.3106 },
+    phone: '+92-321-1234569',
+    timings: '10:00 AM - 11:00 PM'
+  },
+  {
+    id: 4,
+    name: 'Clifton Branch',
+    address: 'Plot 5-C, Block 5, Clifton, Karachi, Sindh 75600, Pakistan',
+    city: 'Karachi',
+    coordinates: { lat: 24.8225, lng: 67.0351 },
+    phone: '+92-321-1234570',
+    timings: '10:00 AM - 11:00 PM'
+  },
+  {
+    id: 5,
+    name: 'Saddar Town',
+    address: '239 Shahrah-e-Liaquat, Saddar, Karachi, Sindh 74000, Pakistan',
+    city: 'Karachi',
+    coordinates: { lat: 24.8590, lng: 67.0263 },
+    phone: '+92-321-1234571',
+    timings: '10:00 AM - 11:00 PM'
+  },
+  {
+    id: 6,
+    name: 'Blue Area',
+    address: 'F-6 Blue Area, Jinnah Avenue, Islamabad, 44000, Pakistan',
+    city: 'Islamabad',
+    coordinates: { lat: 33.7294, lng: 73.0931 },
+    phone: '+92-321-1234572',
+    timings: '10:00 AM - 11:00 PM'
+  },
+  {
+    id: 7,
+    name: 'Commercial Market',
+    address: 'Shop No. 14, Commercial Market, Satellite Town, Rawalpindi, Punjab, Pakistan',
+    city: 'Rawalpindi',
+    coordinates: { lat: 33.6007, lng: 73.0679 },
+    phone: '+92-321-1234573',
+    timings: '10:00 AM - 11:00 PM'
+  },
+  {
+    id: 8,
+    name: 'D Ground',
+    address: 'D Ground, Peoples Colony No 1, Faisalabad, Punjab 38000, Pakistan',
+    city: 'Faisalabad',
+    coordinates: { lat: 31.4180, lng: 73.0793 },
+    phone: '+92-321-1234574',
+    timings: '10:00 AM - 11:00 PM'
+  },
+  {
+    id: 9,
+    name: 'Gulgasht Colony',
+    address: 'Gulgasht Colony, Northern Bypass Road, Multan, Punjab, Pakistan',
+    city: 'Multan',
+    coordinates: { lat: 30.1959, lng: 71.4693 },
+    phone: '+92-321-1234575',
+    timings: '10:00 AM - 11:00 PM'
+  },
+  {
+    id: 10,
+    name: 'University Road',
+    address: 'University Road, Near Board of Intermediate Education, Peshawar, KPK, Pakistan',
+    city: 'Peshawar',
+    coordinates: { lat: 34.0081, lng: 71.5249 },
+    phone: '+92-321-1234576',
+    timings: '10:00 AM - 11:00 PM'
+  },
+  {
+    id: 11,
+    name: 'DHA Phase 5',
+    address: 'Y Block, DHA Phase 5, Lahore, Punjab, Pakistan',
+    city: 'Lahore',
+    coordinates: { lat: 31.4697, lng: 74.4184 },
+    phone: '+92-321-1234577',
+    timings: '10:00 AM - 11:00 PM'
+  },
+  {
+    id: 12,
+    name: 'Gulberg',
+    address: 'Main Boulevard Gulberg, Lahore, Punjab, Pakistan',
+    city: 'Lahore',
+    coordinates: { lat: 31.5102, lng: 74.3441 },
+    phone: '+92-321-1234578',
+    timings: '10:00 AM - 11:00 PM'
+  },
+  {
+    id: 13,
+    name: 'F-10 Markaz',
+    address: 'F-10 Markaz, Islamabad, 44000, Pakistan',
+    city: 'Islamabad',
+    coordinates: { lat: 33.6950, lng: 73.0117 },
+    phone: '+92-321-1234579',
+    timings: '10:00 AM - 11:00 PM'
+  }
+];
+
 const BranchLocator = () => {
   const [selectedCity, setSelectedCity] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [branches, setBranches] = useState([]); // State for branches from API
-  const [isLoading, setIsLoading] = useState(true);
   const dropdownRef = useRef(null);
   const mapRef = useRef(null);
   const leafletMap = useRef(null);
   const markersLayerRef = useRef(null);
   const navigate = useNavigate();
-
+  
   // Extract unique cities from branches data
-  const cities = [...new Set(branches.map(branch => branch.city))].sort();
-
-  // Fetch branches when component mounts
-  useEffect(() => {
-    const fetchBranches = async () => {
-      try {
-        setIsLoading(true);
-        const branchData = await branchService.getBranches();
-        setBranches(branchData);
-      } catch (error) {
-        console.error('Failed to load branches:', error);
-        setBranches([]);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchBranches();
-  }, []);
-
+  const cities = [...new Set(branchesData.map(branch => branch.city))].sort();
+  
+  // Function to navigate to branch detail page
+  const handleViewDetails = (branchId) => {
+    navigate(`/branches/${branchId}`);
+  };
+  
   // Initialize map
   useEffect(() => {
     if (mapRef.current && !leafletMap.current) {
+      // Initialize map with Pakistan center
       leafletMap.current = L.map(mapRef.current).setView([30.3753, 69.3451], 5);
       
+      // Add tile layer with English labels
       L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-        attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors © <a href="https://carto.com/attributions">CARTO</a>',
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
         subdomains: 'abcd',
         maxZoom: 19
       }).addTo(leafletMap.current);
       
+      // Create a layer for markers
       markersLayerRef.current = L.layerGroup().addTo(leafletMap.current);
       
+      // Add markers for all branches
       addBranchMarkers();
     }
     
@@ -69,20 +179,16 @@ const BranchLocator = () => {
       }
     };
   }, []);
-
-  // Update markers when branches, selected city, or search query changes
+  
+  // Update markers when selected city or search query changes
   useEffect(() => {
     if (leafletMap.current) {
       addBranchMarkers();
       
+      // If a city is selected, zoom to that city
       if (selectedCity) {
-        const cityBranch = branches.find(branch => 
-          branch.city === selectedCity && 
-          branch.coordinates && 
-          branch.coordinates.lat && 
-          branch.coordinates.lng
-        );
-        
+        // Find the first branch of the selected city to get coordinates
+        const cityBranch = branchesData.find(branch => branch.city === selectedCity);
         if (cityBranch) {
           leafletMap.current.setView(
             [cityBranch.coordinates.lat, cityBranch.coordinates.lng], 
@@ -90,18 +196,21 @@ const BranchLocator = () => {
           );
         }
       } else {
+        // If no city selected, show all of Pakistan
         leafletMap.current.setView([30.3753, 69.3451], 5);
       }
     }
-  }, [branches, selectedCity, searchQuery]);
-
+  }, [selectedCity, searchQuery]);
+  
   // Function to add branch markers to map
   const addBranchMarkers = () => {
     if (!markersLayerRef.current) return;
     
+    // Clear existing markers
     markersLayerRef.current.clearLayers();
     
-    const filteredBranches = branches.filter(branch => {
+    // Filter branches based on selected city and search query
+    const filteredBranches = branchesData.filter(branch => {
       const matchesCity = !selectedCity || branch.city === selectedCity;
       const matchesSearch = !searchQuery || 
         branch.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
@@ -109,15 +218,11 @@ const BranchLocator = () => {
       return matchesCity && matchesSearch;
     });
     
+    // Add markers for each branch
     filteredBranches.forEach(branch => {
-      // Skip branches without valid coordinates
-      if (!branch.coordinates || !branch.coordinates.lat || !branch.coordinates.lng) {
-        console.warn(`Branch ${branch.id} - ${branch.name} has invalid coordinates:`, branch.coordinates);
-        return;
-      }
-      
       const { lat, lng } = branch.coordinates;
       
+      // Custom popup content with branch info and view details button
       const popupContent = `
         <div style="min-width: 200px;">
           <h3 style="font-weight: bold; margin-bottom: 5px;">${branch.name}</h3>
@@ -138,7 +243,7 @@ const BranchLocator = () => {
       markersLayerRef.current.addLayer(marker);
     });
   };
-
+  
   // Close dropdown when clicking outside
   useEffect(() => {
     function handleClickOutside(event) {
@@ -152,21 +257,16 @@ const BranchLocator = () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [dropdownRef]);
-
-  // Filter branches for display
-  const filteredBranches = branches.filter(branch => {
+  
+  // Filter branches based on selected city and search query
+  const filteredBranches = branchesData.filter(branch => {
     const matchesCity = !selectedCity || branch.city === selectedCity;
     const matchesSearch = !searchQuery || 
       branch.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
       branch.address.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesCity && matchesSearch;
   });
-
-  // Navigate to branch detail page
-  const handleViewDetails = (branchId) => {
-    navigate(`/branches/${branchId}`);
-  };
-
+  
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       {/* Back Button and Header */}
@@ -240,37 +340,32 @@ const BranchLocator = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Branch Listings */}
         <div className="bg-background rounded-lg shadow overflow-hidden">
-          <div className="overflow-y-auto h-[27rem]">
-            {isLoading ? (
-              <div className="px-4 py-6 text-center text-text/50">
-                Loading branches...
-              </div>
-            ) : filteredBranches.length === 0 ? (
-              <div className="px-4 py-6 text-center text-text/50">
-                No branches found matching your criteria.
-              </div>
-            ) : (
-              filteredBranches.map((branch) => (
-                <div key={branch.id} className="border-b border-text/20 last:border-b-0">
-                  <div className="px-4 py-5 sm:px-6">
-                    <div className="flex items-start">
-                      <div className="flex-shrink-0 h-10 w-10 rounded-full bg-primary flex items-center justify-center">
-                        <FaMapMarkerAlt className="h-6 w-6 text-secondary" />
-                      </div>
-                      <div className="ml-4">
-                        <h3 className="text-lg font-medium text-text/80">{branch.name}</h3>
-                        <p className="mt-1 text-sm text-text/70">{branch.address}</p>
-                        <button 
-                          className="mt-3 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-text bg-primary hover:bg-primary/80 hover:brightness-105 transition duration-300"
-                          onClick={() => handleViewDetails(branch.id)}
-                        >
-                          VIEW DETAILS
-                        </button>
-                      </div>
+          <div className="overflow-y-auto h-[27rem]" >
+            {filteredBranches.map((branch) => (
+              <div key={branch.id} className="border-b border-text/20 last:border-b-0">
+                <div className="px-4 py-5 sm:px-6">
+                  <div className="flex items-start">
+                    <div className="flex-shrink-0 h-10 w-10 rounded-full bg-primary flex items-center justify-center">
+                      <FaMapMarkerAlt className="h-6 w-6 text-secondary" />
+                    </div>
+                    <div className="ml-4">
+                      <h3 className="text-lg font-medium text-text/80">{branch.name}</h3>
+                      <p className="mt-1 text-sm text-text/70">{branch.address}</p>
+                      <button 
+                        className="mt-3 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-text bg-primary hover:bg-primary/80 hover:brightness-105 transition duration-300"
+                        onClick={() => handleViewDetails(branch.id)}
+                      >
+                        VIEW DETAILS
+                      </button>
                     </div>
                   </div>
                 </div>
-              ))
+              </div>
+            ))}
+            {filteredBranches.length === 0 && (
+              <div className="px-4 py-6 text-center text-text/50">
+                No branches found matching your criteria.
+              </div>
             )}
           </div>
         </div>

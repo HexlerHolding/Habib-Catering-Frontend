@@ -150,7 +150,9 @@ function App() {
             path="/checkout"
             element={
               <ProtectedRoutes {...layoutProps}>
-                <CheckoutPage />
+                <MainLayout {...layoutProps}>
+                  <CheckoutPage />
+                </MainLayout>
               </ProtectedRoutes>
             }
           />
@@ -158,7 +160,9 @@ function App() {
             path="/order-success"
             element={
               <ProtectedRoutes {...layoutProps}>
-                <OrderSuccessPage />
+                <MainLayout {...layoutProps}>
+                  <OrderSuccessPage />
+                </MainLayout>
               </ProtectedRoutes>
             }
           />

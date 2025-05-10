@@ -203,7 +203,65 @@ export const authService = {
       'Authorization': `Bearer ${token}`,
       'Content-Type': 'application/json',
     };
-  }
+  },
+
+  /**
+   * Fetch authenticated user's profile
+   * @param {string} userId
+   * @returns {Promise<Object>}
+   */
+  async getProfile(userId) {
+    try {
+      const response = await fetch(`${API_URL}/user/profile/${userId}`, {
+        method: 'GET',
+        headers: this.getAuthHeaders(),
+      });
+   
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || 'Failed to fetch profile');
+      }
+   
+      return await response.json();
+    } catch (error) {
+      console.error('Get profile error:', error);
+      throw error;
+    }
+  },
+
+  /**
+   * Update authenticated user's profile
+   * @param {string} userId
+   * @param {Object} updates - { name, phone, password }
+   * @returns {Promise<Object>}
+   */
+  async updateProfile(userId, updates) {
+    try {
+      const response = await fetch(`${API_URL}/user/profile/${userId}`, {
+        method: 'PUT',
+        headers: this.getAuthHeaders(),
+        body: JSON.stringify(updates),
+      });
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to update profile');
+      }
+      // Update localStorage if name or phone changed
+      if (data.token && data.user) {
+        const essentialUserData = {
+          _id: data.user._id || data.user.id || '',
+          Name: data.user.Name || data.user.name || '',
+          Phone: data.user.Phone || data.user.phone || '',
+        };
+        localStorage.setItem('userToken', data.token);
+        localStorage.setItem('user', JSON.stringify(essentialUserData));
+      }
+      return data;
+    } catch (error) {
+      console.error('Update profile error:', error);
+      throw error;
+    }
+  },
 };
 
 export default authService;

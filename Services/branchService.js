@@ -14,6 +14,7 @@ export const branchService = {
       }
       
       const data = await response.json();
+      console.log('Fetched branches:', data);
       const branches = data.branches || [];
       
       // Validate and normalize branch data

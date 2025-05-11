@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
-import { FaUser, FaPhone, FaLock, FaEye, FaEyeSlash } from 'react-icons/fa';
-import { Link, useNavigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
-import { login } from '../redux/slices/authSlice';
-import { authService } from '../../Services/authService';
+import { useState } from 'react';
 import { toast } from 'react-hot-toast';
+import { FaEye, FaEyeSlash, FaLock, FaPhone, FaUser } from 'react-icons/fa';
+import { useDispatch } from 'react-redux';
+import { Link, useNavigate } from 'react-router-dom';
+import { authService } from '../../Services/authService';
+import { login } from '../redux/slices/authSlice';
 
 const Register = () => {    
     const [showPassword, setShowPassword] = useState(false);
@@ -94,7 +94,7 @@ const Register = () => {
             {/* Logo */}
             <Link to="/" className="flex absolute top-4 md:top-8 left-4 md:left-8 items-center z-10">
                 <img 
-                    src='/logo.webp'
+                    src='/offerSectionImage34.png'
                     alt="Cheezious Logo" 
                     className="w-8 md:w-10"
                 />

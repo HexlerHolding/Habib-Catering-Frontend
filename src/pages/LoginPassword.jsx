@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
-import { useDispatch } from 'react-redux';
-import { FaLock, FaEye, FaEyeSlash } from "react-icons/fa";
-import { login } from '../redux/slices/authSlice';
-import { authService } from '../../Services/authService';
+import { useEffect, useState } from "react";
 import { toast } from 'react-hot-toast';
+import { FaEye, FaEyeSlash, FaLock } from "react-icons/fa";
+import { useDispatch } from 'react-redux';
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { authService } from '../../Services/authService';
+import { login } from '../redux/slices/authSlice';
 
 const LoginPassword = () => {
   const location = useLocation();
@@ -75,7 +75,7 @@ const LoginPassword = () => {
   return (
     <div className="flex flex-col md:flex-row h-screen overflow-hidden relative">
       <Link to="/" className="flex absolute top-4 md:top-8 left-4 md:left-8 items-center z-10">
-        <img src="/logo.webp" alt="Cheezious Logo" className="w-8 md:w-10" />
+        <img src="/offerSectionImage34.png" alt="Cheezious Logo" className="w-8 md:w-10" />
         <h1 className="font-bold text-xl md:text-2xl ml-2">Cheezious</h1>
       </Link>
 

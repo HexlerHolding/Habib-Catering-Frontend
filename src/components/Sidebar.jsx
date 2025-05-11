@@ -1,9 +1,8 @@
-import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { FaTimes, FaPhoneAlt } from 'react-icons/fa';
 import { BiUser } from 'react-icons/bi';
-import { MdLocationOn, MdRestaurantMenu, MdHistory } from 'react-icons/md';
+import { FaPhoneAlt, FaTimes } from 'react-icons/fa';
+import { MdHistory, MdLocationOn, MdRestaurantMenu } from 'react-icons/md';
 import { useDispatch } from 'react-redux';
+import { Link, useNavigate } from 'react-router-dom';
 import { logout } from '../redux/slices/authSlice';
 
 const Sidebar = ({ isOpen, closeSidebar, isLoggedIn, user }) => {
@@ -157,7 +156,7 @@ const Sidebar = ({ isOpen, closeSidebar, isLoggedIn, user }) => {
         <div className={`absolute bottom-0 left-0 right-0 p-4 flex items-center justify-between bg-primary`}>
           <div className="flex items-center">
             <img 
-              src="/logo.webp" 
+              src="/offerSectionImage34.png" 
               alt="Cheezious Icon"
               className="h-8 w-8 mr-2"
             />

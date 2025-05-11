@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from "react";
-import { FaPhone, FaUser, FaEnvelope } from "react-icons/fa";
+import { useEffect, useState } from "react";
+import { toast } from "react-hot-toast";
+import { FaEnvelope } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
-import { toast } from "react-hot-toast";
 import { authService } from "../../Services/authService";
 
 const LoginPhone = () => {
@@ -66,7 +66,7 @@ const LoginPhone = () => {
         to="/"
         className="flex absolute top-4 md:top-8 left-4 md:left-8 items-center z-10"
       >
-        <img src="/logo.webp" alt="Cheezious Logo" className="w-8 md:w-10" />
+        <img src="/offerSectionImage34.png" alt="Cheezious Logo" className="w-8 md:w-10" />
         <h1 className="font-bold text-xl md:text-2xl ml-2">Cheezious</h1>
       </Link>
 

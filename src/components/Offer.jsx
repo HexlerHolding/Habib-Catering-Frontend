@@ -1,4 +1,3 @@
-import React from 'react';
 
 const Offer = () => {
   return (
@@ -44,8 +43,8 @@ const Offer = () => {
             </div>
             
             {/* Megaphone Icon - simplified version */}
-            <div className="w-32 h-32 flex items-center justify-center">
-              <img src="/offerSectionImage3.webp" alt="Megaphone" className="transform rotate-12" />
+            <div className="w-52 h-52 flex items-center justify-center">
+              <img src="/offerSectionImage34.png" alt="Megaphone" className="transform rotate-12" />
             </div>
           </div>
         </div>

@@ -55,7 +55,7 @@ export const orderService = {
       
       // Extract products array or format from items if needed
       const products = orderData.products || orderData.items.map(item => ({
-        _id: item.id || item._id,
+        _id: item.id,
         name: item.name,
         price: item.price,
         quantity: item.quantity

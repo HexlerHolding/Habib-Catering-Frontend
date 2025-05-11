@@ -1,7 +1,6 @@
-import React, { useState } from 'react';
 import { FaPhone, FaUser } from 'react-icons/fa';
-import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
+import { Link, useNavigate } from 'react-router-dom';
 import { login } from '../redux/slices/authSlice';
 
 const Login = () => {
@@ -37,7 +36,7 @@ const Login = () => {
             {/* Logo - Repositioned for better responsiveness */}
             <Link to="/" className="flex absolute top-4 md:top-8 left-4 md:left-8 items-center z-10">
                 <img 
-                    src='/logo.webp'
+                    src='/offerSectionImage34.png'
                     alt="Cheezious Logo" 
                     className="w-8 md:w-10"
                 />

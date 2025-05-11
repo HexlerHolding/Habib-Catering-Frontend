@@ -1,9 +1,9 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { FaBars, FaMinus, FaPlus, FaShoppingCart, FaSpinner, FaTrash, FaUser } from 'react-icons/fa';
+import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { FaBars, FaShoppingCart, FaUser, FaTrash, FaPlus, FaMinus, FaSpinner } from 'react-icons/fa';
-import { useSelector, useDispatch } from 'react-redux';
-import { removeFromCart, increaseQuantity, decreaseQuantity, selectCartItems, selectCartTotalAmount, selectCartTotalQuantity } from '../redux/slices/cartSlice';
 import { selectIsAuthenticated } from '../redux/slices/authSlice';
+import { decreaseQuantity, increaseQuantity, removeFromCart, selectCartItems, selectCartTotalAmount, selectCartTotalQuantity } from '../redux/slices/cartSlice';
 import AddressSelector from './AddressSelector';
 
 const Navbar = ({ toggleSidebar }) => {
@@ -83,7 +83,7 @@ const Navbar = ({ toggleSidebar }) => {
   };
 
   return (
-    <nav className="fixed top-0 left-0 w-full h-20 flex items-center justify-between p-7 z-50 bg-background" style={{ minHeight: '5rem' }}>
+    <nav className="fixed top-0 left-0 w-full h-30 flex items-center justify-between p-7 z-50 bg-background" style={{ minHeight: '5rem' }}>
       {/* Left section with menu toggle and logo */}
       <div className="flex items-center">
         {/* Menu toggle button */}
@@ -97,11 +97,10 @@ const Navbar = ({ toggleSidebar }) => {
         {/* Logo */}
         <Link to="/" className=" hidden sm:flex items-center">
           <img 
-            src='/logo.webp'
+            src='/habiblogo2.jpg'
             alt="Cheezious Logo" 
-            className="h-10"
+            className="h-30 w-30"
           />
-          <h1 className=' font-bold font-montserrat text-2xl ml-2 text-text'>Cheezious</h1>
         </Link>
 
         {/* Add the AddressSelector component here */}

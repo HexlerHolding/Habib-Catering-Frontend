@@ -1,4 +1,3 @@
-import React from 'react';
 import { FaChevronRight } from 'react-icons/fa';
 
 const AppDownload = () => {
@@ -95,7 +94,7 @@ const AppDownload = () => {
         <div className="relative">
           {/* <div className="w-32 h-32 rounded-full bg-primary  flex items-center justify-center opacity-50 absolute"></div> */}
           <img 
-            src="/logo.webp" 
+            src="/offerSectionImage34.png" 
             alt="" 
             className="w-24 h-24 relative z-20"
           />

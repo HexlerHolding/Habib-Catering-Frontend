@@ -98,7 +98,7 @@ const Navbar = ({ toggleSidebar }) => {
         <Link to="/" className=" hidden sm:flex items-center">
           <img 
             src='/habiblogo2.jpg'
-            alt="Cheezious Logo" 
+            alt="Habib Catering Logo" 
             className="h-16 w-16 rounded-full"
           />
         </Link>

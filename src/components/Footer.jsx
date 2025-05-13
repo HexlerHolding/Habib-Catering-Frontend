@@ -11,9 +11,9 @@ const Footer = () => {
           <div className="flex flex-col items-center sm:gap-3 justify-center text-sm">
             {/* Logo and Copyright */}
             <div className="flex  items-center  sm:mb-4 md:mb-0 ">
-              <img src="/offerSectionImage34.png" alt="Cheezious" className="h-6 mr-2" />
+              <img src="/offerSectionImage34.png" alt="Habib Catering" className="h-6 mr-2" />
               <span className="text-text">
-                Cheezious Copyright © {currentYear}. All Rights Reserved.
+                Habib Catering Copyright © {currentYear}. All Rights Reserved.
               </span>
             </div>
             

@@ -37,17 +37,17 @@ const Login = () => {
             <Link to="/" className="flex absolute top-4 md:top-8 left-4 md:left-8 items-center z-10">
                 <img 
                     src='/offerSectionImage34.png'
-                    alt="Cheezious Logo" 
+                    alt="Habib Catering Logo" 
                     className="w-8 md:w-10"
                 />
-                <h1 className='font-bold text-xl md:text-2xl ml-2'>Cheezious</h1>
+                <h1 className='font-bold text-xl md:text-2xl ml-2'>Habib Catering</h1>
             </Link>
 
             {/* Left Section */}
             <div className="w-full md:w-1/2 h-full p-4 md:p-8 flex flex-col justify-center items-center bg-background pt-20 md:pt-8">
                 <div className="max-w-md w-full text-center">
                     <h1 className="text-xl md:text-2xl font-bold mb-2 md:mb-4 text-text/90">Hey there, feeling hungry?</h1>
-                    <p className="text-text/60 mb-6 md:mb-10">Let's enjoy your food with cheezious!</p>
+                    <p className="text-text/60 mb-6 md:mb-10">Let's enjoy your food with Habib Catering!</p>
                     
                     <Link to='/login/phone-number' className="flex text-secondary justify-center items-center w-full py-3 md:py-4 bg-primary  font-bold rounded mb-4 hover:bg-primary/80 hover:brightness-105 transition-colors">
                         <FaPhone className="mr-2 text-lg" /> CONTINUE WITH PHONE

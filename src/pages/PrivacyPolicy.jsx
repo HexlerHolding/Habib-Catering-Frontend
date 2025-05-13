@@ -10,7 +10,7 @@ const PrivacyPolicy = () => {
           <section className="mb-8">
             <h2 className="text-xl md:text-2xl font-semibold mb-4 text-text">Introduction</h2>
             <p className="mb-4 text-text">
-              At Cheezious, we take your privacy seriously. This Privacy Policy explains how we collect, use, 
+              At Habib Catering, we take your privacy seriously. This Privacy Policy explains how we collect, use, 
               disclose, and safeguard your information when you visit our website or use our mobile application.
             </p>
             <p className="mb-4 text-text">
@@ -95,10 +95,10 @@ const PrivacyPolicy = () => {
               If you have any questions about this Privacy Policy, please contact us at:
             </p>
             <div className="bg-primary/20 p-4 rounded-lg text-text">
-              <p className="font-medium">Cheezious Customer Service</p>
-              <p>Email: privacy@cheezious.com</p>
+              <p className="font-medium">Habib Catering Customer Service</p>
+              <p>Email: privacy@habibcatering.com</p>
               <p>Phone: 111-111-111</p>
-              <p>Address: Cheezious Headquarters, Main Street, City</p>
+              <p>Address: Habib Catering Headquarters, Main Street, City</p>
             </div>
           </section>
         </div>

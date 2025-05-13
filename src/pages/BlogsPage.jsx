@@ -18,7 +18,7 @@ const BlogsPage = () => {
           </h1>
           <div className="w-20 h-1 bg-primary mx-auto mb-6 sm:mb-8 rounded-full"></div>
           <p className="text-text/80 max-w-2xl mx-auto text-base sm:text-lg leading-relaxed">
-            Discover the latest news, tips, and delicious stories from the world of Cheezious
+            Discover the latest news, tips, and delicious stories from the world of Habib Catering
           </p>
         </div>
         

@@ -95,10 +95,10 @@ const Register = () => {
             <Link to="/" className="flex absolute top-4 md:top-8 left-4 md:left-8 items-center z-10">
                 <img 
                     src='/offerSectionImage34.png'
-                    alt="Cheezious Logo" 
+                    alt="Habib Catering Logo" 
                     className="w-8 md:w-10"
                 />
-                <h1 className='font-bold text-xl md:text-2xl ml-2'>Cheezious</h1>
+                <h1 className='font-bold text-xl md:text-2xl ml-2'>Habib Catering</h1>
             </Link>
 
             {/* Left Section - Registration Form */}

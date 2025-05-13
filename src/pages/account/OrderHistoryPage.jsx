@@ -28,7 +28,7 @@ const OrderHistoryPage = () => {
   const orders = [
     {
       id: '080525-25481',
-      restaurant: 'Cheezious - F-10 Islamabad',
+      restaurant: 'Habib Catering - F-10 Islamabad',
       date: 'May 8, 03:22pm',
       items: [
         { name: '1 Chicken Mushroom', price: 690 }
@@ -38,7 +38,7 @@ const OrderHistoryPage = () => {
     },
     {
       id: '080424-12345',
-      restaurant: 'Cheezious - F-8 Islamabad',
+      restaurant: 'Habib Catering - F-8 Islamabad',
       date: 'May 6, 01:15pm',
       items: [
         { name: '1 Beef Special', price: 750 },
@@ -49,7 +49,7 @@ const OrderHistoryPage = () => {
     },
     {
       id: '080323-54321',
-      restaurant: 'Cheezious - E-11 Islamabad',
+      restaurant: 'Habib Catering - E-11 Islamabad',
       date: 'May 4, 07:45pm',
       items: [
         { name: '2 Chicken Fajita', price: 1380 },

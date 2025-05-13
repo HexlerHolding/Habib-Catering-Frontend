@@ -75,8 +75,8 @@ const LoginPassword = () => {
   return (
     <div className="flex flex-col md:flex-row h-screen overflow-hidden relative">
       <Link to="/" className="flex absolute top-4 md:top-8 left-4 md:left-8 items-center z-10">
-        <img src="/offerSectionImage34.png" alt="Cheezious Logo" className="w-8 md:w-10" />
-        <h1 className="font-bold text-xl md:text-2xl ml-2">Cheezious</h1>
+        <img src="/offerSectionImage34.png" alt="Habib Catering Logo" className="w-8 md:w-10" />
+        <h1 className="font-bold text-xl md:text-2xl ml-2">Habib Catering</h1>
       </Link>
 
       <div className="w-full h-full md:w-1/2 p-4 md:p-8 flex flex-col justify-center items-center bg-background pt-20 md:pt-8">

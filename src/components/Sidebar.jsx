@@ -157,7 +157,7 @@ const Sidebar = ({ isOpen, closeSidebar, isLoggedIn, user }) => {
           <div className="flex items-center">
             <img 
               src="/offerSectionImage34.png" 
-              alt="Cheezious Icon"
+              alt="Habib Catering Icon"
               className="h-8 w-8 mr-2"
             />
             <div className="text-secondary font-medium">Habib Catering Hotline</div>

@@ -1,0 +1,37 @@
+version: '3.8'
+
+services:
+  frontend:
+    image: habib-catering-frontend
+    container_name: habib-catering-frontend
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "4009:80"
+    restart: always
+
+  # Uncomment and adjust if you have a backend service
+  # backend:
+  #   image: habib-catering-backend
+  #   container_name: habib-catering-backend
+  #   build:
+  #     context: ../Habib-Catering-Backend
+  #     dockerfile: Dockerfile
+  #   restart: always
+  #   depends_on:
+  #     - db
+  
+  # Uncomment if you need a database
+  # db:
+  #   container_name: habib-catering-db
+  #   image: mongo:latest
+  #   ports:
+  #     - "27017:27017"
+  #   volumes:
+  #     - habibCateringDB:/data/db
+  #   restart: always
+
+# Uncomment if you added the database service
+# volumes:
+#   habibCateringDB:

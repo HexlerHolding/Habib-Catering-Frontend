@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { FaCheckCircle, FaClipboard, FaHome } from 'react-icons/fa';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 
@@ -39,7 +39,7 @@ const OrderSuccessPage = () => {
   }
   
   return (
-    <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4">
+    <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4 mt-10">
       <div className="max-w-md w-full bg-secondary rounded-lg shadow-lg p-8 text-center">
         <div className="mb-6">
           <FaCheckCircle className="text-green-500 text-6xl mx-auto" />
@@ -73,17 +73,17 @@ const OrderSuccessPage = () => {
               
               <div className="flex justify-between mb-2">
                 <span className="text-text/70 font-montserrat">Subtotal:</span>
-                <span className="font-medium text-text font-montserrat">Rs. {orderDetails.subtotal.toFixed(2)}</span>
+                <span className="font-medium text-text font-montserrat">$ {orderDetails.subtotal.toFixed(2)}</span>
               </div>
               
               <div className="flex justify-between mb-2">
                 <span className="text-text/70 font-montserrat">Tax:</span>
-                <span className="font-medium text-text font-montserrat">Rs. {orderDetails.tax.toFixed(2)}</span>
+                <span className="font-medium text-text font-montserrat">$ {orderDetails.tax.toFixed(2)}</span>
               </div>
               
               <div className="flex justify-between font-bold">
                 <span className="text-text font-poppins">Total:</span>
-                <span className="text-text font-poppins">Rs. {orderDetails.total.toFixed(2)}</span>
+                <span className="text-text font-poppins">$ {orderDetails.total.toFixed(2)}</span>
               </div>
             </>
           )}
@@ -92,7 +92,7 @@ const OrderSuccessPage = () => {
         <div className="flex flex-col md:flex-row space-y-3 md:space-y-0 md:space-x-3">
           <Link 
             to="/"
-            className="bg-primary text-text py-3 px-6 rounded-lg font-bold hover:bg-primary/80 transition flex-1 flex items-center justify-center font-poppins"
+            className="bg-primary text-secondary py-3 px-6 rounded-lg font-bold hover:bg-primary/80 transition flex-1 flex items-center justify-center font-poppins"
           >
             <FaHome className="mr-2" /> Return Home
           </Link>

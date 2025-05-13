@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useEffect, useState } from 'react';
+import toast from 'react-hot-toast';
+import { FaHeart, FaShoppingCart } from 'react-icons/fa';
+import { useDispatch, useSelector } from 'react-redux';
 import { favoritesService } from '../../../Services/favoritesService';
+import { menuService } from '../../../Services/menuService';
 import { selectIsAuthenticated, selectToken } from '../../redux/slices/authSlice';
 import { addToCart } from '../../redux/slices/cartSlice';
-import { FaHeart, FaShoppingCart } from 'react-icons/fa';
-import toast from 'react-hot-toast';
-import { menuService } from '../../../Services/menuService';
 
 // MenuItem component copied from MenuPage for consistent card UI
 const MenuItem = ({ item, onRemoveFavorite, onAddToCart }) => (
@@ -39,7 +39,7 @@ const MenuItem = ({ item, onRemoveFavorite, onAddToCart }) => (
     <div className="mt-auto">
       <div className="flex justify-between items-center mb-3">
         <span className="text-accent font-bold text-xl">
-          Rs. {item.price?.toFixed(2)}
+          $ {item.price?.toFixed(2)}
         </span>
       </div>
       <button

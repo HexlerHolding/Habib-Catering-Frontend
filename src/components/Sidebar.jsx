@@ -51,10 +51,10 @@ const Sidebar = ({ isOpen, closeSidebar, isLoggedIn, user }) => {
             <div>
               {isLoggedIn ? (
                 <>
-                  <div className="font-bold text-text">
+                  <div className="font-bold text-secondary">
                     {displayName}
                   </div>
-                  <div className="text-sm text-text">
+                  <div className="text-sm text-secondary">
                     {displayPhone}
                   </div>
                 </>
@@ -160,7 +160,7 @@ const Sidebar = ({ isOpen, closeSidebar, isLoggedIn, user }) => {
               alt="Cheezious Icon"
               className="h-8 w-8 mr-2"
             />
-            <div className="text-text font-medium">Cheezious Hotline</div>
+            <div className="text-secondary font-medium">Habib Catering Hotline</div>
           </div>
           <a 
             href="tel:111111111"

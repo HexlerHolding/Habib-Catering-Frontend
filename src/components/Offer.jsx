@@ -3,7 +3,7 @@ const Offer = () => {
   return (
     <div className="relative w-full overflow-hidden h-[31rem] flex bg-background" 
          style={{
-           backgroundImage: 'url(offerSectionImage2.jpg)',
+           backgroundImage: 'url(offerSectionImage2.png)',
            backgroundSize: 'cover',
            backgroundPosition: 'center'
          }}>
@@ -38,7 +38,7 @@ const Offer = () => {
               <h2 className="text-6xl font-extrabold text-primary leading-tight drop-shadow-lg">
                 let's talk
                 <br />
-                <span className="text-8xl">CHEEZY</span>
+                <span className="text-8xl">Habib Catering</span>
               </h2>
             </div>
             

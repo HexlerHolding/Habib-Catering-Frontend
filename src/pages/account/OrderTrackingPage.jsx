@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useEffect, useState } from 'react';
 import { FiArrowLeft, FiCheck } from 'react-icons/fi';
+import { Link, useParams } from 'react-router-dom';
 
 const OrderTrackingPage = () => {
   const { orderId } = useParams();
@@ -139,13 +139,13 @@ const OrderTrackingPage = () => {
           {order.items.map((item, index) => (
             <div key={index} className="flex justify-between mb-3">
               <span>{item.name}</span>
-              <span>Rs. {item.price}</span>
+              <span>$ {item.price}</span>
             </div>
           ))}
           
           <div className="flex justify-between mt-4 pt-4 border-t border-text/10">
             <span className="font-medium">Total (incl. VAT)</span>
-            <span className="font-medium text-primary">Rs. {order.total}</span>
+            <span className="font-medium text-primary">$ {order.total}</span>
           </div>
         </div>
       </div>

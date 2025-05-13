@@ -1,17 +1,17 @@
 const blogPosts = [
   {
     id: 1,
-    title: "Cheezious: The Awami Brand That's All About Local Love",
+    title: "Habib Catering: The Awami Brand That's All About Local Love",
     image: "/blog1.jpg",
-    altImage: "https://via.placeholder.com/800x400/FFD700/8B4513?text=Cheezious+Local+Brand",
+    altImage: "https://via.placeholder.com/800x400/FFD700/8B4513?text=Habib+Catering+Local+Brand",
     author: "Syed Arslan",
     date: "Oct 11, 2023",
-    excerpt: "At Cheezious, we do more than serve food; we craft a community experience, with a pinch of desi tadka and a whole lot of Pakistani pride.",
-    slug: "cheezious-awami-brand",
+    excerpt: "At Habib Catering, we do more than serve food; we craft a community experience, with a pinch of desi tadka and a whole lot of Pakistani pride.",
+    slug: "Habib Catering-awami-brand",
     content: [
       {
         type: "paragraph",
-        text: "At Cheezious, we do more than serve food; we craft a community experience, with a pinch of desi tadka and a whole lot of Pakistani pride. We believe in food as something that binds us to our heritage, celebrates our roots and showcases what makes Pakistan truly special. So, let's dive into how Cheezious is not just a food chain but a flag bearer of all-things local and especially a 'Proud Pakistani Brand'!"
+        text: "At Habib Catering, we do more than serve food; we craft a community experience, with a pinch of desi tadka and a whole lot of Pakistani pride. We believe in food as something that binds us to our heritage, celebrates our roots and showcases what makes Pakistan truly special. So, let's dive into how Habib Catering is not just a food chain but a flag bearer of all-things local and especially a 'Proud Pakistani Brand'!"
       },
       {
         type: "heading",
@@ -19,7 +19,7 @@ const blogPosts = [
       },
       {
         type: "paragraph",
-        text: "If you have you ever wondered why every bite of your favorite Cheezious dish has a local touch? That's because it does! From the tangy tomatoes in your sauce to the crunchy onions topping your pizza, most of what we use comes from our own backyard—Pakistan. By sourcing our ingredients locally, we not only bring you the freshest flavors but also support our local farmers. This is our way of keeping the community close and the quality even closer."
+        text: "If you have you ever wondered why every bite of your favorite Habib Catering dish has a local touch? That's because it does! From the tangy tomatoes in your sauce to the crunchy onions topping your Cuisine, most of what we use comes from our own backyard—Pakistan. By sourcing our ingredients locally, we not only bring you the freshest flavors but also support our local farmers. This is our way of keeping the community close and the quality even closer."
       },
       {
         type: "heading",
@@ -27,7 +27,7 @@ const blogPosts = [
       },
       {
         type: "paragraph",
-        text: "We're all about mirroring the vibrant culture of our streets in the menu. Every item tells a story, whether it's the spicy Hot N Spicy Pizza or the tangy Oven Baked Wings. The story of local taste with global standards."
+        text: "We're all about mirroring the vibrant culture of our streets in the menu. Every item tells a story, whether it's the spicy Hot N Spicy Cuisine or the tangy Oven Baked Wings. The story of local taste with global standards."
       },
       {
         type: "heading",
@@ -35,7 +35,7 @@ const blogPosts = [
       },
       {
         type: "paragraph",
-        text: "At Cheezious, we believe in growing together. That's why we partner with local businesses, sponsor community events, and create job opportunities for the youth. Our franchisee program isn't just about expanding; it's about empowering entrepreneurs who share our vision of quality and community."
+        text: "At Habib Catering, we believe in growing together. That's why we partner with local businesses, sponsor community events, and create job opportunities for the youth. Our franchisee program isn't just about expanding; it's about empowering entrepreneurs who share our vision of quality and community."
       },
       {
         type: "heading",
@@ -43,27 +43,27 @@ const blogPosts = [
       },
       {
         type: "paragraph",
-        text: "As we continue to grow, our commitment to Pakistani flavors and values remains unwavering. We're constantly innovating, but our recipes will always carry that distinct desi twist that makes a Cheezious meal not just a meal but a celebration of our shared heritage."
+        text: "As we continue to grow, our commitment to Pakistani flavors and values remains unwavering. We're constantly innovating, but our recipes will always carry that distinct desi twist that makes a Habib Catering meal not just a meal but a celebration of our shared heritage."
       },
       {
         type: "paragraph",
-        text: "Next time you take a bite of your favorite Cheezious creation, remember you're not just enjoying great food; you're supporting local farmers, celebrating Pakistani culinary creativity, and being part of a community that values its roots. That's the Cheezious promise—always fresh, always local, always proudly Pakistani!"
+        text: "Next time you take a bite of your favorite Habib Catering creation, remember you're not just enjoying great food; you're supporting local farmers, celebrating Pakistani culinary creativity, and being part of a community that values its roots. That's the Habib Catering promise—always fresh, always local, always proudly Pakistani!"
       }
     ]
   },
   {
     id: 2,
-    title: "Cheezious and Chill: The Perfect Movie Night Pairings",
+    title: "Habib Catering and Chill: The Perfect Movie Night Pairings",
     image: "/blog2.jpg",
-    altImage: "https://via.placeholder.com/800x400/FFD700/FF0000?text=Netflix+and+Pizza",
+    altImage: "https://via.placeholder.com/800x400/FFD700/FF0000?text=Netflix+and+Cuisine",
     author: "Syed Arslan",
     date: "Nov 5, 2023",
-    excerpt: "There's nothing better than settling in for a cozy movie night with friends and family, and what makes it even better? The perfect Cheezious spread!",
-    slug: "cheezious-movie-night",
+    excerpt: "There's nothing better than settling in for a cozy movie night with friends and family, and what makes it even better? The perfect Habib Catering spread!",
+    slug: "Habib Catering-movie-night",
     content: [
       {
         type: "paragraph",
-        text: "There's nothing better than settling in for a cozy movie night with friends and family, and what makes it even better? The perfect Cheezious spread! Here's our guide to pairing your favorite films with the ideal Cheezious dishes."
+        text: "There's nothing better than settling in for a cozy movie night with friends and family, and what makes it even better? The perfect Habib Catering spread! Here's our guide to pairing your favorite films with the ideal Habib Catering dishes."
       },
       {
         type: "heading",
@@ -71,7 +71,7 @@ const blogPosts = [
       },
       {
         type: "paragraph",
-        text: "For those heart-pounding action sequences, you need something that packs a punch! Our Hot N Spicy Pizza with extra jalapeños will keep your taste buds as excited as the on-screen explosions. Add our Atomic Wings for an extra kick during those intense chase scenes."
+        text: "For those heart-pounding action sequences, you need something that packs a punch! Our Hot N Spicy Cuisine with extra jalapeños will keep your taste buds as excited as the on-screen explosions. Add our Atomic Wings for an extra kick during those intense chase scenes."
       },
       {
         type: "heading",
@@ -95,35 +95,35 @@ const blogPosts = [
       },
       {
         type: "paragraph",
-        text: "When the scares start coming, you need something comforting! Our Classic Cheese Pizza with extra cheese provides that warm, gooey comfort food feeling that helps ease those jump scares. Our thick milkshakes also provide sweet relief during the most terrifying scenes."
+        text: "When the scares start coming, you need something comforting! Our Classic Cheese Cuisine with extra cheese provides that warm, gooey comfort food feeling that helps ease those jump scares. Our thick milkshakes also provide sweet relief during the most terrifying scenes."
       },
       {
         type: "paragraph",
-        text: "So the next time you're planning a movie marathon, remember that Cheezious has all your movie night needs covered. Order online for quick delivery, and don't forget to share your movie night pairing combinations with us on social media using #CheeziousAndChill!"
+        text: "So the next time you're planning a movie marathon, remember that Habib Catering has all your movie night needs covered. Order online for quick delivery, and don't forget to share your movie night pairing combinations with us on social media using #Habib CateringAndChill!"
       }
     ]
   },
   {
     id: 3,
-    title: "How to Host the Ultimate Pizza Party with Cheezious",
+    title: "How to Host the Ultimate Cuisine Party with Habib Catering",
     image: "/blog3.jpg",
-    altImage: "https://via.placeholder.com/800x400/FFD700/000000?text=Pizza+Party",
+    altImage: "https://via.placeholder.com/800x400/FFD700/000000?text=Cuisine+Party",
     author: "Syed Arslan",
     date: "Dec 15, 2023",
-    excerpt: "Whether it's a birthday celebration, game night, or just a weekend get-together, a pizza party is always a crowd-pleaser.",
-    slug: "ultimate-pizza-party",
+    excerpt: "Whether it's a birthday celebration, game night, or just a weekend get-together, a Cuisine party is always a crowd-pleaser.",
+    slug: "ultimate-Cuisine-party",
     content: [
       {
         type: "paragraph",
-        text: "Whether it's a birthday celebration, game night, or just a weekend get-together, a pizza party is always a crowd-pleaser. Here's our guide to hosting the ultimate Cheezious pizza party that your guests will remember!"
+        text: "Whether it's a birthday celebration, game night, or just a weekend get-together, a Cuisine party is always a crowd-pleaser. Here's our guide to hosting the ultimate Habib Catering Cuisine party that your guests will remember!"
       },
       {
         type: "heading",
-        text: "Plan Your Pizza Menu"
+        text: "Plan Your Cuisine Menu"
       },
       {
         type: "paragraph",
-        text: "Variety is key when hosting a pizza party. Make sure to include classics like our Traditional Cheese and Pepperoni pizzas, but don't be afraid to add some exciting options like our Desi Special or Fajita Sicilian. For your vegetarian friends, our Garden Fresh pizza is a must-have. And don't forget our new BBQ Ranch pizza for those who love to try something different!"
+        text: "Variety is key when hosting a Cuisine party. Make sure to include classics like our Traditional Cheese and Pepperoni Cuisines, but don't be afraid to add some exciting options like our Desi Special or Fajita Sicilian. For your vegetarian friends, our Garden Fresh Cuisine is a must-have. And don't forget our new BBQ Ranch Cuisine for those who love to try something different!"
       },
       {
         type: "heading",
@@ -131,7 +131,7 @@ const blogPosts = [
       },
       {
         type: "paragraph",
-        text: "Every great pizza party needs complementary sides! Our garlic bread sticks, cheese poppers, and crispy wings make for perfect starters. For beverages, our range of fresh sodas and milkshakes will keep everyone refreshed between slices."
+        text: "Every great Cuisine party needs complementary sides! Our garlic bread sticks, cheese poppers, and crispy wings make for perfect starters. For beverages, our range of fresh sodas and milkshakes will keep everyone refreshed between slices."
       },
       {
         type: "heading",
@@ -147,7 +147,7 @@ const blogPosts = [
       },
       {
         type: "paragraph",
-        text: "Cheezious makes group ordering simple! Use our app's group order feature where everyone can add their own preferences to a single order. This way, everyone gets exactly what they want without the confusion of multiple orders."
+        text: "Habib Catering makes group ordering simple! Use our app's group order feature where everyone can add their own preferences to a single order. This way, everyone gets exactly what they want without the confusion of multiple orders."
       },
       {
         type: "heading",
@@ -155,11 +155,11 @@ const blogPosts = [
       },
       {
         type: "paragraph",
-        text: "Between bites, keep your guests entertained with simple games like pizza trivia or a \"create your dream pizza\" drawing contest where the most creative concept wins a free pizza on your next order!"
+        text: "Between bites, keep your guests entertained with simple games like Cuisine trivia or a \"create your dream Cuisine\" drawing contest where the most creative concept wins a free Cuisine on your next order!"
       },
       {
         type: "paragraph",
-        text: "Remember, the best parties are about bringing people together, and nothing connects people like sharing a delicious Cheezious meal. Tag us in your pizza party photos with #CheeziousParty for a chance to be featured on our social media!"
+        text: "Remember, the best parties are about bringing people together, and nothing connects people like sharing a delicious Habib Catering meal. Tag us in your Cuisine party photos with #Habib CateringParty for a chance to be featured on our social media!"
       }
     ]
   }

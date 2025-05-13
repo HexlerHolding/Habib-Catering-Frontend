@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { selectIsAuthenticated } from '../../redux/slices/authSlice';
@@ -77,7 +77,7 @@ const OrderHistoryPage = () => {
                 </div>
                 <div className="text-right">
                   <div className="text-sm text-text/60">{order.date}</div>
-                  <div className="text-sm text-text/60">Rs. {order.total}</div>
+                  <div className="text-sm text-text/60">$ {order.total}</div>
                 </div>
               </div>
               
@@ -85,12 +85,12 @@ const OrderHistoryPage = () => {
                 {order.items.map((item, index) => (
                   <div key={index} className="flex justify-between mb-1">
                     <span className="text-sm">{item.name}</span>
-                    <span className="text-sm">Rs. {item.price}</span>
+                    <span className="text-sm">$ {item.price}</span>
                   </div>
                 ))}
                 <div className="flex justify-between mt-3 pt-3 border-t border-text/10">
                   <span className="font-bold">Total (incl. VAT)</span>
-                  <span className="font-bold text-text">Rs. {order.total}</span>
+                  <span className="font-bold text-text">$ {order.total}</span>
                 </div>
               </div>
               

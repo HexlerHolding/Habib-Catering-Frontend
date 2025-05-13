@@ -1,98 +1,83 @@
 import { useEffect, useState } from 'react';
-import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
-
+import { useNavigate } from 'react-router-dom';
 
 const slides = [
   {
     id: 1,
-    image: '/slideImage1.png',
-   
-  },
-  {
-    id: 2,
-    image: '/slideImage2.png', // Fixed: Use path instead of undefined variable
-    
-  },
-  {
-    id: 3,
-    image: '/slideImage3.png', // Fixed: Use path instead of undefined variable
-  
+    image: '/hero.png',
   },
 ];
 
 const HeroSlider = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
-  
+  const navigate = useNavigate();
+
   // Automatic slide transition
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentSlide((prev) => (prev === slides.length - 1 ? 0 : prev + 1));
     }, 5000);
-    
+
     return () => clearInterval(interval);
   }, []);
-  
-  // Navigation handlers
-  const goToPrevSlide = () => {
-    setCurrentSlide((prev) => (prev === 0 ? slides.length - 1 : prev - 1));
+
+  // Scroll to section on same page
+   const scrollToSection = () => {
+    const section = document.getElementById('category-section');
+    if (section) {
+      section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
   };
-  
-  const goToNextSlide = () => {
-    setCurrentSlide((prev) => (prev === slides.length - 1 ? 0 : prev + 1));
+
+  // Redirect to event catering page
+  const goToEventCatering = () => {
+    navigate('/contact');
   };
-  
-  const goToSlide = (index) => {
-    setCurrentSlide(index);
-  };
-  
+
   return (
-    <div className="relative h-[50vh] md:h-[70vh] w-full overflow-hidden">
+    <div className="relative h-[50vh] md:h-[75vh] w-full overflow-hidden">
       {/* Slider */}
-      <div 
+      <div
         className="h-full w-full flex transition-transform duration-700 ease-in-out"
         style={{ transform: `translateX(-${currentSlide * 100}%)` }}
       >
         {slides.map((slide) => (
-          <div 
+          <div
             key={slide.id}
-            className="h-full w-full flex-shrink-0 relative"
+            className="h-full w-full flex-shrink-0 relative flex items-center justify-center"
           >
+            {/* Image with reduced opacity */}
             <img
               src={slide.image}
-              alt={slide.title}
-              className="h-full w-full object-cover"
-            
+              alt={slide.title || 'Slide image'}
+              className="w-full h-auto object-contain opacity-80"
             />
-       
+            {/* Green overlay */}
+            <div className="absolute inset-0 bg-[var(--color-green)] opacity-30"></div>
+            {/* Text and buttons */}
+            <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
+              <h1 className="text-4xl md:text-5xl font-bold text-[var(--color-secondary)] mb-2">
+                Habib Catering
+              </h1>
+              <p className="text-lg md:text-xl text-[var(--color-secondary)] mb-4">
+                Food Ordering and Event Catering
+              </p>
+              <div className="flex space-x-4">
+                <button
+                  onClick={scrollToSection}
+                  className="px-6 py-2 bg-[var(--color-green)] text-[var(--color-secondary)] font-semibold rounded-md hover:bg-[var(--color-green-dark)] transition-colors"
+                >
+                  Order Now
+                </button>
+                <button
+                  onClick={goToEventCatering}
+                  className="px-6 py-2 bg-[var(--color-green)] text-[var(--color-secondary)] font-semibold rounded-md hover:bg-[var(--color-green-dark)] transition-colors"
+                >
+                  Event Catering
+                </button>
+              </div>
+            </div>
           </div>
-        ))}
-      </div>
-      
-      {/* Navigation arrows */}
-      <button
-        className="absolute top-1/2 left-4 transform -translate-y-1/2 w-10 h-10 rounded-full bg-black bg-opacity-50 flex items-center justify-center text-white hover:bg-opacity-70 transition-all"
-        onClick={goToPrevSlide}
-      >
-        <FaChevronLeft />
-      </button>
-      
-      <button
-        className="absolute top-1/2 right-4 transform -translate-y-1/2 w-10 h-10 rounded-full bg-black bg-opacity-50 flex items-center justify-center text-white hover:bg-opacity-70 transition-all"
-        onClick={goToNextSlide}
-      >
-        <FaChevronRight />
-      </button>
-      
-      {/* Indicators */}
-      <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
-        {slides.map((_, index) => (
-          <button
-            key={index}
-            className={`h-3 rounded-full transition-all ${
-              index === currentSlide ? 'w-6 bg-background' : 'w-3 bg-background bg-opacity-50'
-            }`}
-            onClick={() => goToSlide(index)}
-          />
         ))}
       </div>
     </div>

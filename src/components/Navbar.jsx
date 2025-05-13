@@ -127,7 +127,7 @@ const Navbar = ({ toggleSidebar }) => {
           >
             <div className="flex items-center">
               <FaShoppingCart className="text-xl" />
-              <span className="ml-2 hidden sm:inline text-text">CART</span>
+              <span className="ml-2 hidden sm:inline text-secondary">CART</span>
               <span className="ml-1 bg-accent text-secondary text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold">
                 {totalQuantity}
               </span>
@@ -141,12 +141,12 @@ const Navbar = ({ toggleSidebar }) => {
             }`}
           >
             <div className="p-4 hidden sm:block">
-              <h3 className="font-bold text-lg border-b pb-2 text-text">Your Cart</h3>
+              <h3 className="font-bold text-lg border-b pb-2 text-secondary">Your Cart</h3>
               
               {isLoading ? (
                 <div className="py-12 flex flex-col items-center justify-center">
                   <FaSpinner className="text-primary text-3xl animate-spin mb-2" />
-                  <p className="text-text/70">Loading your cart...</p>
+                  <p className="text-secondary/70">Loading your cart...</p>
                 </div>
               ) : cartItems.length > 0 ? (
                 <>
@@ -157,7 +157,7 @@ const Navbar = ({ toggleSidebar }) => {
                           <img src={item.image} alt={item.name} className="w-10 h-10 object-cover rounded" />
                           <div className="ml-2">
                             <p className="font-medium text-sm">{item.name}</p>
-                            <p className="text-sm text-text/70">Rs.{item.price.toFixed(2)}</p>
+                            <p className="text-sm text-text/70">${item.price.toFixed(2)}</p>
                           </div>
                         </div>
                         <div className="flex items-center space-x-2">
@@ -192,7 +192,7 @@ const Navbar = ({ toggleSidebar }) => {
                   
                   <div className="mt-4 flex justify-between font-bold">
                     <span>Total:</span>
-                    <span>Rs.{totalAmount.toFixed(2)}</span>
+                    <span>$ {totalAmount.toFixed(2)}</span>
                   </div>
                   
                   <div className="mt-4 grid grid-cols-2 gap-2">
@@ -204,7 +204,7 @@ const Navbar = ({ toggleSidebar }) => {
                     </Link>
                     <Link 
                       to="/checkout" 
-                      className={`bg-primary hover:bg-primary/80 text-center py-2 rounded font-medium text-sm`}
+                      className={`bg-primary hover:bg-primary/80 text-center py-2 rounded font-medium text-sm text-secondary`}
                     >
                       Checkout
                     </Link>
@@ -233,7 +233,7 @@ const Navbar = ({ toggleSidebar }) => {
             className={`flex items-center justify-center px-4 py-2 rounded-xl font-bold bg-primary hover:bg-primary/80 hover:brightness-105 transition duration-300`}
           >
             <FaUser className="text-xl sm:mr-2" />
-            <span className="hidden sm:inline">ACCOUNT</span>
+            <span className="hidden sm:inline text-secondary">ACCOUNT</span>
           </Link>
         ) : (
           <Link 

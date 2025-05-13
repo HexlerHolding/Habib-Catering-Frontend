@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
+import toast from 'react-hot-toast';
 import { FaHeart, FaSearch } from 'react-icons/fa';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
-import { menuService } from '../../Services/menuService';
 import { favoritesService } from '../../Services/favoritesService';
-import { addToCart } from '../redux/slices/cartSlice';
-import toast from 'react-hot-toast';
+import { menuService } from '../../Services/menuService';
 import { selectIsAuthenticated, selectToken } from '../redux/slices/authSlice';
+import { addToCart } from '../redux/slices/cartSlice';
 
 const MenuItem = ({ item, isFavorite, onToggleFavorite, onAddToCart, isLoggedIn }) => {
   return (
@@ -41,7 +41,7 @@ const MenuItem = ({ item, isFavorite, onToggleFavorite, onAddToCart, isLoggedIn 
         <div className="flex justify-between items-center mb-3">
           <div>
             <span className="text-accent font-bold text-xl">
-              Rs. {item.price.toFixed(2)}
+              $ {item.price.toFixed(2)}
             </span>
             {item.isPopular && (
               <span className="ml-2 bg-accent brightness-110 text-secondary text-xs px-2 py-1 rounded">
@@ -172,12 +172,13 @@ const MenuPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background pb-20">
+    <div className="min-h-screen bg-background pb-20 mt-20">
       <div className="container mx-auto">
-        <div className="sticky top-0 pt-8 pb-2 px-4 bg-background z-10">
-          <h1 className="text-2xl md:text-4xl font-bold mb-4 text-center text-black">
+        <h1 className="text-2xl md:text-4xl font-bold mb-4 text-center text-black">
             Our Menu
           </h1>
+        <div className="sticky top-20 pt-8 pb-2 px-4 bg-background z-10">
+          
           {/* Search Bar */}
           <div className="max-w-md mx-auto mb-6">
             <div className="flex items-center bg-background px-4 py-2 rounded-full shadow-sm">
@@ -199,7 +200,7 @@ const MenuPage = () => {
                   key={category.id}
                   className={`px-4 py-2 whitespace-nowrap rounded-full font-medium transition-all ${
                     activeCategory === category.id
-                      ? 'bg-primary text-text'
+                      ? 'bg-primary text-secondary'
                       : 'bg-text/10 text-text'
                   }`}
                   onClick={() => setActiveCategory(category.id)}

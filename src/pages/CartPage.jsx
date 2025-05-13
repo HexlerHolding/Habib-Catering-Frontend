@@ -1,17 +1,17 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
+import { FaArrowLeft, FaCreditCard, FaMinus, FaMoneyBill, FaPlus, FaShoppingCart, FaTicketAlt, FaTimes, FaTrash } from 'react-icons/fa';
+import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
-import { useSelector, useDispatch } from 'react-redux';
-import { 
-  increaseQuantity, 
-  decreaseQuantity, 
-  removeFromCart, 
+import ConfirmationModal from '../components/ConfirmationModal';
+import {
   clearCart,
+  decreaseQuantity,
+  increaseQuantity,
+  removeFromCart,
   selectCartItems,
   selectCartTotalAmount,
   selectCartTotalQuantity
 } from '../redux/slices/cartSlice';
-import { FaTrash, FaPlus, FaMinus, FaArrowLeft, FaCreditCard, FaMoneyBill, FaShoppingCart, FaTimes, FaTicketAlt } from 'react-icons/fa';
-import ConfirmationModal from '../components/ConfirmationModal';
 
 const CartPage = () => {
   const dispatch = useDispatch();
@@ -66,7 +66,7 @@ const CartPage = () => {
     // Example vouchers for demonstration - in production, these would come from backend
     const availableVouchers = [
       { code: 'SAVE10', type: 'percentage', value: 10, description: '10% off your order' },
-      { code: 'DISCOUNT50', type: 'fixed', value: 50, description: 'Rs. 50 off your order' },
+      { code: 'DISCOUNT50', type: 'fixed', value: 50, description: '$ 50 off your order' },
       { code: 'EXTRA20', type: 'percentage', value: 20, description: '20% off your order' }
     ];
     
@@ -133,7 +133,7 @@ const CartPage = () => {
   };
   
   return (
-    <div className="min-h-screen pt-8 pb-16">
+    <div className="min-h-screen pt-8 pb-16 mt-10">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between mb-8">
           <h1 className="text-3xl font-bold text-text">Your Cart</h1>
@@ -170,7 +170,7 @@ const CartPage = () => {
                         <div className="ml-4">
                           <h3 className="font-bold text-lg text-text">{item.name}</h3>
                           <p className="text-sm text-text/60 line-clamp-2 mb-1">{item.description}</p>
-                          <p className="text-accent font-bold">Rs. {item.price.toFixed(2)}</p>
+                          <p className="text-accent font-bold">$ {item.price.toFixed(2)}</p>
                         </div>
                       </div>
                       
@@ -225,7 +225,7 @@ const CartPage = () => {
                           {appliedVoucher.code} - {appliedVoucher.description}
                         </p>
                         <p className="text-sm text-text/70">
-                          Discount: Rs. {discountAmount.toFixed(2)}
+                          Discount: $ {discountAmount.toFixed(2)}
                         </p>
                       </div>
                       <button 
@@ -261,20 +261,20 @@ const CartPage = () => {
                   {appliedVoucher && (
                     <div className="flex justify-between text-primary">
                       <span className="font-medium">Discount</span>
-                      <span className="font-medium">- Rs. {discountAmount.toFixed(2)}</span>
+                      <span className="font-medium">- $ {discountAmount.toFixed(2)}</span>
                     </div>
                   )}
                   
                   <div className="border-t pt-4 flex justify-between">
                     <span className="text-text font-bold">Total</span>
-                    <span className="text-accent font-bold text-xl">Rs. {(subtotal - discountAmount).toFixed(2)}</span>
+                    <span className="text-accent font-bold text-xl">$ {(subtotal - discountAmount).toFixed(2)}</span>
                   </div>
                 </div>
                 
                 {/* Checkout button */}
                 <button 
                   onClick={handleCheckout}
-                  className="w-full bg-primary text-text py-3 px-6 rounded-lg font-bold hover:bg-primary/80 hover:brightness-105 transition mb-4 flex items-center justify-center"
+                  className="w-full bg-primary text-secondary py-3 px-6 rounded-lg font-bold hover:bg-primary/80 hover:brightness-105 transition mb-4 flex items-center justify-center"
                 >
                   <FaCreditCard className="mr-2" /> PROCEED TO CHECKOUT
                 </button>
@@ -365,7 +365,7 @@ const CartPage = () => {
               <p className="text-xs text-text/50 mb-2">Example vouchers (for testing):</p>
               <div className="text-xs text-text/70 space-y-1">
                 <p>SAVE10 - 10% off your order</p>
-                <p>DISCOUNT50 - Rs. 50 off your order</p>
+                <p>DISCOUNT50 - $. 1 off your order</p>
                 <p>EXTRA20 - 20% off your order</p>
               </div>
             </div>

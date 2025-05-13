@@ -4,16 +4,18 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { branchService } from '../../Services/branchService';
 import { orderService } from '../../Services/orderService';
+import AddressSelector from '../components/AddressSelector';
 import CardDetailsModal from '../components/CardDetailsModal';
+import { selectIsAuthenticated } from '../redux/slices/authSlice';
 import { clearCart, selectCartItems, selectCartTotalAmount } from '../redux/slices/cartSlice';
-import { selectSavedAddresses, selectSelectedAddress, setSelectedAddress } from '../redux/slices/locationSlice';
+import { selectSavedAddresses, selectSelectedAddress } from '../redux/slices/locationSlice';
 
 // Component for displaying a single branch option
 const BranchOption = ({ branch, isSelected, onChange }) => (
   <label 
     className={`border rounded-md p-4 cursor-pointer transition-all font-montserrat ${
       isSelected 
-        ? 'border-primary bg-primary/10' 
+        ? 'border-primary bg-primary/90' 
         : 'border-text/20 hover:border-text/30'
     }`}
   >
@@ -49,12 +51,13 @@ const BranchOption = ({ branch, isSelected, onChange }) => (
     </div>
   </label>
 );
+
 // Component for displaying a saved address option
 const SavedAddressOption = ({ address, isSelected, onClick }) => (
   <div 
     className={`border rounded-md p-4 cursor-pointer flex items-center font-montserrat ${
       isSelected 
-        ? 'border-primary bg-primary/10' 
+        ? 'border-primary bg-primary/90' 
         : 'border-text/20 hover:border-text/30'
     }`}
     onClick={onClick}
@@ -118,10 +121,10 @@ const CartItem = ({ item }) => (
     <div className="ml-3 flex-1">
       <p className="font-medium text-text">{item.name}</p>
       <p className="text-sm text-text/70">Qty: {item.quantity}</p>
-      <p className="font-medium text-text">Rs. {item.price.toFixed(2)}</p>
+      <p className="font-medium text-text">$ {item.price.toFixed(2)}</p>
     </div>
     <div className="font-medium text-text">
-      Rs. {(item.price * item.quantity).toFixed(2)}
+      $ {(item.price * item.quantity).toFixed(2)}
     </div>
   </div>
 );
@@ -139,18 +142,17 @@ const CheckoutPage = () => {
   const [branchLoading, setBranchLoading] = useState(true);
 
   // Address states
-  const [useSelectedAddress, setUseSelectedAddress] = useState(false);
+  const [showAddressSelectorModal, setShowAddressSelectorModal] = useState(false);
   const savedAddresses = useSelector(selectSavedAddresses);
   const selectedAddressFromStore = useSelector(selectSelectedAddress);
+  const isAuthenticated = useSelector(selectIsAuthenticated);
     
   // Form states
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
     phone: '',
-    address: '',
-    city: 'Islamabad',
-    zipCode: '',
+    address: '', // Single address field
     notes: ''
   });
   
@@ -214,24 +216,15 @@ const CheckoutPage = () => {
     fetchTaxRate();
   }, [paymentMethod, selectedBranchId]);
 
-
-  // Handle saved address selection
+  // Update address field when selectedAddress changes in Redux
   useEffect(() => {
-    // Initialize the checkbox state based on whether we have saved addresses
-    setUseSelectedAddress(savedAddresses && savedAddresses.length > 0);
-    
-    // Update form data when a saved address is selected
-    if (useSelectedAddress && selectedAddressFromStore) {
-      // Extract address parts - assuming format "street, city, zipCode"
-      const addressParts = selectedAddressFromStore.address.split(',');
+    if (selectedAddressFromStore) {
       setFormData(prev => ({
         ...prev,
-        address: addressParts[0] ? addressParts[0].trim() : prev.address,
-        city: addressParts[1] ? addressParts[1].trim() : prev.city,
-        zipCode: addressParts[2] ? addressParts[2].trim().replace(/\D/g, '') : prev.zipCode
+        address: selectedAddressFromStore.address
       }));
     }
-  }, [selectedAddressFromStore, useSelectedAddress, savedAddresses]);
+  }, [selectedAddressFromStore]);
     
   // Calculate tax amount and final total
   const taxAmount = subtotal * (taxRate / 100);
@@ -268,14 +261,6 @@ const CheckoutPage = () => {
     if (name === 'phone') {
       const digitsOnly = value.replace(/\D/g, '');
       if (digitsOnly.length <= 11) {
-        setFormData({
-          ...formData,
-          [name]: digitsOnly
-        });
-      }
-    } else if (name === 'zipCode') {
-      const digitsOnly = value.replace(/\D/g, '');
-      if (digitsOnly.length <= 5) {
         setFormData({
           ...formData,
           [name]: digitsOnly
@@ -323,6 +308,16 @@ const CheckoutPage = () => {
     setShowCardModal(false);
   };
   
+  // Show address selector modal
+  const handleShowAddressSelector = () => {
+    setShowAddressSelectorModal(true);
+  };
+  
+  // Hide address selector modal
+  const handleAddressSelectorClose = () => {
+    setShowAddressSelectorModal(false);
+  };
+  
   // Validate form
   const validateForm = () => {
     const newErrors = {};
@@ -339,12 +334,6 @@ const CheckoutPage = () => {
       newErrors.phone = 'Please enter a valid phone number';
     }
     if (!formData.address.trim()) newErrors.address = 'Address is required';
-    if (!formData.city.trim()) newErrors.city = 'City is required';
-    if (!formData.zipCode.trim()) {
-      newErrors.zipCode = 'Zip code is required';
-    } else if (!/^\d{5}$/.test(formData.zipCode.replace(/[^0-9]/g, ''))) {
-      newErrors.zipCode = 'Please enter a valid 5-digit zip code';
-    }
     
     if (!selectedBranchId) {
       newErrors.branch = 'Please select a branch';
@@ -382,7 +371,7 @@ const CheckoutPage = () => {
         customerName: formData.fullName,
         email: formData.email,
         phone: formData.phone,
-        address: `${formData.address}, ${formData.city}, ${formData.zipCode}`,
+        address: formData.address, // Using the single address field
         notes: formData.notes,
         paymentMethod: paymentMethod,
         orderType: orderType,
@@ -396,7 +385,7 @@ const CheckoutPage = () => {
         })
       };
       
-      console.log(" submitting order data:", orderData);
+      console.log("Submitting order data:", orderData);
       
       const response = await orderService.submitOrder(orderData);
       console.log("API response:", response);
@@ -439,367 +428,321 @@ const CheckoutPage = () => {
   }
   
   return (
-    <div className="max-w-6xl mx-auto px-4 py-8 bg-background">
-      {/* Checkout header */}
-      <div className="mb-8">
-        <button 
-          onClick={() => navigate('/cart')}
-          className="flex items-center text-sm font-medium mb-4 text-text hover:text-accent transition-colors font-montserrat"
-        >
-          <FaArrowLeft className="mr-2" /> Back to Cart
-        </button>
-        <h1 className="text-3xl font-bold text-text font-poppins">Checkout</h1>
-      </div>
-      
-      {/* Card Details Modal */}
-      <CardDetailsModal 
-        isOpen={showCardModal} 
-        onClose={() => {
-          setShowCardModal(false);
-          if (!cardDetails) setPaymentMethod('cash');
-        }}
-        onSave={handleCardDetailsSave}
-      />
-      
-      {/* Display submission error if any */}
-      {submitError && (
-        <div className="bg-accent/10 border border-accent text-accent px-4 py-3 rounded mb-6" role="alert">
-          <p className="font-medium text-accent font-poppins">Order Error</p>
-          <p className="text-accent font-montserrat">{submitError}</p>
+    <>
+      {/* Address Selector Modal - Conditionally rendered */}
+      {showAddressSelectorModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+          <div className="bg-background rounded-lg w-full max-w-lg p-6">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-bold text-text">Select Address</h2>
+              <button 
+                onClick={handleAddressSelectorClose}
+                className="text-text/50 hover:text-accent"
+              >
+                <FaArrowLeft size={20} />
+              </button>
+            </div>
+            <AddressSelector onAddressSelected={handleAddressSelectorClose} />
+          </div>
         </div>
       )}
-      
-      <div className="grid md:grid-cols-3 gap-8">
-        {/* Customer information form - 2/3 width */}
-        <div className="md:col-span-2">
-          {/* Branch Selection Section */}
-          <div className="bg-secondary rounded-lg shadow-md p-6 mb-6 border border-primary/20">
-            <h2 className="text-xl font-bold mb-4 text-text font-poppins">Select Branch</h2>
-            
-            {branchLoading ? (
-              <div className="flex items-center justify-center py-4">
-                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary"></div>
-                <span className="ml-2 text-text/70 font-montserrat">Loading branches...</span>
-              </div>
-            ) : branches.length > 0 ? (
-              <div>
-                <p className="text-sm text-text/70 mb-4 font-montserrat">
-                  Please select the branch you want to order from:
-                </p>
-                
-                <div className="grid grid-cols-1 gap-3">
-                  {branches.map((branch) => (
-                    <BranchOption
-                      key={branch.id}
-                      branch={branch}
-                      isSelected={selectedBranchId === branch.id}
-                      onChange={handleBranchChange}
-                    />
-                  ))}
-                </div>
-                
-                {errors.branch && (
-                  <p className="text-accent text-sm mt-2 font-montserrat">{errors.branch}</p>
-                )}
-              </div>
-            ) : (
-              <div className="text-center py-4">
-                <p className="text-text/70 font-montserrat">No branches available. Please try again later.</p>
-              </div>
-            )}
-          </div>
 
-          {/* Saved Addresses Section */}
-          <div className="bg-secondary rounded-lg shadow-md p-6 mb-6 border border-primary/20">
-            <h2 className="text-xl font-bold mb-4 text-text font-poppins">Delivery Address</h2>
-            
-            {savedAddresses && savedAddresses.length > 0 ? (
-              <div>
-                <div className="mb-4">
-                  <label className="flex items-center cursor-pointer">
+      <div className="max-w-6xl mx-auto px-4 py-8 bg-background">
+        {/* Checkout header */}
+        <div className="mb-8">
+          <button 
+            onClick={() => navigate('/cart')}
+            className="flex items-center text-sm font-medium mb-4 text-text hover:text-accent transition-colors font-montserrat"
+          >
+            <FaArrowLeft className="mr-2" /> Back to Cart
+          </button>
+          <h1 className="text-3xl font-bold text-text font-poppins">Checkout</h1>
+        </div>
+        
+        {/* Card Details Modal */}
+        <CardDetailsModal 
+          isOpen={showCardModal} 
+          onClose={() => {
+            setShowCardModal(false);
+            if (!cardDetails) setPaymentMethod('cash');
+          }}
+          onSave={handleCardDetailsSave}
+        />
+        
+        {/* Display submission error if any */}
+        {submitError && (
+          <div className="bg-accent/10 border border-accent text-accent px-4 py-3 rounded mb-6" role="alert">
+            <p className="font-medium text-accent font-poppins">Order Error</p>
+            <p className="text-accent font-montserrat">{submitError}</p>
+          </div>
+        )}
+        
+        <div className="grid md:grid-cols-3 gap-8">
+          {/* Customer information form - 2/3 width */}
+          <div className="md:col-span-2">
+            {/* Branch Selection Section */}
+            <div className="bg-secondary rounded-lg shadow-md p-6 mb-6 border border-primary/20">
+              <h2 className="text-xl font-bold mb-4 text-text font-poppins">Select Branch</h2>
+              
+              {branchLoading ? (
+                <div className="flex items-center justify-center py-4">
+                  <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary"></div>
+                  <span className="ml-2 text-text/70 font-montserrat">Loading branches...</span>
+                </div>
+              ) : branches.length > 0 ? (
+                <div>
+                  <p className="text-sm text-text/70 mb-4 font-montserrat">
+                    Please select the branch you want to order from:
+                  </p>
+                  
+                  <div className="grid grid-cols-1 gap-3">
+                    {branches.map((branch) => (
+                      <BranchOption
+                        key={branch.id}
+                        branch={branch}
+                        isSelected={selectedBranchId === branch.id}
+                        onChange={handleBranchChange}
+                      />
+                    ))}
+                  </div>
+                  
+                  {errors.branch && (
+                    <p className="text-accent text-sm mt-2 font-montserrat">{errors.branch}</p>
+                  )}
+                </div>
+              ) : (
+                <div className="text-center py-4">
+                  <p className="text-text/70 font-montserrat">No branches available. Please try again later.</p>
+                </div>
+              )}
+            </div>
+          
+            {/* Customer Information Section */}
+            <div className="bg-secondary rounded-lg shadow-md p-6 mb-6 border border-primary/20">
+              <h2 className="text-xl font-bold mb-4 text-text font-poppins">Customer Information</h2>
+              
+              <form id="checkout-form" onSubmit={handleSubmit}>
+                <div className="grid md:grid-cols-2 gap-4 mb-4">
+                  {/* Full Name */}
+                  <div className="col-span-2 md:col-span-1">
+                    <label htmlFor="fullName" className="block text-sm font-medium mb-1 text-text font-montserrat">
+                      Full Name *
+                    </label>
                     <input
-                      type="checkbox"
-                      checked={useSelectedAddress}
-                      onChange={(e) => setUseSelectedAddress(e.target.checked)}
-                      className="sr-only"
+                      type="text"
+                      id="fullName"
+                      name="fullName"
+                      value={formData.fullName}
+                      onChange={handleChange}
+                      className={`w-full p-3 border rounded-md ${errors.fullName ? 'border-accent' : 'border-text/20'}`}
+                      placeholder="John Doe"
                     />
-                    <div className="h-5 w-5 rounded-full border border-text/30 mr-3 flex items-center justify-center">
-                      {useSelectedAddress && (
-                        <div className="h-3 w-3 rounded-full bg-primary"></div>
+                    {errors.fullName && <p className="text-accent text-sm mt-1 font-montserrat">{errors.fullName}</p>}
+                  </div>
+                  
+                  {/* Email */}
+                  <div className="col-span-2 md:col-span-1">
+                    <label htmlFor="email" className="block text-sm font-medium mb-1 text-text font-montserrat">
+                      Email Address *
+                    </label>
+                    <input
+                      type="email"
+                      id="email"
+                      name="email"
+                      value={formData.email}
+                      onChange={handleChange}
+                      className={`w-full p-3 border rounded-md ${errors.email ? 'border-accent' : 'border-text/20'}`}
+                      placeholder="email@example.com"
+                    />
+                    {errors.email && <p className="text-accent text-sm mt-1 font-montserrat">{errors.email}</p>}
+                  </div>
+                  
+                  {/* Phone */}
+                  <div className="col-span-2 md:col-span-1">
+                    <label htmlFor="phone" className="block text-sm font-medium mb-1 text-text font-montserrat">
+                      Phone Number *
+                    </label>
+                    <input
+                      type="tel"
+                      id="phone"
+                      name="phone"
+                      value={formData.phone}
+                      onChange={handleChange}
+                      maxLength={11}
+                      className={`w-full p-3 border rounded-md ${errors.phone ? 'border-accent' : 'border-text/20'}`}
+                      placeholder="03XX1234567"
+                    />
+                    {errors.phone && <p className="text-accent text-sm mt-1 font-montserrat">{errors.phone}</p>}
+                  </div>
+                  
+                  {/* Single Address Field with Map Selection Button */}
+                  <div className="col-span-2 md:col-span-2">
+                    <label htmlFor="address" className="flex justify-between items-center text-sm font-medium mb-1 text-text font-montserrat">
+                      <span>Complete Address *</span>
+                      <button
+                        type="button"
+                        onClick={handleShowAddressSelector}
+                        className="text-primary hover:text-primary/80 text-sm flex items-center"
+                      >
+                        <FaMapMarkerAlt className="mr-1" />
+                        {selectedAddressFromStore ? 'Change Address' : 'Select from Map'}
+                      </button>
+                    </label>
+                    <div className="relative">
+                      <input
+                        type="text"
+                        id="address"
+                        name="address"
+                        value={formData.address}
+                        onChange={handleChange}
+                        className={`w-full p-3 border rounded-md ${errors.address ? 'border-accent' : 'border-text/20'}`}
+                        placeholder="Enter your complete address"
+                      />
+                      {selectedAddressFromStore && (
+                        <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+                          <span className="bg-primary/100 text-secondary  text-xs px-2 py-1 rounded-full">
+                            {selectedAddressFromStore.name || 'Selected'}
+                          </span>
+                        </div>
                       )}
                     </div>
-                    <span className="font-medium text-text">Use saved address</span>
-                  </label>
+                    {errors.address && <p className="text-accent text-sm mt-1 font-montserrat">{errors.address}</p>}
+                  </div>
+                  
+                  {/* Order Type Selection */}
+                  <div className="col-span-2">
+                    <label className="block text-sm font-medium mb-3 text-text font-montserrat">
+                      Order Type
+                    </label>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      {orderTypeOptions.map(option => (
+                        <div
+                          key={option.id}
+                          className={`border rounded-md p-3 cursor-pointer transition-all font-montserrat ${
+                            orderType === option.id 
+                              ? 'border-primary bg-primary/10' 
+                              : 'border-text/20 hover:border-text/30'
+                          }`}
+                          onClick={() => setOrderType(option.id)}
+                        >
+                          <div className="flex items-center">
+                            <div className="h-5 w-5 rounded-full border border-text/30 mr-3 flex items-center justify-center flex-shrink-0">
+                              {orderType === option.id && (
+                                <div className="h-3 w-3 rounded-full bg-primary"></div>
+                              )}
+                            </div>
+                            <div>
+                              <p className="font-medium text-text">{option.label}</p>
+                              <p className="text-sm text-text/50">{option.description}</p>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  
+                  {/* Additional Notes */}
+                  <div className="col-span-2">
+                    <label htmlFor="notes" className="block text-sm font-medium mb-1 text-text font-montserrat">
+                      Order Notes (Optional)
+                    </label>
+                    <textarea
+                      id="notes"
+                      name="notes"
+                      value={formData.notes}
+                      onChange={handleChange}
+                      rows="3"
+                      className="w-full p-3 border border-text/20 rounded-md"
+                      placeholder="Special instructions for delivery or food preparation..."
+                    ></textarea>
+                  </div>
                 </div>
                 
-                {useSelectedAddress && (
-                  <div className="space-y-3">
-                    {savedAddresses.map((address) => (
-                      <SavedAddressOption
-                        key={address.id}
-                        address={address}
-                        isSelected={selectedAddressFromStore && selectedAddressFromStore.id === address.id}
-                        onClick={() => dispatch(setSelectedAddress(address))}
+                {/* Payment Methods */}
+                <div className="mt-8 mb-8">
+                  <h2 className="text-xl font-bold mb-4 text-text font-poppins">Payment Method</h2>
+                  
+                  <div className="space-y-4">
+                    {paymentMethodOptions.map(option => (
+                      <PaymentMethodOption
+                        key={option.id}
+                        id={option.id}
+                        icon={option.icon}
+                        title={option.title}
+                        description={option.description}
+                        isSelected={paymentMethod === option.id}
+                        onClick={() => handlePaymentMethodSelect(option.id)}
                       />
                     ))}
                     
-                    <p className="text-sm text-text/70 mt-2">
-                      <FaMapMarkerAlt className="inline-block mr-1" />
-                      You can manage your saved addresses in your account settings.
-                    </p>
+                    {paymentMethod === 'card' && cardDetails && (
+                      <div className="mt-2 flex justify-end">
+                        <button
+                          type="button"
+                          onClick={() => setShowCardModal(true)}
+                          className="text-primary hover:text-primary/80 text-sm font-medium font-montserrat"
+                        >
+                          Change card details
+                        </button>
+                      </div>
+                    )}
                   </div>
-                )}
-              </div>
-            ) : (
-              <p className="text-text/70 mb-2 font-montserrat">
-                You don't have any saved addresses yet. Fill in the address details below.
-              </p>
-            )}
+                </div>
+              </form>
+            </div>
           </div>
           
-          {/* Customer Information Section */}
-          <div className="bg-secondary rounded-lg shadow-md p-6 mb-6 border border-primary/20">
-            <h2 className="text-xl font-bold mb-4 text-text font-poppins">Shipping Information</h2>
-            
-            <form id="checkout-form" onSubmit={handleSubmit}>
-              <div className="grid md:grid-cols-2 gap-4 mb-4">
-                {/* Full Name */}
-                <div className="col-span-2 md:col-span-1">
-                  <label htmlFor="fullName" className="block text-sm font-medium mb-1 text-text font-montserrat">
-                    Full Name *
-                  </label>
-                  <input
-                    type="text"
-                    id="fullName"
-                    name="fullName"
-                    value={formData.fullName}
-                    onChange={handleChange}
-                    className={`w-full p-3 border rounded-md ${errors.fullName ? 'border-accent' : 'border-text/20'}`}
-                    placeholder="John Doe"
-                  />
-                  {errors.fullName && <p className="text-accent text-sm mt-1 font-montserrat">{errors.fullName}</p>}
+          {/* Order Summary - 1/3 width */}
+          <div className="md:col-span-1">
+            <div className="bg-secondary rounded-lg shadow-md p-6 sticky top-20 border border-primary/20">
+              <h2 className="text-xl font-bold mb-4 text-text font-poppins">Order Summary</h2>
+              
+              {/* Product list */}
+              <div className="space-y-4 mb-6 max-h-64 overflow-y-auto pr-2">
+                {cartItems.map(item => (
+                  <CartItem key={item.id} item={item} />
+                ))}
+              </div>
+              
+              {/* Totals */}
+              <div className="space-y-2 py-4 border-t border-b border-text/20">
+                <div className="flex justify-between">
+                  <span className="text-text/70 font-montserrat">Subtotal</span>
+                  <span className="text-text font-montserrat">$ {subtotal.toFixed(2)}</span>
                 </div>
-                
-                {/* Email */}
-                <div className="col-span-2 md:col-span-1">
-                  <label htmlFor="email" className="block text-sm font-medium mb-1 text-text font-montserrat">
-                    Email Address *
-                  </label>
-                  <input
-                    type="email"
-                    id="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    className={`w-full p-3 border rounded-md ${errors.email ? 'border-accent' : 'border-text/20'}`}
-                    placeholder="email@example.com"
-                  />
-                  {errors.email && <p className="text-accent text-sm mt-1 font-montserrat">{errors.email}</p>}
+                <div className="flex justify-between">
+                  <span className="text-text/70 font-montserrat">Tax ({taxRate}%)</span>
+                  <span className="text-text font-montserrat">$ {taxAmount.toFixed(2)}</span>
                 </div>
-                
-                {/* Phone */}
-                <div className="col-span-2 md:col-span-1">
-                  <label htmlFor="phone" className="block text-sm font-medium mb-1 text-text font-montserrat">
-                    Phone Number *
-                  </label>
-                  <input
-                    type="tel"
-                    id="phone"
-                    name="phone"
-                    value={formData.phone}
-                    onChange={handleChange}
-                    maxLength={11}
-                    className={`w-full p-3 border rounded-md ${errors.phone ? 'border-accent' : 'border-text/20'}`}
-                    placeholder="03XX1234567"
-                  />
-                  {errors.phone && <p className="text-accent text-sm mt-1 font-montserrat">{errors.phone}</p>}
-                </div>
-                
-                {/* Address */}
-                <div className="col-span-2">
-                  <label htmlFor="address" className="block text-sm font-medium mb-1 text-text font-montserrat">
-                    Address *
-                  </label>
-                  <input
-                    type="text"
-                    id="address"
-                    name="address"
-                    value={formData.address}
-                    onChange={handleChange}
-                    className={`w-full p-3 border rounded-md ${errors.address ? 'border-accent' : 'border-text/20'}`}
-                    placeholder="123 Main Street, Apartment 4B"
-                  />
-                  {errors.address && <p className="text-accent text-sm mt-1 font-montserrat">{errors.address}</p>}
-                </div>
-                
-                {/* City */}
-                <div className="col-span-2 md:col-span-1">
-                  <label htmlFor="city" className="block text-sm font-medium mb-1 text-text font-montserrat">
-                    City *
-                  </label>
-                  <input
-                    type="text"
-                    id="city"
-                    name="city"
-                    value={formData.city}
-                    onChange={handleChange}
-                    className={`w-full p-3 border rounded-md ${errors.city ? 'border-accent' : 'border-text/20'}`}
-                    placeholder="Islamabad"
-                  />
-                  {errors.city && <p className="text-accent text-sm mt-1 font-montserrat">{errors.city}</p>}
-                </div>
-                
-                {/* Zip Code */}
-                <div className="col-span-2 md:col-span-1">
-                  <label htmlFor="zipCode" className="block text-sm font-medium mb-1 text-text font-montserrat">
-                    Zip Code *
-                  </label>
-                  <input
-                    type="text"
-                    id="zipCode"
-                    name="zipCode"
-                    value={formData.zipCode}
-                    onChange={handleChange}
-                    maxLength={5}
-                    className={`w-full p-3 border rounded-md ${errors.zipCode ? 'border-accent' : 'border-text/20'}`}
-                    placeholder="44000"
-                  />
-                  {errors.zipCode && <p className="text-accent text-sm mt-1 font-montserrat">{errors.zipCode}</p>}
-                </div>
-                
-                {/* Order Type Selection */}
-                <div className="col-span-2">
-                  <label className="block text-sm font-medium mb-3 text-text font-montserrat">
-                    Order Type
-                  </label>
-                  
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    {orderTypeOptions.map(option => (
-                      <div
-                        key={option.id}
-                        className={`border rounded-md p-3 cursor-pointer transition-all font-montserrat ${
-                          orderType === option.id 
-                            ? 'border-primary bg-primary/10' 
-                            : 'border-text/20 hover:border-text/30'
-                        }`}
-                        onClick={() => setOrderType(option.id)}
-                      >
-                        <div className="flex items-center">
-                          <div className="h-5 w-5 rounded-full border border-text/30 mr-3 flex items-center justify-center flex-shrink-0">
-                            {orderType === option.id && (
-                              <div className="h-3 w-3 rounded-full bg-primary"></div>
-                            )}
-                          </div>
-                          <div>
-                            <p className="font-medium text-text">{option.label}</p>
-                            <p className="text-sm text-text/50">{option.description}</p>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-                
-                {/* Additional Notes */}
-                <div className="col-span-2">
-                  <label htmlFor="notes" className="block text-sm font-medium mb-1 text-text font-montserrat">
-                    Order Notes (Optional)
-                  </label>
-                  <textarea
-                    id="notes"
-                    name="notes"
-                    value={formData.notes}
-                    onChange={handleChange}
-                    rows="3"
-                    className="w-full p-3 border border-text/20 rounded-md"
-                    placeholder="Special instructions for delivery or food preparation..."
-                  ></textarea>
+                <div className="flex justify-between font-bold pt-2">
+                  <span className="text-text font-poppins">Total</span>
+                  <span className="text-text font-poppins">$ {finalTotal.toFixed(2)}</span>
                 </div>
               </div>
               
-              {/* Payment Methods */}
-              <div className="mt-8 mb-8">
-                <h2 className="text-xl font-bold mb-4 text-text font-poppins">Payment Method</h2>
-                
-                <div className="space-y-4">
-                  {paymentMethodOptions.map(option => (
-                    <PaymentMethodOption
-                      key={option.id}
-                      id={option.id}
-                      icon={option.icon}
-                      title={option.title}
-                      description={option.description}
-                      isSelected={paymentMethod === option.id}
-                      onClick={() => handlePaymentMethodSelect(option.id)}
-                    />
-                  ))}
-                  
-                  {paymentMethod === 'card' && cardDetails && (
-                    <div className="mt-2 flex justify-end">
-                      <button
-                        type="button"
-                        onClick={() => setShowCardModal(true)}
-                        className="text-primary hover:text-primary/80 text-sm font-medium font-montserrat"
-                      >
-                        Change card details
-                      </button>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </form>
-          </div>
-        </div>
-        
-        {/* Order Summary - 1/3 width */}
-        <div className="md:col-span-1">
-          <div className="bg-secondary rounded-lg shadow-md p-6 sticky top-20 border border-primary/20">
-            <h2 className="text-xl font-bold mb-4 text-text font-poppins">Order Summary</h2>
-            
-            {/* Product list */}
-            <div className="space-y-4 mb-6 max-h-64 overflow-y-auto pr-2">
-              {cartItems.map(item => (
-                <CartItem key={item.id} item={item} />
-              ))}
+              {/* Place Order Button */}
+              <button
+                type="submit"
+                form="checkout-form"
+                disabled={isSubmitting || branchLoading || branches.length === 0}
+                className={`w-full mt-6 py-3 rounded-md text-center font-bold text-secondary transition-all font-poppins ${
+                  isSubmitting || branchLoading || branches.length === 0
+                    ? 'bg-text/20 cursor-not-allowed'
+                    : 'bg-primary hover:bg-primary/10'
+                }`}
+              >
+                {isSubmitting ? 'Processing...' : 'Place Order'}
+              </button>
+              
+              <p className="text-xs text-text/50 text-center mt-4 font-montserrat">
+                By placing your order, you agree to our Terms of Service and Privacy Policy
+              </p>
             </div>
-            
-            {/* Totals */}
-            <div className="space-y-2 py-4 border-t border-b border-text/20">
-              <div className="flex justify-between">
-                <span className="text-text/70 font-montserrat">Subtotal</span>
-                <span className="text-text font-montserrat">Rs. {subtotal.toFixed(2)}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-text/70 font-montserrat">Tax ({taxRate}%)</span>
-                <span className="text-text font-montserrat">Rs. {taxAmount.toFixed(2)}</span>
-              </div>
-              <div className="flex justify-between font-bold pt-2">
-                <span className="text-text font-poppins">Total</span>
-                <span className="text-text font-poppins">Rs. {finalTotal.toFixed(2)}</span>
-              </div>
-            </div>
-            
-            {/* Place Order Button */}
-            <button
-              type="submit"
-              form="checkout-form"
-              disabled={isSubmitting || branchLoading || branches.length === 0}
-              className={`w-full mt-6 py-3 rounded-md text-center font-bold text-text transition-all font-poppins ${
-                isSubmitting || branchLoading || branches.length === 0
-                  ? 'bg-text/20 cursor-not-allowed'
-                  : 'bg-primary hover:bg-primary/90'
-              }`}
-            >
-              {isSubmitting ? 'Processing...' : 'Place Order'}
-            </button>
-            
-            <p className="text-xs text-text/50 text-center mt-4 font-montserrat">
-              By placing your order, you agree to our Terms of Service and Privacy Policy
-            </p>
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

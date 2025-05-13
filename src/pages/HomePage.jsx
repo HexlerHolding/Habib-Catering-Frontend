@@ -1,12 +1,7 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import HeroSlider from '../components/HeroSlider';
-import CategorySlider from '../components/CategorySlider';
-import { FaArrowRight } from 'react-icons/fa';
-import HomePageCards from '../components/HomePageCards';
 import AppDownload from '../components/AppDownload';
 import BlogSection from '../components/BlogSection';
-import Footer from '../components/Footer';
+import CategorySlider from '../components/CategorySlider';
+import HeroSlider from '../components/HeroSlider';
 import Offer from '../components/Offer';
 // Removed OrderNowButton import since it's now in MainLayout
 
@@ -21,7 +16,7 @@ const HomePage = () => {
         <CategorySlider />
         
         {/* Home Page Cards */}
-        <HomePageCards />
+        {/* <HomePageCards /> */}
         
         {/* App Download Component - Added here */}
         <div className="my-12">

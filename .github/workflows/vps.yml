@@ -1,0 +1,34 @@
+name: Deploy Habib Catering on VPS
+
+on:
+  push:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+        
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.SERVER_IP }}
+          username: ${{ secrets.SERVER_USER }}
+          password: ${{ secrets.SERVER_PASSWORD }}
+          script: |
+            set -e
+            echo "🚀 Connecting to server..."
+            cd /var/www/apps/habib/Habib-Catering-Frontend
+
+            echo "🔄 Pulling latest changes..."
+            git pull
+            
+            echo "📦 Updating Docker..."
+            docker-compose down
+            docker-compose build
+            docker-compose up -d
+            
+            echo "✅ Build completed successfully!"
+          timeout: 10m

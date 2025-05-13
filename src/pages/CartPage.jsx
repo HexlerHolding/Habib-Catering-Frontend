@@ -257,6 +257,24 @@ const CartPage = () => {
                 
                 {/* Price breakdown */}
                 <div className="space-y-4 mb-6">
+                  {/* Show order items */}
+                  <div className="space-y-3 pb-4">
+                    {cartItems.map(item => (
+                      <div key={item.id} className="flex justify-between text-text">
+                        <span className="font-medium">
+                          {item.name} <span className="text-text/60">× {item.quantity}</span>
+                        </span>
+                        <span className="font-medium">$ {(item.price * item.quantity).toFixed(2)}</span>
+                      </div>
+                    ))}
+                  </div>
+                  
+                  {/* Subtotal row */}
+                  <div className="flex justify-between text-text border-t pt-3">
+                    <span className="font-medium">Subtotal</span>
+                    <span className="font-medium">$ {subtotal.toFixed(2)}</span>
+                  </div>
+                  
                   {/* Show discount if voucher is applied */}
                   {appliedVoucher && (
                     <div className="flex justify-between text-primary">
@@ -365,7 +383,7 @@ const CartPage = () => {
               <p className="text-xs text-text/50 mb-2">Example vouchers (for testing):</p>
               <div className="text-xs text-text/70 space-y-1">
                 <p>SAVE10 - 10% off your order</p>
-                <p>DISCOUNT50 - $. 1 off your order</p>
+                <p>DISCOUNT50 - $ 50 off your order</p>
                 <p>EXTRA20 - 20% off your order</p>
               </div>
             </div>

@@ -240,8 +240,8 @@ const Navbar = ({ toggleSidebar }) => {
             to="/login"
             className={`flex items-center justify-center px-4 py-2 rounded-xl font-bold bg-primary hover:bg-primary/80 hover:brightness-105 transition duration-300`}
           >
-            <FaUser className="text-xl sm:mr-2" />
-            <span className="hidden sm:inline">LOGIN</span>
+            <FaUser className="text-xl sm:mr-2 text-secondary" />
+            <span className="hidden sm:inline text-secondary">LOGIN</span>
           </Link>
         )}
       </div>

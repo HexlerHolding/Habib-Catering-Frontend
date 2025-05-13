@@ -60,10 +60,10 @@ const Sidebar = ({ isOpen, closeSidebar, isLoggedIn, user }) => {
                 </>
               ) : (
                 <>
-                  <div className="font-bold text-text">
+                  <div className="font-bold text-secondary">
                     Login to explore
                   </div>
-                  <div className="text-sm text-text">
+                  <div className="text-sm text-secondary">
                     World of flavors
                   </div>
                 </>

@@ -15,8 +15,8 @@ const BranchOption = ({ branch, isSelected, onChange }) => (
   <label 
     className={`border rounded-md p-4 cursor-pointer transition-all font-montserrat ${
       isSelected 
-        ? 'border-primary bg-primary/90' 
-        : 'border-text/20 hover:border-text/30'
+        ? 'border-primary bg-primary/90 text-secondary' 
+        : 'border-text/20 hover:border-text/30 text-secondary'
     }`}
   >
     <div className="flex items-center">
@@ -30,17 +30,17 @@ const BranchOption = ({ branch, isSelected, onChange }) => (
       />
       <div className="h-5 w-5 rounded-full border border-text/30 mr-3 flex items-center justify-center">
         {isSelected && (
-          <div className="h-3 w-3 rounded-full bg-primary"></div>
+          <div className="h-3 w-3 rounded-full text-secondary bg-primary"></div>
         )}
       </div>
       <div className="flex-1">
         <div className="flex items-center">
-          <FaStore className="text-text/70 mr-2" />
-          <p className="font-medium text-text">{branch.name}</p>
+          <FaStore className={`mr-2 ${isSelected ? 'text-secondary' : 'text-text/70'}`} />
+          <p className={`font-medium ${isSelected ? 'text-secondary' : 'text-text'}`}>{branch.name}</p>
         </div>
         <div className="mt-1 flex items-start">
-          <FaMapMarkerAlt className="text-text/70 mr-2 mt-1" />
-          <p className="text-sm text-text/70">{branch.address}, {branch.city}</p>
+          <FaMapMarkerAlt className={`mr-2 mt-1 ${isSelected ? 'text-secondary' : 'text-text/70'}`} />
+          <p className={`text-sm ${isSelected ? 'text-secondary' : 'text-text/70'}`}>{branch.address}, {branch.city}</p>
         </div>
         {branch.status === 'closed' && (
           <p className="text-accent text-sm mt-1">
@@ -729,7 +729,7 @@ const CheckoutPage = () => {
                 className={`w-full mt-6 py-3 rounded-md text-center font-bold text-secondary transition-all font-poppins ${
                   isSubmitting || branchLoading || branches.length === 0
                     ? 'bg-text/20 cursor-not-allowed'
-                    : 'bg-primary hover:bg-primary/10'
+                    : 'bg-primary hover:bg-primary/80 hover:brightness-105'
                 }`}
               >
                 {isSubmitting ? 'Processing...' : 'Place Order'}

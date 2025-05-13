@@ -232,7 +232,7 @@ const CardDetailsModal = ({ isOpen, onClose, onSave }) => {
               <button
                 type="submit"
                 disabled={isSaving}
-                className="py-2 px-4 bg-primary text-text rounded-md font-medium hover:bg-primary/80 hover:brightness-105 transition-colors font-poppins flex items-center"
+                className="py-2 px-4 bg-primary text-secondary rounded-md font-medium hover:bg-primary/80 hover:brightness-105 transition-colors font-poppins flex items-center"
               >
                 {isSaving ? (
                   <>

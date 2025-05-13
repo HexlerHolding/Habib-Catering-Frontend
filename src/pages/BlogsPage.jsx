@@ -9,7 +9,7 @@ const BlogsPage = () => {
   const regularPosts = blogPosts.slice(1);
 
   return (
-    <div className="bg-background min-h-screen pt-12 sm:pt-16 pb-20 sm:pb-24">
+    <div className="bg-background min-h-screen pt-14c sm:pt-16 pb-20 sm:pb-24">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header Section */}
         <div className="max-w-3xl mx-auto text-center mb-12 sm:mb-16">

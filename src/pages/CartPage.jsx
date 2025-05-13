@@ -133,7 +133,7 @@ const CartPage = () => {
   };
   
   return (
-    <div className="min-h-screen pt-8 pb-16 mt-10">
+    <div className="min-h-screen pt-14 pb-16 mt-10">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between mb-8">
           <h1 className="text-3xl font-bold text-text">Your Cart</h1>

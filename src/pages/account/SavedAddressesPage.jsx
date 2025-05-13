@@ -98,7 +98,7 @@ const SavedAddressesPage = () => {
             const addressSelectorBtn = document.querySelector('[data-testid="address-selector-btn"]');
             if (addressSelectorBtn) addressSelectorBtn.click();
           }}
-          className="flex items-center bg-primary text-text px-4 py-2 rounded-lg hover:bg-primary/80 hover:brightness-105 transition-colors"
+          className="flex items-center bg-primary text-secondary px-4 py-2 rounded-lg hover:bg-primary/80 hover:brightness-105 transition-colors"
         >
           <FaMapMarkerAlt className="mr-2" /> Add New Address
         </a>

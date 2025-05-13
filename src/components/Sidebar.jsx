@@ -46,7 +46,7 @@ const Sidebar = ({ isOpen, closeSidebar, isLoggedIn, user }) => {
         <div className={`flex items-center justify-between p-4 bg-primary`}>
           <div className="flex items-center">
             <div className={`h-10 w-10 mr-2 bg-primary rounded-full flex items-center justify-center`}>
-              <BiUser className="w-6 h-6 text-text" />
+              <BiUser className="w-6 h-6 text-secondary" />
             </div>
             <div>
               {isLoggedIn ? (
@@ -74,7 +74,7 @@ const Sidebar = ({ isOpen, closeSidebar, isLoggedIn, user }) => {
           {/* Close button */}
           <button 
             onClick={closeSidebar}
-            className="text-xl p-1 text-text"
+            className="text-xl p-1 text-secondary"
           >
             <FaTimes />
           </button>
@@ -142,7 +142,7 @@ const Sidebar = ({ isOpen, closeSidebar, isLoggedIn, user }) => {
               </Link>
             </li>
             <div className='flex flex-col items-start'>
-              <Link to='/blogs' className="px-9 py-2 hover:underline text-text">
+              <Link to='/blogs' className="px-9 py-2 hover:underline text-text" onClick={closeSidebar}a>
                 <span>Blog</span>
               </Link>
               <Link to='/privacy-policy' className="px-9 py-2 hover:underline text-text" onClick={closeSidebar}>

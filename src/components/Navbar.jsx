@@ -83,7 +83,7 @@ const Navbar = ({ toggleSidebar }) => {
   };
 
   return (
-    <nav className="fixed top-0 left-0 w-full h-30 flex items-center justify-between p-7 z-50 bg-background" style={{ minHeight: '5rem' }}>
+    <nav className="fixed top-0 left-0 w-full h-24 flex items-center justify-between p-7 z-50 bg-background" style={{ minHeight: '5rem' }}>
       {/* Left section with menu toggle and logo */}
       <div className="flex items-center">
         {/* Menu toggle button */}
@@ -99,7 +99,7 @@ const Navbar = ({ toggleSidebar }) => {
           <img 
             src='/habiblogo2.jpg'
             alt="Cheezious Logo" 
-            className="h-30 w-30"
+            className="h-16 w-16 rounded-full"
           />
         </Link>
 
@@ -126,7 +126,7 @@ const Navbar = ({ toggleSidebar }) => {
             className={`flex items-center justify-center px-4 py-2 rounded-xl font-bold bg-primary hover:bg-primary/80 hover:brightness-105`}
           >
             <div className="flex items-center">
-              <FaShoppingCart className="text-xl" />
+              <FaShoppingCart className="text-xl text-secondary" />
               <span className="ml-2 hidden sm:inline text-secondary">CART</span>
               <span className="ml-1 bg-accent text-secondary text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold">
                 {totalQuantity}
@@ -232,7 +232,7 @@ const Navbar = ({ toggleSidebar }) => {
             to="/account/profile"
             className={`flex items-center justify-center px-4 py-2 rounded-xl font-bold bg-primary hover:bg-primary/80 hover:brightness-105 transition duration-300`}
           >
-            <FaUser className="text-xl sm:mr-2" />
+            <FaUser className="text-xl sm:mr-2 text-secondary " />
             <span className="hidden sm:inline text-secondary">ACCOUNT</span>
           </Link>
         ) : (

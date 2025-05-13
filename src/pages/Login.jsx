@@ -49,7 +49,7 @@ const Login = () => {
                     <h1 className="text-xl md:text-2xl font-bold mb-2 md:mb-4 text-text/90">Hey there, feeling hungry?</h1>
                     <p className="text-text/60 mb-6 md:mb-10">Let's enjoy your food with cheezious!</p>
                     
-                    <Link to='/login/phone-number' className="flex justify-center items-center w-full py-3 md:py-4 bg-primary text-text/90 font-bold rounded mb-4 hover:bg-primary/80 hover:brightness-105 transition-colors">
+                    <Link to='/login/phone-number' className="flex text-secondary justify-center items-center w-full py-3 md:py-4 bg-primary  font-bold rounded mb-4 hover:bg-primary/80 hover:brightness-105 transition-colors">
                         <FaPhone className="mr-2 text-lg" /> CONTINUE WITH PHONE
                     </Link>
                       <Link to='/' className="flex justify-center items-center w-full py-3 md:py-4 bg-background text-text/90 font-bold rounded border border-text/20 hover:bg-text/10 transition-colors">

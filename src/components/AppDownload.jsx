@@ -2,12 +2,12 @@ import { FaChevronRight } from 'react-icons/fa';
 
 const AppDownload = () => {
   const avatars = [
-    { id: 1, src: "/avatar2.jpg", alt: "User 1" },
-    { id: 2, src: "/avatar1.jpg", alt: "User 2" },
+    { id: 1, src: "/avatar1.jpg", alt: "User 1" },
+    { id: 2, src: "/avatar2.jpg", alt: "User 2" },
     { id: 3, src: "/avatar3.jpg", alt: "User 3" },
     { id: 4, src: "/avatar4.jpg", alt: "User 4" },
-    { id: 5, src: "/avatar1.jpg", alt: "User 5" },
-    { id: 6, src: "/avatar2.jpg", alt: "User 6" },
+    { id: 5, src: "/avatar4.jpg", alt: "User 5" },
+    { id: 6, src: "/avatar5.jpg", alt: "User 6" },
   ];
 
   return (
@@ -23,7 +23,7 @@ const AppDownload = () => {
       
       <div className="flex flex-col md:flex-row items-center justify-between relative z-10">
         {/* Left side with phone image */}
-        <div className="md:w-1/3 mb-8 md:mb-0">
+        <div className="md:w-1/3 mb-8 md:mb-0 !z-20">
           <img 
             src="/appImage.png" 
             alt="Mobile App" 
@@ -96,7 +96,7 @@ const AppDownload = () => {
           <img 
             src="/offerSectionImage34.png" 
             alt="" 
-            className="w-24 h-24 relative z-20"
+            className="w-30  relative !z-0"
           />
         {/* </div> */}
       </div>

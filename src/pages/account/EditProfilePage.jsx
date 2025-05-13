@@ -127,7 +127,7 @@ const EditProfilePage = () => {
         <div className="flex justify-end">
           <button
             type="submit"
-            className="bg-text text-secondary py-3 px-6 rounded-lg font-medium hover:bg-text/80 transition-colors"
+            className="bg-primary text-secondary py-3 px-6 rounded-lg font-medium hover:bg-primary/80 transition-colors"
             disabled={loading}
           >
             {loading ? 'Saving...' : 'Save Changes'}

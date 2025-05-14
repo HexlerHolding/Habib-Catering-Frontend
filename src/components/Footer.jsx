@@ -11,7 +11,7 @@ const Footer = () => {
           <div className="flex flex-col items-center sm:gap-3 justify-center text-sm">
             {/* Logo and Copyright */}
             <div className="flex  items-center  sm:mb-4 md:mb-0 ">
-              <img src="/offerSectionImage34.png" alt="Habib Catering" className="h-6 mr-2" />
+              <img src="/offerSectionImage34.png" alt="Habib Catering" className="h-6 mr-2 filter grayscale contrast-200 brightness-20" />
               <span className="text-text">
                 Habib Catering Copyright © {currentYear}. All Rights Reserved.
               </span>
@@ -23,7 +23,7 @@ const Footer = () => {
                 TERMS & CONDITIONS
               </Link>
               <span>|</span>
-              <Link to="/privacy" className="hover:text-text/50 transition-colors">
+              <Link to="/privacy" className="hover:text-text/50 transition-colors text-negative">
                 PRIVACY POLICY
               </Link>
             </div>

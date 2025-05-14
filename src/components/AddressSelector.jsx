@@ -17,6 +17,7 @@ import {
   setSelectedAddress,
   setUserSelectedAddress
 } from '../redux/slices/locationSlice';
+import toast from 'react-hot-toast';
 
 // Fix Leaflet marker icon issue
 delete L.Icon.Default.prototype._getIconUrl;
@@ -179,7 +180,7 @@ const AddressSelector = () => {
         }
       } else {
         // No results found
-        alert('No addresses found matching your search.');
+        toast.error('No results found for the entered address.');
       }
     } catch (error) {
       console.error('Error searching address:', error);
@@ -236,11 +237,11 @@ const AddressSelector = () => {
         (error) => {
           console.error('Error getting current location:', error);
           setIsLoading(false);
-          alert('Unable to get your current location. Please check your browser permissions.');
+          toast.error('Unable to get your current location. Please check your browser permissions.');
         }
       );
     } else {
-      alert('Geolocation is not supported by this browser.');
+     toast.error('Geolocation is not supported by this browser.');
       setIsLoading(false);
     }
   };
@@ -301,7 +302,7 @@ const AddressSelector = () => {
     );
     
     if (isAlreadySaved) {
-      alert('This address is already saved.');
+      toast.error('This address is already saved.');
       return;
     }
     
@@ -328,7 +329,7 @@ const AddressSelector = () => {
               setIsAddressList(false);
               
               // Show success message
-              alert('Address saved successfully!');
+              toast.success('Address saved successfully!');
             });
         })
         .catch(error => {
@@ -342,7 +343,7 @@ const AddressSelector = () => {
           setIsModalOpen(false);
           setIsAddressList(false);
           
-          alert('Address saved locally. You may need to log in again to sync with your account.');
+          toast.success('Address saved successfully!');
         });
     } else {
       // Save locally if not authenticated
@@ -354,7 +355,7 @@ const AddressSelector = () => {
       setIsModalOpen(false);
       setIsAddressList(false);
       
-      alert('Address saved successfully!');
+      toast.success('Address saved successfully!');
     }
   };
   
@@ -369,7 +370,7 @@ const AddressSelector = () => {
           .unwrap()
           .catch(error => {
             console.error('Failed to delete address:', error);
-            alert('Failed to delete address. Please try again.');
+            toast.error('Failed to delete address. Please try again.');
           });
       } else {
         // Delete locally if not authenticated
@@ -607,14 +608,14 @@ const AddressSelector = () => {
                   <div className="px-4 py-3">
                     <div className="flex items-center px-4 py-3 bg-text/5 rounded-lg mb-4">
                       <div className="bg-primary p-2 rounded-full mr-3">
-                        <FaMapMarkerAlt className="text-text" />
+                        <FaMapMarkerAlt className="text-secondary" />
                       </div>
                       <div className="flex-1 overflow-hidden pr-2">
                         <p className="font-medium text-text truncate">{localSelectedAddress.address}</p>
                       </div>
                       <button 
                         onClick={handleSelectAddress}
-                        className="bg-primary text-text px-4 py-2 rounded-lg font-bold hover:bg-primary/80 flex-shrink-0"
+                        className="bg-primary text-secondary px-4 py-2 rounded-lg font-bold hover:bg-primary/80 flex-shrink-0"
                       >
                         SELECT
                       </button>
@@ -651,7 +652,7 @@ const AddressSelector = () => {
                 <div className="px-4 pb-4">
                   <button
                     onClick={getCurrentLocation}
-                    className="w-full bg-primary text-text py-3 rounded-lg font-medium hover:bg-primary/80 flex items-center justify-center"
+                    className="w-full bg-primary text-secondary py-3 rounded-lg font-medium hover:bg-primary/80 flex items-center justify-center"
                   >
                     <FaMapMarkerAlt className="mr-2" />
                     Use Current Location

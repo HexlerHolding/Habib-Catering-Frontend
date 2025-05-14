@@ -83,7 +83,7 @@ const Navbar = ({ toggleSidebar }) => {
   };
 
   return (
-    <nav className="fixed top-0 left-0 w-full h-24 flex items-center justify-between p-7 z-50 bg-background" style={{ minHeight: '5rem' }}>
+    <nav className="fixed top-0 left-0 w-full h-24 flex items-center border-b border-text/10 justify-between p-7 z-50 bg-background" style={{ minHeight: '5rem' }}>
       {/* Left section with menu toggle and logo */}
       <div className="flex items-center">
         {/* Menu toggle button */}
@@ -107,7 +107,7 @@ const Navbar = ({ toggleSidebar }) => {
         <div className='!ml-10'>
 
   <AddressSelector />
-        </div>
+    </div>
       </div>
       
       {/* Desktop navigation - hidden */}

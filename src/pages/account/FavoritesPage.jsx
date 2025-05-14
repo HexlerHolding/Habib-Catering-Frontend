@@ -43,10 +43,11 @@ const MenuItem = ({ item, onRemoveFavorite, onAddToCart }) => (
         </span>
       </div>
       <button
-        className="w-full bg-text text-secondary py-2 px-4 rounded-lg font-medium hover:bg-text/80 transition-colors flex items-center justify-center"
+        className="w-full bg-primary text-secondary py-2 px-4 rounded-lg font-medium hover:bg-primary/80 transition-colors flex items-center justify-center"
         onClick={() => onAddToCart(item)}
       >
-        <FaShoppingCart className="mr-1" />
+        {/* <FaShoppingCart className="mr-1" /> */}
+        +
         Add to Cart
       </button>
     </div>

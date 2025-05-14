@@ -30,7 +30,7 @@ const BranchOption = ({ branch, isSelected, onChange }) => (
       />
       <div className="h-5 w-5 rounded-full border border-text/30 mr-3 flex items-center justify-center">
         {isSelected && (
-          <div className="h-3 w-3 rounded-full text-secondary bg-primary"></div>
+          <div className="h-3 w-3 rounded-full bg-white"></div>
         )}
       </div>
       <div className="flex-1">
@@ -89,20 +89,20 @@ const PaymentMethodOption = ({ id, icon: Icon, title, description, isSelected, o
   <div 
     className={`border rounded-md p-4 cursor-pointer flex items-center font-montserrat ${
       isSelected 
-        ? 'border-primary bg-primary/10' 
-        : 'border-text/20 hover:border-text/30'
+        ? 'border-primary bg-primary/90 text-secondary' 
+        : 'border-text/20 hover:border-text/30 text-secondary'
     }`}
     onClick={onClick}
   >
     <div className="h-5 w-5 rounded-full border border-text/30 mr-3 flex items-center justify-center">
       {isSelected && (
-        <div className="h-3 w-3 rounded-full bg-primary"></div>
+        <div className="h-3 w-3 rounded-full bg-secondary"></div>
       )}
     </div>
-    <Icon className="text-text/70 text-xl mr-3" />
+    <Icon className={`${isSelected ? 'text-secondary' : 'text-text'} text-xl mr-3`} />
     <div>
-      <p className="font-medium text-text">{title}</p>
-      <p className="text-sm text-text/50">{description}</p>
+      <p className={`font-medium ${isSelected ? 'text-secondary' : 'text-text'}`}>{title}</p>
+      <p className={`text-sm ${isSelected ? 'text-secondary' : 'text-text/50'}`}>{description}</p>
     </div>
   </div>
 );
@@ -595,12 +595,12 @@ const CheckoutPage = () => {
                         name="address"
                         value={formData.address}
                         onChange={handleChange}
-                        className={`w-full p-3 border rounded-md ${errors.address ? 'border-accent' : 'border-text/20'}`}
+                        className={`w-full p-3 border rounded-md ${errors.address ? 'border-accent' : 'border-text/20'} sm:pr-40`}
                         placeholder="Enter your complete address"
                       />
                       {selectedAddressFromStore && (
-                        <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-                          <span className="bg-primary/100 text-secondary  text-xs px-2 py-1 rounded-full">
+                        <div className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 z-10 flex items-center">
+                          <span className="bg-primary/100 text-secondary text-xs px-2 py-1 rounded-full whitespace-nowrap shadow-md">
                             {selectedAddressFromStore.name || 'Selected'}
                           </span>
                         </div>
@@ -621,20 +621,20 @@ const CheckoutPage = () => {
                           key={option.id}
                           className={`border rounded-md p-3 cursor-pointer transition-all font-montserrat ${
                             orderType === option.id 
-                              ? 'border-primary bg-primary/10' 
-                              : 'border-text/20 hover:border-text/30'
+                               ? 'border-primary bg-primary/90 text-secondary' 
+                               : 'border-text/20 hover:border-text/30 text-secondary'
                           }`}
                           onClick={() => setOrderType(option.id)}
                         >
                           <div className="flex items-center">
                             <div className="h-5 w-5 rounded-full border border-text/30 mr-3 flex items-center justify-center flex-shrink-0">
                               {orderType === option.id && (
-                                <div className="h-3 w-3 rounded-full bg-primary"></div>
+                                <div className="h-3 w-3 rounded-full bg-secondary"></div>
                               )}
                             </div>
                             <div>
-                              <p className="font-medium text-text">{option.label}</p>
-                              <p className="text-sm text-text/50">{option.description}</p>
+                              <p className={`font-medium ${orderType === option.id ? 'text-secondary' : 'text-text'}`}>{option.label}</p>
+                              <p className={`text-sm ${orderType === option.id ? 'text-secondary' : 'text-text/50'}`}>{option.description}</p>
                             </div>
                           </div>
                         </div>

@@ -34,8 +34,8 @@ const Offer = () => {
         {/* Right section with "Let's talk cheezy" */}
         <div className="hidden md:block w-1/2">
           <div className="flex items-center">
-            <div className="mr-4">
-              <h2 className="text-6xl font-extrabold text-primary leading-tight drop-shadow-lg">
+            <div className="mr-4 text-[#c4b55a]">
+              <h2 className="text-6xl font-extrabold  leading-tight drop-shadow-lg">
                 let's talk
                 <br />
                 <span className="text-8xl">Habib Catering</span>

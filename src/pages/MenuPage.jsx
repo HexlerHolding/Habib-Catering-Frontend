@@ -51,7 +51,7 @@ const MenuItem = ({ item, isFavorite, onToggleFavorite, onAddToCart, isLoggedIn 
           </div>
         </div>
         <button
-          className="w-full bg-text text-secondary py-2 px-4 rounded-lg font-medium hover:bg-text/80 transition-colors flex items-center justify-center"
+          className="w-full bg-primary text-secondary py-2 px-4 rounded-lg font-medium hover:bg-primary/80 transition-colors flex items-center justify-center"
           onClick={() => onAddToCart(item)}
         >
           + ADD TO CART

@@ -60,10 +60,10 @@ const Sidebar = ({ isOpen, closeSidebar, isLoggedIn, user }) => {
                 </>
               ) : (
                 <>
-                  <div className="font-bold text-text">
+                  <div className="font-bold text-secondary">
                     Login to explore
                   </div>
-                  <div className="text-sm text-text">
+                  <div className="text-sm text-secondary">
                     World of flavors
                   </div>
                 </>
@@ -158,7 +158,7 @@ const Sidebar = ({ isOpen, closeSidebar, isLoggedIn, user }) => {
             <img 
               src="/offerSectionImage34.png" 
               alt="Cheezious Icon"
-              className="h-8 w-8 mr-2"
+              className="h-6 mr-2"
             />
             <div className="text-secondary font-medium">Habib Catering Hotline</div>
           </div>

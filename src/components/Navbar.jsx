@@ -216,7 +216,7 @@ const Navbar = ({ toggleSidebar }) => {
                   <p className="text-sm text-text/40 mb-4">Go ahead and explore top categories.</p>
                   <Link 
                     to="/menu" 
-                    className={`bg-primary hover:bg-primary/80 px-4 py-2 rounded-lg font-medium text-sm inline-block`}
+                    className={`bg-primary hover:bg-primary/80 px-4 py-2 text-secondary rounded-lg font-medium text-sm inline-block`}
                   >
                     Start Shopping
                   </Link>

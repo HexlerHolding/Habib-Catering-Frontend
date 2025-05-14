@@ -288,7 +288,7 @@ const BranchDetail = () => {
 
               <button
                 onClick={getDirections}
-                className="mt-6 w-full flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-base font-medium bg-primary hover:bg-primary/80 hover:brightness-105 transition duration-300 text-text"
+                className="mt-6 w-full flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-base font-medium bg-primary hover:bg-primary/80 hover:brightness-105 transition duration-300 text-secondary"
               >
                 <FaDirections className="mr-2" />
                 Get Directions

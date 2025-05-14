@@ -60,10 +60,10 @@ const Sidebar = ({ isOpen, closeSidebar, isLoggedIn, user }) => {
                 </>
               ) : (
                 <>
-                  <div className="font-bold text-secondary">
+                  <div className="font-bold text-text">
                     Login to explore
                   </div>
-                  <div className="text-sm text-secondary">
+                  <div className="text-sm text-text">
                     World of flavors
                   </div>
                 </>
@@ -157,7 +157,7 @@ const Sidebar = ({ isOpen, closeSidebar, isLoggedIn, user }) => {
           <div className="flex items-center">
             <img 
               src="/offerSectionImage34.png" 
-              alt="Habib Catering Icon"
+              alt="Cheezious Icon"
               className="h-8 w-8 mr-2"
             />
             <div className="text-secondary font-medium">Habib Catering Hotline</div>

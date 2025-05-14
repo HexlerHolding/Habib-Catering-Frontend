@@ -639,7 +639,7 @@ const AddressSelector = () => {
                       />
                       <button
                         onClick={handleSaveAddress}
-                        className="w-full bg-accent text-white py-2 rounded-lg font-medium hover:bg-accent/90"
+                        className="w-full bg-accent text-secondary py-2 rounded-lg font-medium hover:bg-accent/90"
                       >
                         Save Address
                       </button>

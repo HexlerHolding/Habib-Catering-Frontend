@@ -323,7 +323,7 @@ const CartPage = () => {
             </p>
             <Link 
               to="/menu"
-              className="bg-primary text-text py-3 px-8 rounded-lg font-bold hover:bg-primary/80 transition inline-block"
+              className="bg-primary text-secondary py-3 px-8 rounded-lg font-bold hover:bg-primary/80 transition inline-block"
             >
               Browse Menu
             </Link>

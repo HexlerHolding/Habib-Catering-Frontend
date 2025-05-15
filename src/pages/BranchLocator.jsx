@@ -214,18 +214,19 @@ const BranchLocator = () => {
       branch.address.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesCity && matchesSearch;
   });
+
+
   
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 mt-10">
       {/* Back Button and Header */}
-      <div className="mb-6">
-        <div className="flex items-center">
-          <Link to='/menu' className="mr-4 text-text/80">
-            <FaArrowLeft className="h-6 w-6" />
-          </Link>
-          <h1 className="text-2xl font-bold text-text hover:underline">Branch Locator</h1>
-        </div>
-      </div>
+        <button
+        className="flex items-center text-primary cursor-pointer hover:text-accent font-medium mb-4 px-2 py-1 rounded transition-colors self-start"
+        onClick={() => navigate('/')}
+      >
+        <FaArrowLeft className="mr-2" />
+        Back to Home
+      </button>
       
       {/* Search and Filter Section */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">

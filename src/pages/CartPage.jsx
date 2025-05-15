@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { FaArrowLeft, FaCreditCard, FaMinus, FaMoneyBill, FaPlus, FaShoppingCart, FaTicketAlt, FaTimes, FaTrash } from 'react-icons/fa';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
@@ -45,6 +45,11 @@ const CartPage = () => {
       onConfirm,
     });
   };
+
+    // Always scroll to top when MenuPage mounts
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   // Helper to close modal
   const closeConfirmModal = () => {
@@ -135,6 +140,14 @@ const CartPage = () => {
   return (
     <div className="min-h-screen pt-14 pb-16 mt-10">
       <div className="container mx-auto px-4">
+        {/* Go Back Arrow */}
+        <button
+          className="flex items-center text-primary cursor-pointer  hover:text-accent font-medium mb-4 px-2 py-1 rounded transition-colors"
+          onClick={() => navigate(-1)}
+        >
+          <FaArrowLeft className="mr-2" />
+          Back
+        </button>
         <div className="flex items-center justify-between mb-8">
           <h1 className="text-3xl font-bold text-text">Your Cart</h1>
           {cartItems.length > 0 && (
@@ -151,7 +164,7 @@ const CartPage = () => {
           <div className="lg:grid lg:grid-cols-3 lg:gap-8">
             {/* Cart Items Section (2/3 width on large screens) */}
             <div className="lg:col-span-2 mb-8 lg:mb-0">
-              <div className="bg-secondary rounded-lg shadow-sm p-6 h-screen overflow-y-auto ">
+              <div className="bg-secondary rounded-lg shadow-sm p-6 h-auto overflow-y-auto ">
                 <h2 className="text-xl font-bold mb-6 text-text">Cart Items ({totalQuantity})</h2>
                 
                 {/* Cart items list */}
@@ -239,14 +252,14 @@ const CartPage = () => {
                 </div> */}
                 
                 {/* Continue Shopping Link */}
-                <div className="mt-8">
+                {/* <div className="mt-8">
                   <Link 
                     to="/menu"
                     className="flex items-center text-text font-medium hover:text-accent transition-colors"
                   >
                     <FaArrowLeft className="mr-2" /> Continue Shopping
                   </Link>
-                </div>
+                </div> */}
               </div>
             </div>
             

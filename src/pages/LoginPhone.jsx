@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
-import { FaEnvelope } from "react-icons/fa";
+import { FaEnvelope, FaArrowLeft } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { authService } from "../../Services/authService";
@@ -18,11 +18,13 @@ const LoginPhone = () => {
       navigate('/');
     }
   }, [isAuthenticated, navigate]);
+
   const validatePhoneNumber = (number) => {
     // Check if number starts with 0 and has exactly 11 digits
     const phoneRegex = /^0\d{10}$/;
     return phoneRegex.test(number);
   };
+
   const handleVerifyPhone = async () => {
     if (!validatePhoneNumber(phoneNumber)) {
       toast.error('Please enter a valid phone number starting with 3');
@@ -48,7 +50,9 @@ const LoginPhone = () => {
     } finally {
       setLoading(false);
     }
-  };  const handlePhoneNumberChange = (e) => {
+  };
+
+  const handlePhoneNumberChange = (e) => {
     const input = e.target.value;
     // Only allow digits and limit to 11 characters
     let digitsOnly = input.replace(/\D/g, '');
@@ -61,30 +65,40 @@ const LoginPhone = () => {
 
   return (
     <div className="flex flex-col md:flex-row h-screen overflow-hidden relative">
-      {/* Logo - Repositioned for better responsiveness */}
-      <Link
-        to="/"
-        className="flex absolute top-4 md:top-8 left-4 md:left-8 items-center z-10"
-      >
-        <img src="/offerSectionImage34.png" alt="Habib Catering Logo" className="w-8 md:w-10" />
-        <h1 className="font-bold text-xl md:text-2xl ml-2">Habib Catering</h1>
-      </Link>
+      {/* Top Bar: Back Arrow + Logo */}
+      <div className="flex items-start flex-col-reverse gap-4 absolute top-4 left-4 md:top-8 md:left-8 z-20">
+        <button
+          className="flex items-center text-primary cursor-pointer hover:text-accent font-medium px-2 py-1 rounded transition-colors"
+          onClick={() => navigate(-1)}
+        >
+          <FaArrowLeft className="mr-2" />
+          Back
+        </button>
+        <Link
+          to="/"
+          className="flex items-center"
+        >
+          <img src="/offerSectionImage34.png" alt="Habib Catering Logo" className="w-8 md:w-10" />
+          <h1 className="font-bold text-xl md:text-2xl ml-2">Habib Catering</h1>
+        </Link>
+      </div>
 
       {/* Left Section */}
       <div className="w-full md:w-1/2 h-full p-4 md:p-8 flex flex-col justify-center items-center bg-background pt-20 md:pt-8">
         <div className="max-w-md w-full text-center">
           <h1 className="text-xl md:text-2xl font-bold mb-2 md:mb-4 text-text/90">Enter Your Phone Number</h1>
           <p className="text-text/60 mb-6 md:mb-10">We will send you the code to confirm it.</p>
-            <div className="flex w-full mb-6">
+          <div className="flex w-full mb-6">
             <input
               type="tel"
               placeholder="03XX-XXXXXXX"
               value={phoneNumber}
-              onChange={handlePhoneNumberChange}              maxLength={11}
+              onChange={handlePhoneNumberChange}
+              maxLength={11}
               className="flex-grow p-3 bg-text/5 rounded-lg focus:outline-none"
             />
           </div>
-            <button
+          <button
             onClick={handleVerifyPhone}
             disabled={loading}
             className="flex justify-center cursor-pointer items-center w-full py-3 md:py-4 bg-primary text-secondary font-bold rounded hover:bg-primary/80 hover:brightness-105 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
@@ -109,6 +123,5 @@ const LoginPhone = () => {
     </div>
   );
 };
-
 
 export default LoginPhone;

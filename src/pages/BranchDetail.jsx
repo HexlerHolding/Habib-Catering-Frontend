@@ -2,7 +2,7 @@ import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { useEffect, useRef, useState } from 'react';
 import { FaArrowLeft, FaClock, FaDirections, FaMapMarkerAlt, FaPhone } from 'react-icons/fa';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import branchService from '../../Services/branchService';
 
 // Fix for Leaflet marker icons in React
@@ -51,6 +51,7 @@ const BranchDetail = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const mapRef = useRef(null);
+  const navigate = useNavigate();
 
   // Fetch branch details from API
   useEffect(() => {
@@ -248,14 +249,15 @@ const BranchDetail = () => {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 z-10">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 z-10 mt-10">
       {/* Back Button and Header */}
-      <div className="mb-6">
-        <Link to="/branches" className="inline-flex items-center text-2xl font-bold text-text hover:underline">
-          <FaArrowLeft className="mr-2" />
-          Back to Branches
-        </Link>
-      </div>
+        <button
+        className="flex items-center text-primary cursor-pointer hover:text-accent font-medium mb-4 px-2 py-1 rounded transition-colors self-start"
+        onClick={() => navigate(-1)}
+      >
+        <FaArrowLeft className="mr-2" />
+        Back to Home
+      </button>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* Branch Information */}

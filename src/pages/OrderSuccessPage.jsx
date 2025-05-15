@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { FaCheckCircle, FaClipboard, FaHome } from 'react-icons/fa';
+import { FaCheckCircle, FaClipboard, FaHome, FaArrowLeft } from 'react-icons/fa';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 const OrderSuccessPage = () => {
@@ -41,6 +41,14 @@ const OrderSuccessPage = () => {
   return (
     <div className="min-h-screen bg-background flex flex-col items-center justify-center p-2 sm:p-4 mt-4 sm:mt-10">
       <div className="w-full max-w-md bg-secondary rounded-lg shadow-lg p-4 sm:p-8 text-center overflow-x-auto">
+      {/* Go Back Arrow */}
+      <button
+        className="flex items-center text-primary cursor-pointer hover:text-accent font-medium mb-4 px-2 py-1 rounded transition-colors self-start"
+        onClick={() => navigate('/')}
+      >
+        <FaArrowLeft className="mr-2" />
+        Back to Home
+      </button>
         <div className="mb-6">
           <FaCheckCircle className="text-green-500 text-6xl mx-auto" />
         </div>

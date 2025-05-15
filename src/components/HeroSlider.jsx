@@ -50,7 +50,7 @@ const HeroSlider = () => {
             <img
               src={slide.image}
               alt={slide.title || 'Slide image'}
-              className="w-full h-auto object-contain opacity-80"
+              className="w-full h-full object-cover opacity-80"
             />
             {/* Green overlay */}
             <div className="absolute inset-0 bg-[var(--color-green)] opacity-30"></div>
@@ -62,16 +62,16 @@ const HeroSlider = () => {
               <p className="text-lg md:text-xl text-[var(--color-secondary)] mb-4">
                 Food Ordering and Event Catering
               </p>
-              <div className="flex space-x-4">
+              <div className="flex space-x-2 sm:space-x-4">
                 <button
                   onClick={scrollToSection}
-                  className="px-6 py-2 bg-[var(--color-green)] cursor-pointer text-[var(--color-secondary)] font-semibold rounded-md hover:bg-[var(--color-green-dark)] transition-colors"
+                  className="px-4 py-2 sm:px-6 sm:py-2 bg-[var(--color-green)] cursor-pointer text-[var(--color-secondary)] font-semibold rounded-md hover:bg-[var(--color-green-dark)] transition-colors text-sm sm:text-base"
                 >
                   Order Now
                 </button>
                 <button
                   onClick={goToEventCatering}
-                  className="px-6 py-2 bg-[var(--color-green)]  cursor-pointer text-[var(--color-secondary)] font-semibold rounded-md hover:bg-[var(--color-green-dark)] transition-colors"
+                  className="px-4 py-2 sm:px-6 sm:py-2 bg-[var(--color-green)]  cursor-pointer text-[var(--color-secondary)] font-semibold rounded-md hover:bg-[var(--color-green-dark)] transition-colors text-sm sm:text-base"
                 >
                   Event Catering
                 </button>

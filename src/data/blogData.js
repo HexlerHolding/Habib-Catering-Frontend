@@ -1,165 +1,161 @@
 const blogPosts = [
   {
     id: 1,
-    title: "Habib Catering: The Awami Brand That's All About Local Love",
+    title: "5 Tips for Effortless Food Ordering with Habib Catering",
     image: "/blog1.jpg",
-    altImage: "https://via.placeholder.com/800x400/FFD700/8B4513?text=Habib+Catering+Local+Brand",
+    altImage: "https://via.placeholder.com/800x400/FFD700/8B4513?text=Effortless+Food+Ordering",
     author: "Syed Arslan",
-    date: "Oct 11, 2023",
-    excerpt: "At Habib Catering, we do more than serve food; we craft a community experience, with a pinch of desi tadka and a whole lot of Pakistani pride.",
-    slug: "Habib Catering-awami-brand",
+    date: "May 1, 2025",
+    excerpt: "Discover how to make your next meal a breeze with these simple food ordering tips from Habib Catering.",
+    slug: "effortless-food-ordering-tips",
     content: [
       {
         type: "paragraph",
-        text: "At Habib Catering, we do more than serve food; we craft a community experience, with a pinch of desi tadka and a whole lot of Pakistani pride. We believe in food as something that binds us to our heritage, celebrates our roots and showcases what makes Pakistan truly special. So, let's dive into how Habib Catering is not just a food chain but a flag bearer of all-things local and especially a 'Proud Pakistani Brand'!"
+        text: "Ordering food should be easy and enjoyable! At Habib Catering, we want to make sure your experience is smooth from start to finish. Here are our top 5 tips for effortless food ordering."
       },
       {
         type: "heading",
-        text: "Locally Sourced, Ghar ka Taste:"
+        text: "1. Plan Ahead"
       },
       {
         type: "paragraph",
-        text: "If you have you ever wondered why every bite of your favorite Habib Catering dish has a local touch? That's because it does! From the tangy tomatoes in your sauce to the crunchy onions topping your Cuisine, most of what we use comes from our own backyard—Pakistan. By sourcing our ingredients locally, we not only bring you the freshest flavors but also support our local farmers. This is our way of keeping the community close and the quality even closer."
+        text: "Check our menu online and decide what you want before you order. This saves time and helps you avoid last-minute indecision."
       },
       {
         type: "heading",
-        text: "Desi Delights on a Dough Base:"
+        text: "2. Use Our App or Website"
       },
       {
         type: "paragraph",
-        text: "We're all about mirroring the vibrant culture of our streets in the menu. Every item tells a story, whether it's the spicy Hot N Spicy Cuisine or the tangy Oven Baked Wings. The story of local taste with global standards."
+        text: "Ordering through our app or website is quick and secure. You can customize your order, save your favorite dishes, and track your delivery in real time."
       },
       {
         type: "heading",
-        text: "Community Over Competition:"
+        text: "3. Double-Check Your Order"
       },
       {
         type: "paragraph",
-        text: "At Habib Catering, we believe in growing together. That's why we partner with local businesses, sponsor community events, and create job opportunities for the youth. Our franchisee program isn't just about expanding; it's about empowering entrepreneurs who share our vision of quality and community."
+        text: "Before you hit submit, review your cart to make sure you’ve got everything you need. Don’t forget to add drinks or desserts!"
       },
       {
         type: "heading",
-        text: "The Taste of Tomorrow:"
+        text: "4. Take Advantage of Deals"
       },
       {
         type: "paragraph",
-        text: "As we continue to grow, our commitment to Pakistani flavors and values remains unwavering. We're constantly innovating, but our recipes will always carry that distinct desi twist that makes a Habib Catering meal not just a meal but a celebration of our shared heritage."
+        text: "Look out for special offers and discounts on our homepage. You might find a great deal on your favorite meal."
+      },
+      {
+        type: "heading",
+        text: "5. Share Your Experience"
       },
       {
         type: "paragraph",
-        text: "Next time you take a bite of your favorite Habib Catering creation, remember you're not just enjoying great food; you're supporting local farmers, celebrating Pakistani culinary creativity, and being part of a community that values its roots. That's the Habib Catering promise—always fresh, always local, always proudly Pakistani!"
+        text: "We love hearing from you! Tag us on social media with your Habib Catering order and let us know how we did."
       }
     ]
   },
   {
     id: 2,
-    title: "Habib Catering and Chill: The Perfect Movie Night Pairings",
+    title: "Why Catering is the Secret Ingredient to a Successful Event",
     image: "/blog2.jpg",
-    altImage: "https://via.placeholder.com/800x400/FFD700/FF0000?text=Netflix+and+Cuisine",
+    altImage: "https://via.placeholder.com/800x400/FFD700/FF0000?text=Event+Catering",
     author: "Syed Arslan",
-    date: "Nov 5, 2023",
-    excerpt: "There's nothing better than settling in for a cozy movie night with friends and family, and what makes it even better? The perfect Habib Catering spread!",
-    slug: "Habib Catering-movie-night",
+    date: "April 20, 2025",
+    excerpt: "From weddings to office parties, discover how professional catering can elevate any occasion.",
+    slug: "catering-secret-successful-event",
     content: [
       {
         type: "paragraph",
-        text: "There's nothing better than settling in for a cozy movie night with friends and family, and what makes it even better? The perfect Habib Catering spread! Here's our guide to pairing your favorite films with the ideal Habib Catering dishes."
+        text: "Planning an event? The food you serve can make or break the experience. Here’s why choosing Habib Catering is the best decision for your next gathering."
       },
       {
         type: "heading",
-        text: "Action & Adventure: Spicy Sensation"
+        text: "Stress-Free Planning"
       },
       {
         type: "paragraph",
-        text: "For those heart-pounding action sequences, you need something that packs a punch! Our Hot N Spicy Cuisine with extra jalapeños will keep your taste buds as excited as the on-screen explosions. Add our Atomic Wings for an extra kick during those intense chase scenes."
+        text: "Our team handles everything from menu selection to setup and cleanup, so you can focus on your guests."
       },
       {
         type: "heading",
-        text: "Romance: Sweet & Savory"
+        text: "Custom Menus for Every Occasion"
       },
       {
         type: "paragraph",
-        text: "As the love story unfolds, enjoy our Club Sandwich paired with sweet potato fries. The combination of savory sandwich with the hint of sweetness from the fries perfectly complements those tender romantic moments. Finish with our Chocolate Lava Cake for the perfect happy ending."
+        text: "Whether it’s a formal dinner or a casual get-together, we offer a variety of menu options to suit your needs and preferences."
       },
       {
         type: "heading",
-        text: "Comedy: Fun Finger Foods"
+        text: "Professional Presentation"
       },
       {
         type: "paragraph",
-        text: "Laughter goes best with food you can easily grab between giggles. Our variety of garlic bread sticks and cheese poppers are perfect for those hilarious moments when you can't take your eyes off the screen. Don't forget our specialty Desi-style loaded fries to share!"
+        text: "Our staff ensures every dish looks as good as it tastes, leaving a lasting impression on your guests."
       },
       {
         type: "heading",
-        text: "Horror: Comfort Food"
+        text: "Delicious, Reliable Food"
       },
       {
         type: "paragraph",
-        text: "When the scares start coming, you need something comforting! Our Classic Cheese Cuisine with extra cheese provides that warm, gooey comfort food feeling that helps ease those jump scares. Our thick milkshakes also provide sweet relief during the most terrifying scenes."
+        text: "With Habib Catering, you can count on fresh, flavorful food delivered on time, every time."
       },
       {
         type: "paragraph",
-        text: "So the next time you're planning a movie marathon, remember that Habib Catering has all your movie night needs covered. Order online for quick delivery, and don't forget to share your movie night pairing combinations with us on social media using #Habib CateringAndChill!"
+        text: "Let us help you create an event to remember! Contact us today to discuss your catering needs."
       }
     ]
   },
   {
     id: 3,
-    title: "How to Host the Ultimate Cuisine Party with Habib Catering",
+    title: "How to Choose the Perfect Menu for Your Next Party",
     image: "/blog3.jpg",
-    altImage: "https://via.placeholder.com/800x400/FFD700/000000?text=Cuisine+Party",
+    altImage: "https://via.placeholder.com/800x400/FFD700/000000?text=Menu+Planning",
     author: "Syed Arslan",
-    date: "Dec 15, 2023",
-    excerpt: "Whether it's a birthday celebration, game night, or just a weekend get-together, a Cuisine party is always a crowd-pleaser.",
-    slug: "ultimate-Cuisine-party",
+    date: "March 30, 2025",
+    excerpt: "Not sure what to serve at your next event? Here’s a simple guide to picking the right menu with Habib Catering.",
+    slug: "choose-perfect-menu-party",
     content: [
       {
         type: "paragraph",
-        text: "Whether it's a birthday celebration, game night, or just a weekend get-together, a Cuisine party is always a crowd-pleaser. Here's our guide to hosting the ultimate Habib Catering Cuisine party that your guests will remember!"
+        text: "Choosing the right menu is key to a successful party. Here’s how Habib Catering can help you make the best choice."
       },
       {
         type: "heading",
-        text: "Plan Your Cuisine Menu"
+        text: "Consider Your Guests"
       },
       {
         type: "paragraph",
-        text: "Variety is key when hosting a Cuisine party. Make sure to include classics like our Traditional Cheese and Pepperoni Cuisines, but don't be afraid to add some exciting options like our Desi Special or Fajita Sicilian. For your vegetarian friends, our Garden Fresh Cuisine is a must-have. And don't forget our new BBQ Ranch Cuisine for those who love to try something different!"
+        text: "Think about your guests’ preferences and dietary needs. We offer vegetarian, vegan, and gluten-free options to accommodate everyone."
       },
       {
         type: "heading",
-        text: "Perfect Pairings"
+        text: "Mix and Match Dishes"
       },
       {
         type: "paragraph",
-        text: "Every great Cuisine party needs complementary sides! Our garlic bread sticks, cheese poppers, and crispy wings make for perfect starters. For beverages, our range of fresh sodas and milkshakes will keep everyone refreshed between slices."
+        text: "A variety of appetizers, main courses, and desserts keeps things interesting and ensures there’s something for everyone."
       },
       {
         type: "heading",
-        text: "Setting the Scene"
+        text: "Don’t Forget the Drinks"
       },
       {
         type: "paragraph",
-        text: "Create a casual buffet-style setting where guests can help themselves. Use colorful plates and napkins, play upbeat music, and consider creating a DIY dessert station with our chocolate brownies and ice cream for after the main course."
+        text: "Pair your menu with a selection of beverages, from fresh juices to classic sodas."
       },
       {
         type: "heading",
-        text: "Group Order Made Easy"
+        text: "Ask for Recommendations"
       },
       {
         type: "paragraph",
-        text: "Habib Catering makes group ordering simple! Use our app's group order feature where everyone can add their own preferences to a single order. This way, everyone gets exactly what they want without the confusion of multiple orders."
-      },
-      {
-        type: "heading",
-        text: "Party Games"
+        text: "Our catering experts are happy to suggest crowd-pleasing combinations based on your event type and size."
       },
       {
         type: "paragraph",
-        text: "Between bites, keep your guests entertained with simple games like Cuisine trivia or a \"create your dream Cuisine\" drawing contest where the most creative concept wins a free Cuisine on your next order!"
-      },
-      {
-        type: "paragraph",
-        text: "Remember, the best parties are about bringing people together, and nothing connects people like sharing a delicious Habib Catering meal. Tag us in your Cuisine party photos with #Habib CateringParty for a chance to be featured on our social media!"
+        text: "Ready to plan your party? Explore our menu online or contact us for personalized advice!"
       }
     ]
   }

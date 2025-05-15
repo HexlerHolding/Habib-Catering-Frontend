@@ -1,9 +1,24 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { FaArrowLeft } from 'react-icons/fa';
 
 const PrivacyPolicy = () => {
+    const navigate = useNavigate();
+    // Always scroll to top when MenuPage mounts
+    useEffect(() => {
+      window.scrollTo(0, 0);
+    }, []);
   return (
     <div className="bg-background min-h-screen mt-10">      
       <div className="container mx-auto px-4 py-8 max-w-4xl">
+        {/* Go Back Arrow */}
+        <button
+          className="flex items-center text-primary cursor-pointer hover:text-accent font-medium mb-4 px-2 py-1 rounded transition-colors"
+          onClick={() => navigate(-1)}
+        >
+          <FaArrowLeft className="mr-2" />
+          Back
+        </button>
         <h1 className="text-3xl md:text-4xl font-bold mb-6 text-text">Privacy Policy</h1>
         
         <div className="bg-white rounded-lg shadow-md p-5 md:p-8">

@@ -1,16 +1,31 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import { FaArrowRight, FaCalendarAlt, FaUser, FaTag } from 'react-icons/fa';
+import React, { useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { FaArrowRight, FaCalendarAlt, FaUser, FaTag, FaArrowLeft } from 'react-icons/fa';
 import { getAllBlogs } from '../data/blogData';
 
 const BlogsPage = () => {
   const blogPosts = getAllBlogs();
   const featuredPost = blogPosts[0]; // Using the first blog as featured post
   const regularPosts = blogPosts.slice(1);
+  const navigate = useNavigate();
+
+  // Always scroll to top when MenuPage mounts
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   return (
     <div className="bg-background min-h-screen pt-14c sm:pt-16 pb-20 sm:pb-24">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Go Back Arrow */}
+        <button
+          className="flex items-center text-primary cursor-pointer hover:text-accent font-medium mb-4 px-2 py-1 rounded transition-colors"
+          onClick={() => navigate(-1)}
+        >
+          <FaArrowLeft className="mr-2" />
+          Back
+        </button>
+        
         {/* Header Section */}
         <div className="max-w-3xl mx-auto text-center mb-12 sm:mb-16">
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 text-text font-montserrat leading-tight">

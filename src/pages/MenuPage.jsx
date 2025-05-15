@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
-import { FaHeart, FaSearch } from 'react-icons/fa';
+import { FaHeart, FaSearch, FaArrowLeft } from 'react-icons/fa';
 import { useDispatch, useSelector } from 'react-redux';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { favoritesService } from '../../Services/favoritesService';
 import { menuService } from '../../Services/menuService';
 import { selectIsAuthenticated, selectToken } from '../redux/slices/authSlice';
@@ -63,6 +63,7 @@ const MenuItem = ({ item, isFavorite, onToggleFavorite, onAddToCart, isLoggedIn 
 
 const MenuPage = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const queryParams = new URLSearchParams(location.search);
   const categoryFromUrl = queryParams.get('category');
 
@@ -77,6 +78,11 @@ const MenuPage = () => {
 
   const isLoggedIn = useSelector(selectIsAuthenticated);
   const token = useSelector(selectToken);
+
+  // Always scroll to top when MenuPage mounts
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   // Set active category from URL parameter on component mount
   useEffect(() => {
@@ -174,9 +180,17 @@ const MenuPage = () => {
   return (
     <div className="min-h-screen bg-background  pb-20 pt-14">
       <div className="container mx-auto">
+        {/* Go Back Arrow */}
+        <button
+          className="flex items-center text-primary cursor-pointer hover:text-accent font-medium mb-2 px-2 py-1 rounded transition-colors"
+          onClick={() => navigate(-1)}
+        >
+          <FaArrowLeft className="mr-2" />
+          Back
+        </button>
         <h1 className="text-2xl md:text-4xl font-bold mb-4 text-center text-black">
             Our Menu
-          </h1>
+        </h1>
         <div className="sticky top-20 pt-8 pb-2 px-4 bg-background z-10">
           
           {/* Search Bar */}

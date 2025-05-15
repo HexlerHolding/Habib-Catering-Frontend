@@ -55,7 +55,7 @@ const Contact = () => {
           rows="5"
           required
         ></textarea>
-        <button type="submit" className="px-6 py-2 bg-[var(--color-green)] text-[var(--color-secondary)] font-semibold rounded-md hover:bg-[var(--color-green-dark)] transition-colors">
+        <button type="submit" className="px-6 py-2 bg-[var(--color-green)] text-[var(--color-secondary)] font-semibold cursor-pointer rounded-md hover:bg-primary/80 transition-colors hover:brightness-105">
           Send Message
         </button>
       </form>

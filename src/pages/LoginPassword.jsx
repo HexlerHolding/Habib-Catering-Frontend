@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { toast } from 'react-hot-toast';
-import { FaEye, FaEyeSlash, FaLock } from "react-icons/fa";
+import { FaEye, FaEyeSlash, FaLock, FaArrowLeft } from "react-icons/fa";
 import { useDispatch } from 'react-redux';
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { authService } from '../../Services/authService';
@@ -74,10 +74,20 @@ const LoginPassword = () => {
 
   return (
     <div className="flex flex-col md:flex-row h-screen overflow-hidden relative">
-      <Link to="/" className="flex absolute top-4 md:top-8 left-4 md:left-8 items-center z-10">
-        <img src="/offerSectionImage34.png" alt="Habib Catering Logo" className="w-8 md:w-10" />
-        <h1 className="font-bold text-xl md:text-2xl ml-2">Habib Catering</h1>
-      </Link>
+      {/* Top Bar: Back Arrow + Logo */}
+      <div className="flex items-start flex-col-reverse gap-4 absolute top-4 left-4 md:top-8 md:left-8 z-20">
+        <button
+          className="flex items-center text-primary cursor-pointer hover:text-accent font-medium px-2 py-1 rounded transition-colors"
+          onClick={() => navigate(-1)}
+        >
+          <FaArrowLeft className="mr-2" />
+          Back
+        </button>
+        <Link to="/" className="flex items-center">
+          <img src="/offerSectionImage34.png" alt="Habib Catering Logo" className="w-8 md:w-10" />
+          <h1 className="font-bold text-xl md:text-2xl ml-2">Habib Catering</h1>
+        </Link>
+      </div>
 
       <div className="w-full h-full md:w-1/2 p-4 md:p-8 flex flex-col justify-center items-center bg-background pt-20 md:pt-8">
         <div className="max-w-md w-full text-center">

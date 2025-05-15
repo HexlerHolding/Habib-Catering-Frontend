@@ -5,6 +5,7 @@ import { useDispatch } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import { authService } from '../../Services/authService';
 import { login } from '../redux/slices/authSlice';
+import { TITLE } from '../data/globalText';
 
 const Register = () => {    
     const [showPassword, setShowPassword] = useState(false);
@@ -103,10 +104,10 @@ const Register = () => {
                 <Link to="/" className="flex items-center">
                     <img 
                         src='/offerSectionImage34.png'
-                        alt="Habib Catering Logo" 
+                        alt={`${TITLE} Logo`}
                         className="w-8 md:w-10"
                     />
-                    <h1 className='font-bold text-xl md:text-2xl ml-2'>Habib Catering</h1>
+                    <h1 className='font-bold text-xl md:text-2xl ml-2'>{TITLE}</h1>
                 </Link>
             </div>
 

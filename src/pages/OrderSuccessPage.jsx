@@ -39,8 +39,8 @@ const OrderSuccessPage = () => {
   }
   
   return (
-    <div className="min-h-screen bg-background flex flex-col items-center justify-center p-2 sm:p-4 mt-4 sm:mt-10">
-      <div className="w-full max-w-md bg-secondary rounded-lg shadow-lg p-4 sm:p-8 text-center overflow-x-auto">
+    <div className="min-h-screen bg-background flex flex-col items-center justify-center p-2 sm:p-4 mt-4 sm:mt-9">
+      <div className="w-full max-w-md bg-background rounded-lg shadow-lg p-4 sm:p-8 text-center overflow-x-auto">
       {/* Go Back Arrow */}
       <button
         className="flex items-center text-primary cursor-pointer hover:text-accent font-medium mb-4 px-2 py-1 rounded transition-colors self-start"

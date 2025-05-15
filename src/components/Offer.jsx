@@ -1,4 +1,7 @@
 
+import React from 'react';
+import { TITLE } from '../data/globalText';
+
 const Offer = () => {
   return (
     <div className="relative w-full overflow-hidden h-[31rem] flex bg-background" 
@@ -38,7 +41,7 @@ const Offer = () => {
               <h2 className="text-6xl font-extrabold  leading-tight drop-shadow-lg">
                 let's talk
                 <br />
-                <span className="text-8xl">Habib Catering</span>
+                <span className="text-8xl">{TITLE}</span>
               </h2>
             </div>
             

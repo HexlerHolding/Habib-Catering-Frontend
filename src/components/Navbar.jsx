@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 import { selectIsAuthenticated } from '../redux/slices/authSlice';
 import { decreaseQuantity, increaseQuantity, removeFromCart, selectCartItems, selectCartTotalAmount, selectCartTotalQuantity } from '../redux/slices/cartSlice';
 import AddressSelector from './AddressSelector';
+import { TITLE } from '../data/globalText';
 
 const Navbar = ({ toggleSidebar }) => {
   const [isCartOpen, setIsCartOpen] = useState(false);
@@ -98,7 +99,7 @@ const Navbar = ({ toggleSidebar }) => {
         <Link to="/" className=" hidden sm:flex items-center cursor-pointer">
           <img 
             src='/habiblogo2.jpg'
-            alt="Habib Catering Logo" 
+            alt={`${TITLE} Logo`} 
             className="h-16 w-16 rounded-full"
           />
         </Link>

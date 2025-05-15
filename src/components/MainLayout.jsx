@@ -24,7 +24,7 @@ const MainLayout = ({
         isLoggedIn={isAuthenticated}
         user={user}
       />
-      <main className="content">{children}</main>
+      <main className="content bg-background">{children}</main>
       <Footer />
       <OrderNowButtonWrapper />
     </>

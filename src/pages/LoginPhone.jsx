@@ -4,6 +4,7 @@ import { FaEnvelope, FaArrowLeft } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { authService } from "../../Services/authService";
+import { TITLE } from "../data/globalText";
 
 const LoginPhone = () => {
   const [phoneNumber, setPhoneNumber] = useState("");
@@ -78,8 +79,8 @@ const LoginPhone = () => {
           to="/"
           className="flex items-center"
         >
-          <img src="/offerSectionImage34.png" alt="Habib Catering Logo" className="w-8 md:w-10" />
-          <h1 className="font-bold text-xl md:text-2xl ml-2">Habib Catering</h1>
+          <img src="/offerSectionImage34.png" alt={`${TITLE} Logo`} className="w-8 md:w-10" />
+          <h1 className="font-bold text-xl md:text-2xl ml-2">{TITLE}</h1>
         </Link>
       </div>
 

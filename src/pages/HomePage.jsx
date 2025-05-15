@@ -7,7 +7,7 @@ import Offer from '../components/Offer';
 
 const HomePage = () => {
   return (
-    <div className="relative">
+    <div className="relative bg-background">
       {/* Hero Slider */}
       <HeroSlider />
       

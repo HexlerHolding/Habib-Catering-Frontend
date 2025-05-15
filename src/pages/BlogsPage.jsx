@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { FaArrowRight, FaCalendarAlt, FaUser, FaTag, FaArrowLeft } from 'react-icons/fa';
 import { getAllBlogs } from '../data/blogData';
+import { TITLE } from '../data/globalText';
 
 const BlogsPage = () => {
   const blogPosts = getAllBlogs();
@@ -33,7 +34,7 @@ const BlogsPage = () => {
           </h1>
           <div className="w-20 h-1 bg-primary mx-auto mb-6 sm:mb-8 rounded-full"></div>
           <p className="text-text/80 max-w-2xl mx-auto text-base sm:text-lg leading-relaxed">
-            Discover the latest news, tips, and delicious stories from the world of Habib Catering
+            Discover the latest news, tips, and delicious stories from the world of {TITLE}
           </p>
         </div>
         

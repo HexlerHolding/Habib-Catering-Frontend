@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { AiOutlineInfoCircle } from 'react-icons/ai';
+import { IoClose } from 'react-icons/io5';
 
 const CardDetailsModal = ({ isOpen, onClose, onSave }) => {
   const [cardData, setCardData] = useState({
@@ -126,8 +128,8 @@ const CardDetailsModal = ({ isOpen, onClose, onSave }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-text/50 flex items-center justify-center z-50">
-      <div className="bg-secondary rounded-lg shadow-xl w-full max-w-md mx-4 border border-primary/20">
+    <div className="fixed inset-0 bg-modal/50 flex items-center justify-center z-50">
+      <div className="bg-background rounded-lg shadow-xl w-full max-w-md mx-4 border border-primary/20">
         <div className="p-6">
           <div className="flex justify-between items-center mb-6">
             <h3 className="text-xl font-bold text-text font-poppins">Enter Card Details</h3>
@@ -135,9 +137,7 @@ const CardDetailsModal = ({ isOpen, onClose, onSave }) => {
               onClick={onClose} 
               className="text-text/70 hover:text-text"
             >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
-              </svg>
+              <IoClose className="w-5 h-5" />
             </button>
           </div>
           
@@ -250,9 +250,7 @@ const CardDetailsModal = ({ isOpen, onClose, onSave }) => {
         <div className="p-4 bg-primary/10 rounded-b-lg border-t border-primary/20">
           <div className="flex items-center">
             <div className="text-primary">
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-              </svg>
+              <AiOutlineInfoCircle className="w-6 h-6" />
             </div>
             <p className="ml-2 text-sm text-text/70 font-montserrat">
               Your card information is securely processed and never stored on our servers.

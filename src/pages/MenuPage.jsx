@@ -10,14 +10,14 @@ import { addToCart } from '../redux/slices/cartSlice';
 
 const MenuItem = ({ item, isFavorite, onToggleFavorite, onAddToCart, isLoggedIn }) => {
   return (
-    <div className="bg-secondary rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all p-4 flex flex-col h-full">
+    <div className="bg-background rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all p-4 flex flex-col h-full">
       <div className="relative">
         {/* Heart icon */}
         <button
           className="absolute top-2 right-2"
           onClick={() => onToggleFavorite(item)}
         >
-          <FaHeart className={`w-6 h-6 cursor-pointer ${isFavorite ? 'text-accent fill-current' : 'text-secondary'}`} />
+          <FaHeart className={`w-6 h-6 cursor-pointer ${isFavorite ? 'text-accent fill-current hover:text-accent/80' : 'text-secondary hover:text-secondary/80'}`} />
         </button>
         {/* Image container with slate background */}
         <div className="bg-text/10 rounded-lg p-2 mb-3">
@@ -240,8 +240,8 @@ const MenuPage = () => {
         )}
         {/* Menu Items Grid - Scrollable Section */}
         {!isLoading && !error && (
-          <div className="px-4 pt-4 pb-12">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+          <div className="px-4 pt-4 pb-12 ">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 ">
               {filteredItems.map((item) => (
                 <MenuItem
                   key={item.id}

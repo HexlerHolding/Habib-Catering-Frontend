@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { TITLE } from '../data/globalText';
 
 const slides = [
   {
@@ -57,7 +58,7 @@ const HeroSlider = () => {
             {/* Text and buttons */}
             <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
               <h1 className="text-4xl md:text-5xl font-bold text-[var(--color-secondary)] mb-2">
-                Habib Catering
+                {TITLE}
               </h1>
               <p className="text-lg md:text-xl text-[var(--color-secondary)] mb-4">
                 Food Ordering and Event Catering

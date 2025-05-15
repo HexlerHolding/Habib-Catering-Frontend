@@ -11,7 +11,7 @@ const AppDownload = () => {
   ];
 
   return (
-    <div className="w-full py-10 px-8 rounded-3xl overflow-hidden relative">
+    <div className="w-full py-10 px-8 rounded-3xl overflow-hidden relative ">
       {/* Curved gradient background */}
       <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-primary z-0 overflow-hidden">
         {/* Top left curve effect - using a pseudo-element with border-radius */}

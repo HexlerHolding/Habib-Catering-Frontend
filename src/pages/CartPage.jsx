@@ -138,7 +138,7 @@ const CartPage = () => {
   };
   
   return (
-    <div className="min-h-screen pt-14 sm:pt-5 pb-16 mt-10">
+    <div className="min-h-screen pt-14 sm:pt-5 pb-16 mt-9 bg-background">
       <div className="container mx-auto px-4">
         {/* Go Back Arrow */}
         <button
@@ -164,7 +164,7 @@ const CartPage = () => {
           <div className="lg:grid lg:grid-cols-3 lg:gap-8">
             {/* Cart Items Section (2/3 width on large screens) */}
             <div className="lg:col-span-2 mb-8 lg:mb-0">
-              <div className="bg-secondary rounded-lg shadow-sm p-6 h-auto overflow-y-auto ">
+              <div className="bg-background rounded-lg shadow-sm p-6 h-auto overflow-y-auto ">
                 <h2 className="text-xl font-bold mb-6 text-text">Cart Items ({totalQuantity})</h2>
                 
                 {/* Cart items list */}
@@ -265,7 +265,7 @@ const CartPage = () => {
             
             {/* Order Summary Section (1/3 width on large screens) */}
             <div className="lg:col-span-1">
-              <div className="bg-secondary rounded-lg shadow-sm p-6 sticky top-24">
+              <div className="bg-background rounded-lg shadow-sm p-6 sticky top-24">
                 <h2 className="text-xl font-bold mb-6 text-text">Order Summary</h2>
                 
                 {/* Price breakdown */}
@@ -324,7 +324,7 @@ const CartPage = () => {
           </div>
         ) : (
           // Empty cart view
-          <div className="bg-secondary rounded-lg shadow-sm p-12 text-center">
+          <div className="bg-background rounded-lg shadow-sm p-12 text-center">
             <div className="flex justify-center mb-6">
               <div className="bg-text/5 w-24 h-24 rounded-full flex items-center justify-center">
                 <FaShoppingCart size={48} className="text-text/30" />

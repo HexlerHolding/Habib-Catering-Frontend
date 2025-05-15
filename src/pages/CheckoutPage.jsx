@@ -428,7 +428,7 @@ const CheckoutPage = () => {
   }
   
   return (
-    <>
+    <div className='bg-background min-h-screen'>
       {/* Address Selector Modal - Conditionally rendered */}
       {showAddressSelectorModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
@@ -447,7 +447,7 @@ const CheckoutPage = () => {
         </div>
       )}
 
-      <div className="max-w-6xl mx-auto px-4 py-8 bg-background mt-10">
+      <div className="max-w-6xl mx-auto px-4 py-8 bg-background mt-9">
         {/* Checkout header */}
         <div className="mb-8">
           <button 
@@ -481,7 +481,7 @@ const CheckoutPage = () => {
           {/* Customer information form - 2/3 width */}
           <div className="md:col-span-2">
             {/* Branch Selection Section */}
-            <div className="bg-secondary rounded-lg shadow-md p-6 mb-6 border border-primary/20">
+            <div className="bg-background rounded-lg shadow-md p-6 mb-6 border border-primary/20">
               <h2 className="text-xl font-bold mb-4 text-text font-poppins">Select Branch</h2>
               
               {branchLoading ? (
@@ -518,7 +518,7 @@ const CheckoutPage = () => {
             </div>
           
             {/* Customer Information Section */}
-            <div className="bg-secondary rounded-lg shadow-md p-6 mb-6 border border-primary/20">
+            <div className="bg-background rounded-lg shadow-md p-6 mb-6 border border-primary/20">
               <h2 className="text-xl font-bold mb-4 text-text font-poppins">Customer Information</h2>
               
               <form id="checkout-form" onSubmit={handleSubmit}>
@@ -695,7 +695,7 @@ const CheckoutPage = () => {
           
           {/* Order Summary - 1/3 width */}
           <div className="md:col-span-1">
-            <div className="bg-secondary rounded-lg shadow-md p-6 sticky top-20 border border-primary/20">
+            <div className="bg-background rounded-lg shadow-md p-6 sticky top-20 border border-primary/20">
               <h2 className="text-xl font-bold mb-4 text-text font-poppins">Order Summary</h2>
               
               {/* Product list */}
@@ -742,7 +742,7 @@ const CheckoutPage = () => {
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

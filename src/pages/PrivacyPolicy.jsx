@@ -1,6 +1,8 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FaArrowLeft } from 'react-icons/fa';
+import { TITLE } from '../data/globalText';
+import { CONTACT_INFO } from '../data/globalText';
 
 const PrivacyPolicy = () => {
     const navigate = useNavigate();
@@ -9,7 +11,7 @@ const PrivacyPolicy = () => {
       window.scrollTo(0, 0);
     }, []);
   return (
-    <div className="bg-background min-h-screen mt-10">      
+    <div className="bg-background min-h-screen mt-9">      
       <div className="container mx-auto px-4 py-8 max-w-4xl">
         {/* Go Back Arrow */}
         <button
@@ -21,11 +23,11 @@ const PrivacyPolicy = () => {
         </button>
         <h1 className="text-3xl md:text-4xl font-bold mb-6 text-text">Privacy Policy</h1>
         
-        <div className="bg-white rounded-lg shadow-md p-5 md:p-8">
+        <div className="bg-background rounded-lg shadow-md p-5 md:p-8">
           <section className="mb-8">
             <h2 className="text-xl md:text-2xl font-semibold mb-4 text-text">Introduction</h2>
             <p className="mb-4 text-text">
-              At Habib Catering, we take your privacy seriously. This Privacy Policy explains how we collect, use, 
+              At {TITLE}, we take your privacy seriously. This Privacy Policy explains how we collect, use, 
               disclose, and safeguard your information when you visit our website or use our mobile application.
             </p>
             <p className="mb-4 text-text">
@@ -110,17 +112,15 @@ const PrivacyPolicy = () => {
               If you have any questions about this Privacy Policy, please contact us at:
             </p>
             <div className="bg-primary/20 p-4 rounded-lg text-text">
-              <p className="font-medium">Habib Catering Customer Service</p>
-              <p>Email: privacy@habibcatering.com</p>
-              <p>Phone: 111-111-111</p>
-              <p>Address: Habib Catering Headquarters, Main Street, City</p>
+              <p className="font-medium">{TITLE} Customer Service</p>
+              <p>Email: {CONTACT_INFO.email}</p>
+              <p>Phone: {CONTACT_INFO.phone}</p>
+              <p>Address: {CONTACT_INFO.address}</p>
             </div>
           </section>
         </div>
         
-        <div className="text-center mt-8 text-sm text-text/60">
-          <p>Last Updated: May 2024</p>
-        </div>
+       
       </div>
     </div>
   );

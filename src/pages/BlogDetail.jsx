@@ -60,7 +60,7 @@ const BlogDetail = () => {
   }
 
   return (
-    <div className="bg-background min-h-screen pb-20 mt-10">
+    <div className="bg-background min-h-screen pb-20 mt-9">
       {/* Navigation Link */}
       <div className="container mx-auto px-4 sm:px-6 pt-6">
         <Link to="/blogs" className="inline-flex items-center text-accent hover:text-accent/70 font-medium bg-background py-2 px-4 rounded-lg shadow-md transition-colors border-b-2 border-accent mb-2">

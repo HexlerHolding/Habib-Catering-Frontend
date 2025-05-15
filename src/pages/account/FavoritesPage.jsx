@@ -9,14 +9,14 @@ import { addToCart } from '../../redux/slices/cartSlice';
 
 // MenuItem component copied from MenuPage for consistent card UI
 const MenuItem = ({ item, onRemoveFavorite, onAddToCart }) => (
-  <div className="bg-secondary rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all p-4 flex flex-col h-full">
+  <div className="bg-background rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all p-4 flex flex-col h-full">
     <div className="relative">
       {/* Heart icon for remove */}
       <button
         className="absolute top-2 right-2"
         onClick={() => onRemoveFavorite(item)}
       >
-        <FaHeart className="w-6 h-6 cursor-pointer text-accent fill-current" />
+        <FaHeart className="w-6 h-6 cursor-pointer text-accent hover:text-accent/80 fill-current" />
       </button>
       {/* Image container */}
       <div className="bg-text/10 rounded-lg p-2 mb-3">

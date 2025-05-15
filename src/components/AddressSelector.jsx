@@ -455,7 +455,7 @@ const AddressSelector = () => {
 
       {/* Modal Overlay */}
       {isModalOpen && (
-        <div className="fixed inset-0 bg-text/70 z-50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 bg-modal/50 z-50 flex items-center justify-center p-4">
           <div
             ref={modalRef}
             className="bg-background rounded-lg w-full h-auto overflow-auto max-w-xl shadow-xl"

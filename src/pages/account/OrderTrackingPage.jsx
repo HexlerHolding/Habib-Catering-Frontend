@@ -25,7 +25,7 @@ const OrderTrackingPage = () => {
         ],
         total: 690,
         restaurant: {
-          name: 'Habib Catering - F-10 Islamabad',
+          name: `${TITLE} - F-10 Islamabad`,
           address: 'Plot no 2-D Sector F-10 Islamabad'
         }
       };

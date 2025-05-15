@@ -13,10 +13,12 @@
   --color-primary: #303703; /* green */
   --color-secondary: #ffffff;
   --color-accent: #d2604e;
-  --color-text: #0652cc;
-  /* --color-text: #0a131c; */
-  --color-background: #c7c7c7;
-  /* --color-background: #ffffff; */
+  /* --color-text: #0652cc; */
+  --color-text-secondary: #000000;
+  --color-modal: #000000;
+  --color-text: #0a131c;
+  /* --color-background: #c7c7c7; */
+  --color-background: #ffffff;
   --color-green: #303703; /* Custom green for overlay, text, and buttons */
   --color-green-dark: #252d03; /* Darker green for hover effects */
 }

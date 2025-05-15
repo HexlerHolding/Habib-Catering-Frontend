@@ -458,7 +458,7 @@ const AddressSelector = () => {
         <div className="fixed inset-0 bg-text/70 z-50 flex items-center justify-center p-4">
           <div
             ref={modalRef}
-            className="bg-background rounded-lg w-full h-[90vh] overflow-auto max-w-xl shadow-xl"
+            className="bg-background rounded-lg w-full h-auto overflow-auto max-w-xl shadow-xl"
           >
             {/* Modal Header */}
             <div className="flex justify-between items-center p-4 border-b border-text/10">

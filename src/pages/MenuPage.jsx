@@ -182,7 +182,7 @@ const MenuPage = () => {
       <div className="container mx-auto">
         {/* Go Back Arrow */}
         <button
-          className="flex items-center text-primary cursor-pointer hover:text-accent font-medium mb-2 px-2 py-1 rounded transition-colors"
+          className="flex items-center ml-3 text-primary cursor-pointer hover:text-accent font-medium mb-2 px-2 py-1 rounded transition-colors"
           onClick={() => navigate(-1)}
         >
           <FaArrowLeft className="mr-2" />

@@ -13,7 +13,7 @@ const PrivacyPolicy = () => {
       <div className="container mx-auto px-4 py-8 max-w-4xl">
         {/* Go Back Arrow */}
         <button
-          className="flex items-center text-primary cursor-pointer hover:text-accent font-medium mb-4 px-2 py-1 rounded transition-colors"
+          className="flex items-center ml-1 text-primary cursor-pointer hover:text-accent font-medium mb-4 px-2 py-1 rounded transition-colors"
           onClick={() => navigate(-1)}
         >
           <FaArrowLeft className="mr-2" />

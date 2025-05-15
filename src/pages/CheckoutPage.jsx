@@ -452,7 +452,7 @@ const CheckoutPage = () => {
         <div className="mb-8">
           <button 
             onClick={() => navigate('/cart')}
-            className="flex items-center text-sm font-medium mb-4 cursor-pointer text-text hover:text-accent transition-colors font-montserrat"
+            className="flex items-center ml-3 text-sm font-medium mb-4 cursor-pointer text-text hover:text-accent transition-colors font-montserrat"
           >
             <FaArrowLeft className="mr-2" /> Back to Cart
           </button>

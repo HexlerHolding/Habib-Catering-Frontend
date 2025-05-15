@@ -92,7 +92,7 @@ const Sidebar = ({ isOpen, closeSidebar, isLoggedIn, user }) => {
           ) : (
             <Link
               to="/login"
-              className="block w-full py-2 text-center rounded-md font-medium border border-text/30 text-text"
+              className="block w-full py-2 text-center rounded-md cursor-pointer hover:bg-primary/90 hover:text-secondary transition-all duration-300 font-medium border border-text/30 text-text"
               onClick={closeSidebar}
             >
               LOGIN

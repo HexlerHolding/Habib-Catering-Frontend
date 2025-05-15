@@ -53,7 +53,7 @@ const HeroSlider = () => {
               className="w-full h-full object-cover opacity-80"
             />
             {/* Green overlay */}
-            <div className="absolute inset-0 bg-[var(--color-green)] opacity-30"></div>
+            <div className="absolute inset-0 bg-[var(--color-primary)] opacity-30"></div>
             {/* Text and buttons */}
             <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
               <h1 className="text-4xl md:text-5xl font-bold text-[var(--color-secondary)] mb-2">
@@ -65,13 +65,13 @@ const HeroSlider = () => {
               <div className="flex space-x-2 sm:space-x-4">
                 <button
                   onClick={scrollToSection}
-                  className="px-4 py-2 sm:px-6 sm:py-2 bg-[var(--color-green)] cursor-pointer text-[var(--color-secondary)] font-semibold rounded-md hover:bg-primary/80 hover:brightness-105 transition-colors text-sm sm:text-base"
+                  className="px-4 py-2 sm:px-6 sm:py-2 bg-[var(--color-primary)] cursor-pointer text-[var(--color-secondary)] font-semibold rounded-md hover:bg-primary/80 hover:brightness-105 transition-colors text-sm sm:text-base"
                 >
                   Order Now
                 </button>
                 <button
                   onClick={goToEventCatering}
-                  className="px-4 py-2 sm:px-6 sm:py-2 bg-[var(--color-green)]  cursor-pointer text-[var(--color-secondary)] font-semibold rounded-md hover:bg-primary/80 hover:brightness-105 transition-colors text-sm sm:text-base"
+                  className="px-4 py-2 sm:px-6 sm:py-2 bg-[var(--color-primary)]  cursor-pointer text-[var(--color-secondary)] font-semibold rounded-md hover:bg-primary/80 hover:brightness-105 transition-colors text-sm sm:text-base"
                 >
                   Event Catering
                 </button>

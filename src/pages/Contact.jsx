@@ -34,7 +34,7 @@ const Contact = () => {
           value={formData.name}
           onChange={handleChange}
           placeholder="Your Name"
-          className="p-2 border rounded"
+          className="p-2  rounded focus:outline-text focus:outline-1 outline-1 outline-text/50 "
           required
         />
         <input
@@ -43,7 +43,7 @@ const Contact = () => {
           value={formData.email}
           onChange={handleChange}
           placeholder="Your Email"
-          className="p-2 border rounded"
+          className="p-2 focus:outline-text focus:outline-1 outline-1 outline-text/50  rounded"
           required
         />
         <textarea
@@ -51,7 +51,7 @@ const Contact = () => {
           value={formData.message}
           onChange={handleChange}
           placeholder="Your Message"
-          className="p-2 border rounded"
+          className="p-2 focus:outline-text focus:outline-1 outline-1 outline-text/50  rounded"
           rows="5"
           required
         ></textarea>

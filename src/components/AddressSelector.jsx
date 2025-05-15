@@ -458,7 +458,7 @@ const AddressSelector = () => {
         <div className="fixed inset-0 bg-modal/50 z-50 flex items-center justify-center p-4">
           <div
             ref={modalRef}
-            className="bg-background rounded-lg w-full h-auto overflow-auto max-w-xl shadow-xl"
+            className="bg-background rounded-lg w-full h-auto overflow-auto max-w-xl shadow-xl max-h-[90vh] overflow-y-auto"
           >
             {/* Modal Header */}
             <div className="flex justify-between items-center p-4 border-b border-text/10">
@@ -574,7 +574,7 @@ const AddressSelector = () => {
                       onChange={(e) => setSearchQuery(e.target.value)}
                       onKeyDown={handleKeyDown}
                       placeholder="Enter location"
-                      className="w-full p-3 pl-10 pr-20 border border-primary/20 rounded-full focus:outline-none focus:ring-1 focus:ring-primary truncate"
+                      className="w-full p-3 pl-10 pr-20 focus:outline-text focus:outline-1 outline-1 outline-text/50  rounded-full  truncate"
                     />
                     {searchQuery && (
                       <button
@@ -636,7 +636,7 @@ const AddressSelector = () => {
                         value={addressName}
                         onChange={(e) => setAddressName(e.target.value)}
                         placeholder="Location name (e.g. Home, Office)"
-                        className="w-full p-3 border border-primary/20 rounded-lg focus:outline-none focus:ring-1 focus:ring-primary mb-3"
+                        className="w-full p-3 focus:outline-text focus:outline-1 outline-1 outline-text/50 rounded-lg  mb-3"
                       />
                       <button
                         onClick={handleSaveAddress}

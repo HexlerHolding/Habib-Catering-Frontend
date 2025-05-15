@@ -24,7 +24,7 @@ const Offer = () => {
               <input
                 type="email"
                 placeholder="Enter Email Address"
-                className="w-full px-4 py-3 border border-text/50 rounded-md "
+                className="w-full px-4 py-3  focus:outline-text focus:outline-1 outline-1 outline-text/50  rounded-md"
               />
             </div>
             

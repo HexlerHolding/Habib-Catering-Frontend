@@ -96,7 +96,7 @@ const LoginPhone = () => {
               value={phoneNumber}
               onChange={handlePhoneNumberChange}
               maxLength={11}
-              className="flex-grow p-3 bg-text/5 rounded-lg focus:outline-none"
+              className="flex-grow p-3 bg-text/5 rounded focus:outline-text focus:outline-1 outline-1 outline-text/50 "
             />
           </div>
           <button

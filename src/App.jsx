@@ -8,8 +8,8 @@ import ProtectedRoutes from "./components/ProtectedRoutes";
 import AccountLayout from "./layouts/AccountLayout";
 import EditProfilePage from "./pages/account/EditProfilePage";
 import FavoritesPage from "./pages/account/FavoritesPage";
-import OrderHistoryPage from "./pages/account/OrderHistoryPage";
-import OrderTrackingPage from "./pages/account/OrderTrackingPage";
+// import OrderHistoryPage from "./pages/account/OrderHistoryPage";
+// import OrderTrackingPage from "./pages/account/OrderTrackingPage";
 import SavedAddressesPage from "./pages/account/SavedAddressesPage";
 import BlogDetail from "./pages/BlogDetail";
 import BlogsPage from "./pages/BlogsPage";
@@ -185,8 +185,8 @@ function App() {
         >
           <Route index element={<EditProfilePage />} />
           <Route path="profile" element={<EditProfilePage />} />
-          <Route path="orders" element={<OrderHistoryPage />} />
-          <Route path="orders/:orderId" element={<OrderTrackingPage />} />
+          {/* <Route path="orders" element={<OrderHistoryPage />} /> */}
+          {/* <Route path="orders/:orderId" element={<OrderTrackingPage />} /> */}
           <Route path="addresses" element={<SavedAddressesPage />} />
           <Route path="favorites" element={<FavoritesPage />} />
         </Route>

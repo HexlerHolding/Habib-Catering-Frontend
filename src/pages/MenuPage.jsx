@@ -17,7 +17,7 @@ const MenuItem = ({ item, isFavorite, onToggleFavorite, onAddToCart, isLoggedIn 
           className="absolute top-2 right-2"
           onClick={() => onToggleFavorite(item)}
         >
-          <FaHeart className={`w-6 h-6 ${isFavorite ? 'text-accent fill-current' : 'text-secondary'}`} />
+          <FaHeart className={`w-6 h-6 cursor-pointer ${isFavorite ? 'text-accent fill-current' : 'text-secondary'}`} />
         </button>
         {/* Image container with slate background */}
         <div className="bg-text/10 rounded-lg p-2 mb-3">
@@ -51,7 +51,7 @@ const MenuItem = ({ item, isFavorite, onToggleFavorite, onAddToCart, isLoggedIn 
           </div>
         </div>
         <button
-          className="w-full bg-primary text-secondary py-2 px-4 rounded-lg font-medium hover:bg-primary/80 transition-colors flex items-center justify-center"
+          className="w-full bg-primary text-secondary cursor-pointer py-2 px-4 rounded-lg font-medium hover:bg-primary/80 transition-colors flex items-center justify-center"
           onClick={() => onAddToCart(item)}
         >
           + ADD TO CART
@@ -198,7 +198,7 @@ const MenuPage = () => {
               {categories.map((category) => (
                 <button
                   key={category.id}
-                  className={`px-4 py-2 whitespace-nowrap rounded-full font-medium transition-all ${
+                  className={`px-4 py-2 whitespace-nowrap cursor-pointer rounded-full font-medium transition-all ${
                     activeCategory === category.id
                       ? 'bg-primary text-secondary'
                       : 'bg-text/10 text-text'

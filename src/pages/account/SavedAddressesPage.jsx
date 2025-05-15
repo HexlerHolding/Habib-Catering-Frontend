@@ -147,7 +147,7 @@ const SavedAddressesPage = () => {
                     )}
                   </div>
                   <p className="text-text/70 mt-1">
-                    <FaMapMarkerAlt className="inline-block mr-1 text-primary" />
+                    <FaMapMarkerAlt className="inline-block cursor-pointer mr-1 text-primary" />
                     {address.address}
                   </p>
                 </div>
@@ -156,14 +156,14 @@ const SavedAddressesPage = () => {
                     <>
                       <button 
                         onClick={() => saveAddressName(address.id)}
-                        className="text-green-600 hover:text-green-800 p-2 rounded-full hover:bg-text/5"
+                        className="text-green-600 hover:text-green-800 cursor-pointer p-2 rounded-full hover:bg-text/5"
                         title="Save name"
                       >
                         <FaCheck />
                       </button>
                       <button 
                         onClick={cancelEditing}
-                        className="text-red-600 hover:text-red-800 p-2 rounded-full hover:bg-text/5"
+                        className="text-red-600 hover:text-red-800 cursor-pointer p-2 rounded-full hover:bg-text/5"
                         title="Cancel"
                       >
                         <FaTrash />
@@ -174,7 +174,7 @@ const SavedAddressesPage = () => {
                       {(!selectedAddress || selectedAddress.id !== address.id) && (
                         <button 
                           onClick={() => handleSetDefault(address)}
-                          className="text-accent hover:text-accent/80 p-2 rounded-full hover:bg-text/5"
+                          className="text-accent hover:text-accent/80 cursor-pointer p-2 rounded-full hover:bg-text/5"
                           title="Set as default"
                         >
                           <FaCheck />
@@ -182,14 +182,14 @@ const SavedAddressesPage = () => {
                       )}
                       <button 
                         onClick={() => startEditing(address)}
-                        className="text-text/70 hover:text-primary p-2 rounded-full hover:bg-text/5"
+                        className="text-text/70 hover:text-primary cursor-pointer p-2 rounded-full hover:bg-text/5"
                         title="Edit name"
                       >
                         <FaPencilAlt />
                       </button>
                       <button 
                         onClick={() => handleDeleteAddress(address.id)}
-                        className="text-text/70 hover:text-red-500 p-2 rounded-full hover:bg-text/5"
+                        className="text-text/70 hover:text-red-500 p-2 cursor-pointer rounded-full hover:bg-text/5"
                         title="Delete address"
                       >
                         <FaTrash />

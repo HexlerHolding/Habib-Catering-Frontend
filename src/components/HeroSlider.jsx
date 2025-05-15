@@ -65,13 +65,13 @@ const HeroSlider = () => {
               <div className="flex space-x-4">
                 <button
                   onClick={scrollToSection}
-                  className="px-6 py-2 bg-[var(--color-green)] text-[var(--color-secondary)] font-semibold rounded-md hover:bg-[var(--color-green-dark)] transition-colors"
+                  className="px-6 py-2 bg-[var(--color-green)] cursor-pointer text-[var(--color-secondary)] font-semibold rounded-md hover:bg-[var(--color-green-dark)] transition-colors"
                 >
                   Order Now
                 </button>
                 <button
                   onClick={goToEventCatering}
-                  className="px-6 py-2 bg-[var(--color-green)] text-[var(--color-secondary)] font-semibold rounded-md hover:bg-[var(--color-green-dark)] transition-colors"
+                  className="px-6 py-2 bg-[var(--color-green)]  cursor-pointer text-[var(--color-secondary)] font-semibold rounded-md hover:bg-[var(--color-green-dark)] transition-colors"
                 >
                   Event Catering
                 </button>

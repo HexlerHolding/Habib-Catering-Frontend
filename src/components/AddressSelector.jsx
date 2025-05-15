@@ -445,7 +445,7 @@ const AddressSelector = () => {
       <button
         onClick={() => setIsModalOpen(true)}
         data-testid="address-selector-btn"
-        className="flex items-center text-text mr-4 hover:text-accent transition-colors"
+        className="flex items-center text-text cursor-pointer mr-4 hover:text-accent transition-colors"
       >
         <FaMapMarkerAlt className="mr-1" />
         <span className="hidden sm:inline-block max-w-[150px] overflow-hidden truncate">
@@ -468,7 +468,7 @@ const AddressSelector = () => {
               <div className="flex items-center space-x-3">
                 <button
                   onClick={toggleAddressList}
-                  className="text-primary hover:text-primary/80"
+                  className="text-primary cursor-pointer hover:text-primary/80"
                   title={isAddressList ? "Find New Address" : "View Saved Addresses"}
                 >
                   {isAddressList ? <FaMapMarkerAlt size={20} /> : <FaList size={20} />}
@@ -478,7 +478,7 @@ const AddressSelector = () => {
                     setIsModalOpen(false);
                     setIsAddressList(false);
                   }}
-                  className="text-text/50 hover:text-accent"
+                  className="text-text/50 cursor-pointer hover:text-accent"
                 >
                   <FaTimes size={24} />
                 </button>
@@ -615,7 +615,7 @@ const AddressSelector = () => {
                       </div>
                       <button 
                         onClick={handleSelectAddress}
-                        className="bg-primary text-secondary px-4 py-2 rounded-lg font-bold hover:bg-primary/80 flex-shrink-0"
+                        className="bg-primary text-secondary cursor-pointer px-4 py-2 rounded-lg font-bold hover:bg-primary/80 flex-shrink-0"
                       >
                         SELECT
                       </button>
@@ -640,7 +640,7 @@ const AddressSelector = () => {
                       />
                       <button
                         onClick={handleSaveAddress}
-                        className="w-full bg-accent text-secondary py-2 rounded-lg font-medium hover:bg-accent/90"
+                        className="w-full bg-accent text-secondary cursor-pointer py-2 rounded-lg font-medium hover:bg-accent/90"
                       >
                         Save Address
                       </button>
@@ -652,7 +652,7 @@ const AddressSelector = () => {
                 <div className="px-4 pb-4">
                   <button
                     onClick={getCurrentLocation}
-                    className="w-full bg-primary text-secondary py-3 rounded-lg font-medium hover:bg-primary/80 flex items-center justify-center"
+                    className="w-full bg-primary text-secondary cursor-pointer py-3 rounded-lg font-medium hover:bg-primary/80 flex items-center justify-center"
                   >
                     <FaMapMarkerAlt className="mr-2" />
                     Use Current Location

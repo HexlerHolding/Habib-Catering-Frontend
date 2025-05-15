@@ -16,7 +16,7 @@ const MenuItem = ({ item, onRemoveFavorite, onAddToCart }) => (
         className="absolute top-2 right-2"
         onClick={() => onRemoveFavorite(item)}
       >
-        <FaHeart className="w-6 h-6 text-accent fill-current" />
+        <FaHeart className="w-6 h-6 cursor-pointer text-accent fill-current" />
       </button>
       {/* Image container */}
       <div className="bg-text/10 rounded-lg p-2 mb-3">
@@ -43,7 +43,7 @@ const MenuItem = ({ item, onRemoveFavorite, onAddToCart }) => (
         </span>
       </div>
       <button
-        className="w-full bg-primary text-secondary py-2 px-4 rounded-lg font-medium hover:bg-primary/80 transition-colors flex items-center justify-center"
+        className="w-full bg-primary text-secondary cursor-pointer py-2 px-4 rounded-lg font-medium hover:bg-primary/80 transition-colors flex items-center justify-center"
         onClick={() => onAddToCart(item)}
       >
         {/* <FaShoppingCart className="mr-1" /> */}
@@ -119,7 +119,7 @@ const FavoritesPage = () => {
         <div className="text-center py-8">Loading...</div>
       ) : favorites.length === 0 ? (
         <div className="text-center py-8">
-          <FaHeart className="mx-auto text-5xl text-text/30 mb-4" />
+          <FaHeart className="mx-auto text-5xl cursor-pointer text-text/30 mb-4" />
           <p className="text-text/50">You haven't added any favorites yet.</p>
           <p className="text-text/50 mt-2">Browse our menu and click the heart icon to add items to your favorites.</p>
         </div>

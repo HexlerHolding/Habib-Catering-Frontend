@@ -52,10 +52,10 @@ const AccountLayout = () => {
                   <FaUser className="mr-2" />
                   Edit Profile
                 </NavLink>
-                <NavLink to="/account/orders" className={navLinkClass}>
+                {/* <NavLink to="/account/orders" className={navLinkClass}>
                   <FaHistory className="mr-2" />
                   Order History
-                </NavLink>
+                </NavLink> */}
                 <NavLink to="/account/addresses" className={navLinkClass}>
                   <FaMapMarkerAlt className="mr-2" />
                   Saved Addresses

@@ -1,12 +1,12 @@
 import axios from 'axios';
 import { useState } from 'react';
+import toast from 'react-hot-toast';
 //import baseurl from env
 const API_URL = import.meta.env.VITE_API_URL; // Add this environment variable
 
 
 const Contact = () => {
   const [formData, setFormData] = useState({ name: '', email: '', message: '' });
-  const [status, setStatus] = useState('');
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -17,10 +17,10 @@ const Contact = () => {
     e.preventDefault();
     try {
       await axios.post(`${API_URL}/user/contact`, formData);
-      setStatus('Message sent and saved successfully!');
+      toast.success('Message sent and saved successfully!');
       setFormData({ name: '', email: '', message: '' });
     } catch (err) {
-      setStatus('Failed to send message.');
+      toast.error('Failed to send message.');
     }
   };
 
@@ -59,7 +59,6 @@ const Contact = () => {
           Send Message
         </button>
       </form>
-      {status && <p className="mt-4">{status}</p>}
     </div>
   );
 };

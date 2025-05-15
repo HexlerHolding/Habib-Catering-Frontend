@@ -140,7 +140,7 @@ const CartPage = () => {
           {cartItems.length > 0 && (
             <button 
               onClick={handleClearCart}
-              className="text-accent hover:text-accent/80 text-sm font-medium flex items-center"
+              className="text-accent hover:text-accent/80 cursor-pointer text-sm font-medium flex items-center"
             >
               <FaTrash className="mr-1" /> Clear Cart
             </button>
@@ -180,7 +180,7 @@ const CartPage = () => {
                         <div className="inline-flex items-center border border-text/40 rounded-lg">
                           <button 
                             onClick={() => handleDecreaseQuantity(item)}
-                            className="px-3 py-1 border-r border-text/40 text-text hover:bg-text/10"
+                            className="px-3 py-1 border-r cursor-pointer border-text/40 text-text hover:bg-text/10"
                           >
                             <FaMinus size={12} />
                           </button>
@@ -189,7 +189,7 @@ const CartPage = () => {
                           </span>
                           <button 
                             onClick={() => dispatch(increaseQuantity(item.id))}
-                            className="px-3 py-1 border-l border-text/40 text-text hover:bg-text/10"
+                            className="px-3 py-1 border-l cursor-pointer border-text/40 text-text hover:bg-text/10"
                           >
                             <FaPlus size={12} />
                           </button>
@@ -199,7 +199,7 @@ const CartPage = () => {
                         <div className="text-right">
                           <button 
                             onClick={() => handleRemoveItem(item.id)}
-                            className="text-accent hover:text-accent/80 text-sm flex items-center ml-auto"
+                            className="text-accent hover:text-accent/80 cursor-pointer text-sm flex items-center ml-auto"
                           >
                             <FaTrash className="mr-1" size={12} /> Remove
                           </button>
@@ -210,7 +210,7 @@ const CartPage = () => {
                 </div>
                 
                 {/* Voucher Section */}
-                <div className="mt-8 border-t pt-6">
+                {/* <div className="mt-8 border-t pt-6">
                   <button 
                     onClick={() => setShowVoucherModal(true)}
                     className="flex items-center text-xl md:text-2xl text-accent font-medium hover:text-primary/80 transition-colors"
@@ -236,7 +236,7 @@ const CartPage = () => {
                       </button>
                     </div>
                   )}
-                </div>
+                </div> */}
                 
                 {/* Continue Shopping Link */}
                 <div className="mt-8">
@@ -292,7 +292,7 @@ const CartPage = () => {
                 {/* Checkout button */}
                 <button 
                   onClick={handleCheckout}
-                  className="w-full bg-primary text-secondary py-3 px-6 rounded-lg font-bold hover:bg-primary/80 hover:brightness-105 transition mb-4 flex items-center justify-center"
+                  className="w-full bg-primary text-secondary cursor-pointer py-3 px-6 rounded-lg font-bold hover:bg-primary/80 hover:brightness-105 transition mb-4 flex items-center justify-center"
                 >
                   <FaCreditCard className="mr-2" /> PROCEED TO CHECKOUT
                 </button>
@@ -332,7 +332,7 @@ const CartPage = () => {
       </div>
       
       {/* Voucher Modal */}
-      {showVoucherModal && (
+      {/* {showVoucherModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-4">
           <div className="bg-secondary rounded-lg p-6 w-full max-w-md">
             <div className="flex justify-between items-center mb-4">
@@ -377,8 +377,7 @@ const CartPage = () => {
                 Apply
               </button>
             </div>
-            
-            {/* Example vouchers for testing - this would be removed in production */}
+   
             <div className="mt-4 pt-4 border-t border-text/10">
               <p className="text-xs text-text/50 mb-2">Example vouchers (for testing):</p>
               <div className="text-xs text-text/70 space-y-1">
@@ -389,7 +388,7 @@ const CartPage = () => {
             </div>
           </div>
         </div>
-      )}
+      )} */}
 
       {/* Confirmation Modal */}
       <ConfirmationModal

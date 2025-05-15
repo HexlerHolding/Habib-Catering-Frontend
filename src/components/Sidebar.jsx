@@ -74,7 +74,7 @@ const Sidebar = ({ isOpen, closeSidebar, isLoggedIn, user }) => {
           {/* Close button */}
           <button 
             onClick={closeSidebar}
-            className="text-xl p-1 text-secondary"
+            className="text-xl p-1 text-secondary cursor-pointer"
           >
             <FaTimes />
           </button>
@@ -85,7 +85,7 @@ const Sidebar = ({ isOpen, closeSidebar, isLoggedIn, user }) => {
           {isLoggedIn ? (
             <button
               onClick={handleLogout}
-              className="block w-full py-2 text-center rounded-md font-medium border border-text/30 text-text"
+              className="block w-full py-2 text-center rounded-md cursor-pointer hover:bg-primary/90 hover:text-secondary transition-all duration-300 font-medium border border-text/30 text-text"
             >
               LOGOUT
             </button>

@@ -726,7 +726,7 @@ const CheckoutPage = () => {
                 type="submit"
                 form="checkout-form"
                 disabled={isSubmitting || branchLoading || branches.length === 0}
-                className={`w-full mt-6 py-3 rounded-md text-center font-bold text-secondary transition-all font-poppins ${
+                className={`w-full cursor-pointer mt-6 py-3 rounded-md text-center font-bold text-secondary transition-all font-poppins ${
                   isSubmitting || branchLoading || branches.length === 0
                     ? 'bg-text/20 cursor-not-allowed'
                     : 'bg-primary hover:bg-primary/80 hover:brightness-105'

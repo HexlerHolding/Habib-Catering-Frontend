@@ -88,14 +88,14 @@ const Navbar = ({ toggleSidebar }) => {
       <div className="flex items-center">
         {/* Menu toggle button */}
         <button 
-          className="text-xl flex items-center justify-center mr-4"
+          className="text-xl flex items-center cursor-pointer justify-center mr-4"
           onClick={toggleSidebar}
         >
           <FaBars />
         </button>
         
         {/* Logo */}
-        <Link to="/" className=" hidden sm:flex items-center">
+        <Link to="/" className=" hidden sm:flex items-center cursor-pointer">
           <img 
             src='/habiblogo2.jpg'
             alt="Habib Catering Logo" 
@@ -104,7 +104,7 @@ const Navbar = ({ toggleSidebar }) => {
         </Link>
 
         {/* Add the AddressSelector component here */}
-        <div className='!ml-10'>
+        <div className='!ml-10 '>
 
   <AddressSelector />
     </div>

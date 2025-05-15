@@ -15,7 +15,7 @@ const BlogsPage = () => {
   }, []);
 
   return (
-    <div className="bg-background min-h-screen pt-14c sm:pt-16 pb-20 sm:pb-24">
+    <div className="bg-background min-h-screen pt-14 sm:pt-16 pb-20 sm:pb-24">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         {/* Go Back Arrow */}
         <button

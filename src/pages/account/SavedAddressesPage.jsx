@@ -122,7 +122,7 @@ const SavedAddressesPage = () => {
                   : 'border-text/10 hover:border-primary/50'
               }`}
             >
-              <div className="flex justify-between">
+              <div className="flex flex-col-reverse sm:flex-row justify-between">
                 <div className="flex-1">
                   <div className="flex items-center">
                     {editingId === address.id ? (
@@ -151,7 +151,8 @@ const SavedAddressesPage = () => {
                     {address.address}
                   </p>
                 </div>
-                <div className="flex space-x-2 items-start ml-4">
+                {/* icons  */}
+                <div className="flex space-x-2 items-start justify-end ml-4">
                   {editingId === address.id ? (
                     <>
                       <button 

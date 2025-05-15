@@ -23,11 +23,11 @@ const AppDownload = () => {
       
       <div className="flex flex-col md:flex-row items-center justify-between relative z-10">
         {/* Left side with phone image */}
-        <div className="md:w-1/3 mb-8 md:mb-0 !z-20">
+        <div className="md:w-1/3 mb-8 md:mb-0 !z-30">
           <img 
             src="/appImage.png" 
             alt="Mobile App" 
-            className="max-w-full"
+            className="max-w-full !z-30"
           />
         </div>
         
@@ -90,19 +90,15 @@ const AppDownload = () => {
       </div>
       
       {/* Pizza icon decoration */}
-      <div className="absolute top-8 right-16 z-10">
+      <div className="absolute top-8 right-16 z-0"> {/* z-0 to ensure it's behind phone and text */}
         <div className="relative">
-          {/* <div className="w-32 h-32 rounded-full bg-primary  flex items-center justify-center opacity-50 absolute"></div> */}
           <img 
             src="/offerSectionImage34.png" 
             alt="" 
-            className="w-30  relative !z-0"
+            className="w-30 relative"
           />
-        {/* </div> */}
+        </div>
       </div>
-      </div>
-      
-
     </div>
   );
 };

@@ -138,7 +138,7 @@ const CartPage = () => {
   };
   
   return (
-    <div className="min-h-screen pt-14 pb-16 mt-10">
+    <div className="min-h-screen pt-14 sm:pt-5 pb-16 mt-10">
       <div className="container mx-auto px-4">
         {/* Go Back Arrow */}
         <button

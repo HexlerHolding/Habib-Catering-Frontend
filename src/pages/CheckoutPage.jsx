@@ -447,7 +447,7 @@ const CheckoutPage = () => {
         </div>
       )}
 
-      <div className="max-w-6xl mx-auto px-4 py-8 bg-background">
+      <div className="max-w-6xl mx-auto px-4 py-8 bg-background mt-10">
         {/* Checkout header */}
         <div className="mb-8">
           <button 

@@ -25,7 +25,7 @@ const Offer = () => {
               />
             </div>
             
-            <button className="px-8 py-2 font-bold text-text uppercase bg-gradient-to-r from-primary/40 to-primary hover:brightness-105 rounded-md  transition duration-300">
+            <button className="px-8 py-2 font-bold text-secondary uppercase  bg-primary  hover:bg-primary/80 cursor-pointer hover:brightness-105 rounded-lg  transition duration-300">
               Subscribe
             </button>
           </div>

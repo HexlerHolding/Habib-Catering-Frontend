@@ -89,7 +89,7 @@ const SavedAddressesPage = () => {
   return (
     <div>
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-semibold">Saved Addresses</h2>
+        <h2 className="text-xl font-semibold text-text">Saved Addresses</h2>
         <a 
           href="#address-selector" 
           onClick={(e) => {
@@ -106,8 +106,8 @@ const SavedAddressesPage = () => {
       
       {selectedAddress && (
         <div className="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-6 rounded shadow-sm">
-          <p className="font-medium">Your current delivery address is:</p>
-          <p className="text-sm">{selectedAddress.address}</p>
+          <p className="font-medium text-primary">Your current delivery address is:</p>
+          <p className="text-sm text-primary">{selectedAddress.address}</p>
         </div>
       )}
       
@@ -136,7 +136,7 @@ const SavedAddressesPage = () => {
                         placeholder="Location name (e.g. Home, Office)"
                       />
                     ) : (
-                      <span className="font-medium text-lg">
+                      <span className="font-medium text-lg text-text">
                         {address.name || 'Unnamed Location'}
                       </span>
                     )}

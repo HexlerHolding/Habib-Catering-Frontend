@@ -188,7 +188,7 @@ const MenuPage = () => {
           <FaArrowLeft className="mr-2" />
           Back
         </button>
-        <h1 className="text-2xl md:text-4xl font-bold mb-4 text-center text-black">
+        <h1 className="text-2xl md:text-4xl font-bold mb-4 text-center text-primary">
             Our Menu
         </h1>
         <div className="sticky top-20 pt-8 pb-2 px-4 bg-background z-10">

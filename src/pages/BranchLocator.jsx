@@ -319,7 +319,7 @@ const BranchLocator = () => {
                         <h3 className="text-lg font-medium text-text/80">{branch.name}</h3>
                         <p className="mt-1 text-sm text-text/70">{branch.address}</p>
                         <button 
-                          className="mt-3 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-secondary bg-primary hover:bg-primary/80 hover:brightness-105 transition duration-300"
+                          className="mt-3 inline-flex items-center px-4 cursor-pointer py-2 border border-transparent text-sm font-medium rounded-md text-secondary bg-primary hover:bg-primary/80 hover:brightness-105 transition duration-300"
                           onClick={() => handleViewDetails(branch.id)}
                         >
                           VIEW DETAILS

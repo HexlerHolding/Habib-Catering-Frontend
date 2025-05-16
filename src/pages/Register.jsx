@@ -107,7 +107,7 @@ const Register = () => {
                         alt={`${TITLE} Logo`}
                         className="w-8 md:w-10"
                     />
-                    <h1 className='font-bold text-xl md:text-2xl ml-2'>{TITLE}</h1>
+                    <h1 className='font-bold text-xl md:text-2xl ml-2 text-text'>{TITLE}</h1>
                 </Link>
             </div>
 

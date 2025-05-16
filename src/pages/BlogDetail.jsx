@@ -165,7 +165,7 @@ const BlogDetail = () => {
                     </Link>
                     <div className="p-5">
                       <Link to={`/blogs/${post.slug}`}>
-                        <h4 className="font-bold text-lg mb-2 hover:text-accent transition-colors line-clamp-2">
+                        <h4 className="font-bold text-lg mb-2 text-text hover:text-accent transition-colors line-clamp-2">
                           {post.title}
                         </h4>
                       </Link>

@@ -86,7 +86,7 @@ const LoginPassword = () => {
         </button>
         <Link to="/" className="flex items-center">
           <img src="/offerSectionImage34.png" alt={`${TITLE} Logo`} className="w-8 md:w-10" />
-          <h1 className="font-bold text-xl md:text-2xl ml-2">{TITLE}</h1>
+          <h1 className="font-bold text-xl md:text-2xl ml-2 text-text">{TITLE}</h1>
         </Link>
       </div>
 

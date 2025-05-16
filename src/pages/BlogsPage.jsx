@@ -132,7 +132,7 @@ const BlogsPage = () => {
                 </div>
                 
                 <Link to={`/blogs/${post.slug}`} className="group">
-                  <h3 className="text-lg sm:text-xl font-bold mb-2 sm:mb-3 group-hover:text-accent transition-colors line-clamp-2 font-montserrat">
+                  <h3 className="text-lg sm:text-xl font-bold mb-2 sm:mb-3 text-text group-hover:text-accent transition-colors line-clamp-2 font-montserrat">
                     {post.title}
                   </h3>
                 </Link>

@@ -21,7 +21,7 @@ const PrivacyPolicy = () => {
           <FaArrowLeft className="mr-2" />
           Back
         </button>
-        <h1 className="text-3xl md:text-4xl font-bold mb-6 text-text">Privacy Policy</h1>
+        <h1 className="text-2xl md:text-4xl font-bold mb-6 text-text">Privacy Policy</h1>
         
         <div className="bg-background rounded-lg shadow-md p-5 md:p-8">
           <section className="mb-8">

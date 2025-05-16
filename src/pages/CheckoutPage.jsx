@@ -457,7 +457,7 @@ const CheckoutPage = () => {
           >
             <FaArrowLeft className="mr-2" /> Back to Cart
           </button>
-          <h1 className="text-3xl font-bold text-text font-poppins">Checkout</h1>
+          <h1 className="text-2xl md:text-3xl font-bold text-text font-poppins">Checkout</h1>
         </div>
         
         {/* Card Details Modal */}

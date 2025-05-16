@@ -29,7 +29,7 @@ const BlogsPage = () => {
         
         {/* Header Section */}
         <div className="max-w-3xl mx-auto text-center mb-12 sm:mb-16">
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 text-text font-montserrat leading-tight">
+          <h1 className="text-3xl md:text-4xl  font-bold mb-4 text-text font-montserrat leading-tight">
             Our Blog
           </h1>
           <div className="w-20 h-1 bg-primary mx-auto mb-6 sm:mb-8 rounded-full"></div>

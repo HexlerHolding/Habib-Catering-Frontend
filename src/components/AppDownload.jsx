@@ -11,7 +11,7 @@ const AppDownload = () => {
   ];
 
   return (
-    <div className="w-full py-10 px-8 rounded-3xl overflow-hidden relative ">
+    <div className="w-full py-10 px-4 rounded-3xl overflow-hidden relative ">
       {/* Curved gradient background */}
       <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-primary z-0 overflow-hidden">
         {/* Top left curve effect - using a pseudo-element with border-radius */}
@@ -32,7 +32,7 @@ const AppDownload = () => {
         </div>
         
         {/* Right side with content */}
-        <div className="md:w-2/3 md:pl-12">
+        <div className="md:w-2/3 md:pl-12 px-4">
           <h2 className="text-3xl md:text-4xl font-bold mb-4 text-text">Download Our Mobile App</h2>
           <p className="text-lg mb-8 text-text">Elevate your experience by downloading our mobile app for Seamless ordering experience.</p>
           

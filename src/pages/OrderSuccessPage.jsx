@@ -53,7 +53,7 @@ const OrderSuccessPage = () => {
         <div className="mb-6">
           <FaCheckCircle className="text-green-500 text-6xl mx-auto" />
         </div>
-        <h1 className="text-2xl sm:text-3xl font-bold mb-4 text-text font-poppins">Order Successful!</h1>
+        <h1 className="text-2xl md:text-3xl font-bold mb-4 text-text font-poppins">Order Successful!</h1>
         <p className="text-text/70 mb-6 font-montserrat text-sm sm:text-base">
           Thank you for your order. We've received your order and will begin processing it right away.
         </p>

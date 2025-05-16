@@ -9,6 +9,7 @@ import CardDetailsModal from '../components/CardDetailsModal';
 import { selectIsAuthenticated } from '../redux/slices/authSlice';
 import { clearCart, selectCartItems, selectCartTotalAmount } from '../redux/slices/cartSlice';
 import { selectSavedAddresses, selectSelectedAddress } from '../redux/slices/locationSlice';
+import { CURRENCY_SYMBOL } from '../data/globalText';
 
 // Component for displaying a single branch option
 const BranchOption = ({ branch, isSelected, onChange }) => (
@@ -121,10 +122,10 @@ const CartItem = ({ item }) => (
     <div className="ml-3 flex-1">
       <p className="font-medium text-text">{item.name}</p>
       <p className="text-sm text-text/70">Qty: {item.quantity}</p>
-      <p className="font-medium text-text">$ {item.price.toFixed(2)}</p>
+      <p className="font-medium text-text">{CURRENCY_SYMBOL} {item.price.toFixed(2)}</p>
     </div>
     <div className="font-medium text-text">
-      $ {(item.price * item.quantity).toFixed(2)}
+      {CURRENCY_SYMBOL} {(item.price * item.quantity).toFixed(2)}
     </div>
   </div>
 );
@@ -709,15 +710,15 @@ const CheckoutPage = () => {
               <div className="space-y-2 py-4 border-t border-b border-text/20">
                 <div className="flex justify-between">
                   <span className="text-text/70 font-montserrat">Subtotal</span>
-                  <span className="text-text font-montserrat">$ {subtotal.toFixed(2)}</span>
+                  <span className="text-text font-montserrat">{CURRENCY_SYMBOL} {subtotal.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-text/70 font-montserrat">Tax ({taxRate}%)</span>
-                  <span className="text-text font-montserrat">$ {taxAmount.toFixed(2)}</span>
+                  <span className="text-text font-montserrat">{CURRENCY_SYMBOL} {taxAmount.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between font-bold pt-2">
                   <span className="text-text font-poppins">Total</span>
-                  <span className="text-text font-poppins">$ {finalTotal.toFixed(2)}</span>
+                  <span className="text-text font-poppins">{CURRENCY_SYMBOL} {finalTotal.toFixed(2)}</span>
                 </div>
               </div>
               

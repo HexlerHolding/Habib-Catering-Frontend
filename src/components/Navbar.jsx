@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import { selectIsAuthenticated } from '../redux/slices/authSlice';
 import { decreaseQuantity, increaseQuantity, removeFromCart, selectCartItems, selectCartTotalAmount, selectCartTotalQuantity } from '../redux/slices/cartSlice';
 import AddressSelector from './AddressSelector';
-import { TITLE } from '../data/globalText';
+import { CURRENCY_SYMBOL, TITLE } from '../data/globalText';
 
 const Navbar = ({ toggleSidebar }) => {
   const [isCartOpen, setIsCartOpen] = useState(false);
@@ -158,7 +158,7 @@ const Navbar = ({ toggleSidebar }) => {
                           <img src={item.image} alt={item.name} className="w-10 h-10 object-cover rounded" />
                           <div className="ml-2">
                             <p className="font-medium text-sm text-text">{item.name}</p>
-                            <p className="text-sm text-text/70">${item.price.toFixed(2)}</p>
+                            <p className="text-sm text-text/70">{CURRENCY_SYMBOL} {item.price.toFixed(2)}</p>
                           </div>
                         </div>
                         <div className="flex items-center space-x-2">
@@ -193,7 +193,7 @@ const Navbar = ({ toggleSidebar }) => {
                   
                   <div className="mt-4 text-text flex justify-between font-bold">
                     <span>Total:</span>
-                    <span>$ {totalAmount.toFixed(2)}</span>
+                    <span>{CURRENCY_SYMBOL} {totalAmount.toFixed(2)}</span>
                   </div>
                   
                   <div className="mt-4 grid grid-cols-2 gap-2">

@@ -40,8 +40,21 @@ const cartSlice = createSlice({
     // Add item to cart
     addToCart: (state, action) => {
       const newItem = action.payload;
-      const existingItem = state.items.find(item => item.id === newItem.id);
-      
+      // If item has variations, treat each variation selection as a unique cart entry
+      let itemKey = newItem.id;
+      if (newItem.selectedVariations) {
+        // Create a unique key based on id + variations
+        itemKey = `${newItem.id || newItem._id}__${Object.values(newItem.selectedVariations).join('_')}`;
+      }
+      const existingItem = state.items.find(item => {
+        if (item.selectedVariations && newItem.selectedVariations) {
+          return (
+            item.id === newItem.id &&
+            JSON.stringify(item.selectedVariations) === JSON.stringify(newItem.selectedVariations)
+          );
+        }
+        return item.id === newItem.id && !item.selectedVariations && !newItem.selectedVariations;
+      });
       if (existingItem) {
         existingItem.quantity++;
         existingItem.totalPrice = existingItem.price * existingItem.quantity;
@@ -52,11 +65,9 @@ const cartSlice = createSlice({
           totalPrice: newItem.price,
         });
       }
-      
       const totals = calculateTotals(state.items);
       state.totalQuantity = totals.totalQuantity;
       state.totalAmount = totals.totalAmount;
-      
       // Save to localStorage
       localStorage.setItem('cart', JSON.stringify(state));
     },

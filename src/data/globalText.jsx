@@ -5,3 +5,6 @@ export const CONTACT_INFO = {
   phone: '111-111-111',
   address: `${TITLE} Headquarters, Main Street, City`,
 };
+
+
+export const CURRENCY_SYMBOL = '$';

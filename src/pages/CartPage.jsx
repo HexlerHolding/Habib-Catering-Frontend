@@ -12,6 +12,7 @@ import {
   selectCartTotalAmount,
   selectCartTotalQuantity
 } from '../redux/slices/cartSlice';
+import { CURRENCY_SYMBOL } from '../data/globalText';
 
 const CartPage = () => {
   const dispatch = useDispatch();
@@ -169,7 +170,9 @@ const CartPage = () => {
                 
                 {/* Cart items list */}
                 <div className="space-y-6">
+                      {console.log("cart items",cartItems)}
                   {cartItems.map(item => (
+                
                     <div key={item.id} className="flex flex-col sm:flex-row border-b pb-6">
                       {/* Product Image and Info */}
                       <div className="flex sm:w-3/5 mb-4 sm:mb-0">
@@ -183,7 +186,15 @@ const CartPage = () => {
                         <div className="ml-4">
                           <h3 className="font-bold text-lg text-text">{item.name}</h3>
                           <p className="text-sm text-text/60 line-clamp-2 mb-1">{item.description}</p>
-                          <p className="text-accent font-bold">$ {item.price.toFixed(2)}</p>
+                          <p className="text-accent font-bold">{CURRENCY_SYMBOL} {item.price.toFixed(2)}</p>
+                          {/* Show selected variations if present */}
+                          {item.selectedVariations && (
+                            <div className="text-xs text-[var(--color-primary)] mt-1">
+                              {Object.entries(item.selectedVariations).map(([vName, oName]) => (
+                                <div key={vName}>{vName}: <span className="text-[var(--color-accent)]">{oName}</span></div>
+                              ))}
+                            </div>
+                          )}
                         </div>
                       </div>
                       
@@ -277,7 +288,7 @@ const CartPage = () => {
                         <span className="font-medium">
                           {item.name} <span className="text-text/60">× {item.quantity}</span>
                         </span>
-                        <span className="font-medium">$ {(item.price * item.quantity).toFixed(2)}</span>
+                        <span className="font-medium">{CURRENCY_SYMBOL} {(item.price * item.quantity).toFixed(2)}</span>
                       </div>
                     ))}
                   </div>
@@ -285,20 +296,20 @@ const CartPage = () => {
                   {/* Subtotal row */}
                   <div className="flex justify-between text-text border-t pt-3">
                     <span className="font-medium">Subtotal</span>
-                    <span className="font-medium">$ {subtotal.toFixed(2)}</span>
+                    <span className="font-medium">{CURRENCY_SYMBOL} {subtotal.toFixed(2)}</span>
                   </div>
                   
                   {/* Show discount if voucher is applied */}
                   {appliedVoucher && (
                     <div className="flex justify-between text-primary">
                       <span className="font-medium">Discount</span>
-                      <span className="font-medium">- $ {discountAmount.toFixed(2)}</span>
+                      <span className="font-medium">- {CURRENCY_SYMBOL} {discountAmount.toFixed(2)}</span>
                     </div>
                   )}
                   
                   <div className="border-t pt-4 flex justify-between">
                     <span className="text-text font-bold">Total</span>
-                    <span className="text-accent font-bold text-xl">$ {(subtotal - discountAmount).toFixed(2)}</span>
+                    <span className="text-accent font-bold text-xl">{CURRENCY_SYMBOL} {(subtotal - discountAmount).toFixed(2)}</span>
                   </div>
                 </div>
                 

@@ -6,6 +6,7 @@ import { favoritesService } from '../../../Services/favoritesService';
 import { menuService } from '../../../Services/menuService';
 import { selectIsAuthenticated, selectToken } from '../../redux/slices/authSlice';
 import { addToCart } from '../../redux/slices/cartSlice';
+import { CURRENCY_SYMBOL } from '../../data/globalText';
 
 // MenuItem component copied from MenuPage for consistent card UI
 const MenuItem = ({ item, onRemoveFavorite, onAddToCart }) => (
@@ -39,7 +40,7 @@ const MenuItem = ({ item, onRemoveFavorite, onAddToCart }) => (
     <div className="mt-auto">
       <div className="flex justify-between items-center mb-3">
         <span className="text-accent font-bold text-xl">
-          $ {item.price?.toFixed(2)}
+          {CURRENCY_SYMBOL} {item.price?.toFixed(2)}
         </span>
       </div>
       <button

@@ -7,8 +7,23 @@ import { favoritesService } from '../../Services/favoritesService';
 import { menuService } from '../../Services/menuService';
 import { selectIsAuthenticated, selectToken } from '../redux/slices/authSlice';
 import { addToCart } from '../redux/slices/cartSlice';
+import VariationModal from '../components/VariationModal';
+import { CURRENCY_SYMBOL } from '../data/globalText';
+
+// if the variation data is not coming from the backend then you can use the dummy data
+// start
+// import dummyMenuData from '../data/dummyMenuData';
+// const dummyCategories = [
+//   { id: 'all', name: 'All' },
+//   { id: 'cat1', name: 'Main Course' },
+//   { id: 'cat2', name: 'Snacks' },
+//   { id: 'cat3', name: 'Desserts' },
+// ];
+// end
 
 const MenuItem = ({ item, isFavorite, onToggleFavorite, onAddToCart, isLoggedIn }) => {
+  console.log('Rendering MenuItem:', item);
+    const [imgSrc, setImgSrc] = useState(item.image);
   return (
     <div className="bg-background rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all p-4 flex flex-col h-full">
       <div className="relative">
@@ -22,13 +37,14 @@ const MenuItem = ({ item, isFavorite, onToggleFavorite, onAddToCart, isLoggedIn 
         {/* Image container with slate background */}
         <div className="bg-text/10 rounded-lg p-2 mb-3">
           <img
-            src={item.image}
-            alt={item.name}
-            className="w-full h-32 object-cover rounded-lg"
-            onError={(e) => {
-              e.target.src = '/menu1.jpg';
-            }}
-          />
+          src={imgSrc}
+          alt={item.name}
+          className="w-full h-32 object-cover rounded-lg"
+          onError={() => {
+            console.warn('Image failed to load:', imgSrc);
+            setImgSrc('/menu1.jpg');
+          }}
+        />
         </div>
       </div>
       <h3 className="font-bold text-lg mb-1 text-text">
@@ -41,7 +57,7 @@ const MenuItem = ({ item, isFavorite, onToggleFavorite, onAddToCart, isLoggedIn 
         <div className="flex justify-between items-center mb-3">
           <div>
             <span className="text-accent font-bold text-xl">
-              $ {item.price.toFixed(2)}
+              {CURRENCY_SYMBOL} {item.price.toFixed(2)}
             </span>
             {item.isPopular && (
               <span className="ml-2 bg-accent brightness-110 text-secondary text-xs px-2 py-1 rounded">
@@ -74,6 +90,8 @@ const MenuPage = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [favoriteIds, setFavoriteIds] = useState([]);
+  const [showVariationModal, setShowVariationModal] = useState(false);
+  const [variationItem, setVariationItem] = useState(null);
   const dispatch = useDispatch();
 
   const isLoggedIn = useSelector(selectIsAuthenticated);
@@ -91,9 +109,11 @@ const MenuPage = () => {
     }
   }, [categoryFromUrl]);
 
-  // Fetch menu items and categories from POS
+  
   useEffect(() => {
-    const fetchMenuData = async () => {
+
+// if the variation is comming from the backend , then we will uncomment this fetchMenuData function
+const fetchMenuData = async () => {
       try {
         setIsLoading(true);
         const fetchedCategories = await menuService.getMenuCategories();
@@ -114,8 +134,19 @@ const MenuPage = () => {
         setIsLoading(false);
       }
     };
-    fetchMenuData();
+  fetchMenuData();
+
+  
+  
+  // if the variation data is not comming from the backend then you can use the dummy data
+  // start
+    // setMenuItems(dummyMenuData);
+    // setCategories(dummyCategories);
+    // setIsLoading(false);
+  // end
   }, []);
+     
+
 
   // Fetch favorites from backend if logged in
   useEffect(() => {
@@ -150,8 +181,19 @@ const MenuPage = () => {
       toast.error('You are not logged in, login first');
       return;
     }
-    dispatch(addToCart(item));
-    toast.success(`${item.name} has been added to your cart`);
+    if (item.variations && item.variations.length > 0) {
+      setVariationItem(item);
+      setShowVariationModal(true);
+    } else {
+      dispatch(addToCart(item));
+      toast.success(`${item.name} has been added to your cart`);
+    }
+  };
+
+  // Handle saving item with variations
+  const handleSaveVariation = (customizedItem) => {
+    dispatch(addToCart(customizedItem));
+    toast.success(`${customizedItem.name} has been added to your cart`);
   };
 
   // Handle favorite toggle
@@ -263,6 +305,14 @@ const MenuPage = () => {
                   Try a different search term or category
                 </p>
               </div>
+            )}
+            {/* Variation Modal */}
+            {showVariationModal && variationItem && (
+              <VariationModal
+                item={variationItem}
+                onClose={() => setShowVariationModal(false)}
+                onSave={handleSaveVariation}
+              />
             )}
           </div>
         )}

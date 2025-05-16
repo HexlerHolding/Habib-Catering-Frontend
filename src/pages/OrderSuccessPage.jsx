@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { FaCheckCircle, FaClipboard, FaHome, FaArrowLeft } from 'react-icons/fa';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { CURRENCY_SYMBOL } from '../data/globalText';
 
 const OrderSuccessPage = () => {
   const location = useLocation();
@@ -75,15 +76,15 @@ const OrderSuccessPage = () => {
                 </div>
                 <div className="flex flex-wrap justify-between mb-2">
                   <span className="text-text/70 font-montserrat">Subtotal:</span>
-                  <span className="font-medium text-text font-montserrat">$ {orderDetails.subtotal.toFixed(2)}</span>
+                  <span className="font-medium text-text font-montserrat">{CURRENCY_SYMBOL} {orderDetails.subtotal.toFixed(2)}</span>
                 </div>
                 <div className="flex flex-wrap justify-between mb-2">
                   <span className="text-text/70 font-montserrat">Tax:</span>
-                  <span className="font-medium text-text font-montserrat">$ {orderDetails.tax.toFixed(2)}</span>
+                  <span className="font-medium text-text font-montserrat">{CURRENCY_SYMBOL} {orderDetails.tax.toFixed(2)}</span>
                 </div>
                 <div className="flex flex-wrap justify-between font-bold">
                   <span className="text-text font-poppins">Total:</span>
-                  <span className="text-text font-poppins">$ {orderDetails.total.toFixed(2)}</span>
+                  <span className="text-text font-poppins">{CURRENCY_SYMBOL} {orderDetails.total.toFixed(2)}</span>
                 </div>
               </>
             )}

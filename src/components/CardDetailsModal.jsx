@@ -154,7 +154,7 @@ const CardDetailsModal = ({ isOpen, onClose, onSave }) => {
                   value={cardData.cardNumber}
                   onChange={handleCardDataChange}
                   maxLength={19} // 16 digits + 3 spaces
-                  className={`w-full p-3 focus:outline-text focus:outline-1 outline-1 outline-text/50  rounded-md ${cardErrors.cardNumber ? 'border-accent' : 'border-text/20'}`}
+                  className={`w-full p-3 focus:outline-text focus:outline-2 outline-1 outline-text/50  rounded-md ${cardErrors.cardNumber ? 'border-accent' : 'border-text/20'}`}
                   placeholder="0000 0000 0000 0000"
                 />
                 {cardErrors.cardNumber && (
@@ -172,7 +172,7 @@ const CardDetailsModal = ({ isOpen, onClose, onSave }) => {
                   name="cardHolder"
                   value={cardData.cardHolder}
                   onChange={handleCardDataChange}
-                  className={`w-full p-3 focus:outline-text focus:outline-1 outline-1 outline-text/50  rounded-md ${cardErrors.cardHolder ? 'border-accent' : 'border-text/20'}`}
+                  className={`w-full p-3 focus:outline-text focus:outline-2 outline-1 outline-text/50  rounded-md ${cardErrors.cardHolder ? 'border-accent' : 'border-text/20'}`}
                   placeholder="John Doe"
                 />
                 {cardErrors.cardHolder && (
@@ -192,7 +192,7 @@ const CardDetailsModal = ({ isOpen, onClose, onSave }) => {
                     value={cardData.expiry}
                     onChange={handleCardDataChange}
                     maxLength={5} // MM/YY format
-                    className={`w-full p-3 focus:outline-text focus:outline-1 outline-1 outline-text/50  rounded-md ${cardErrors.expiry ? 'border-accent' : 'border-text/20'}`}
+                    className={`w-full p-3 focus:outline-text focus:outline-2 outline-1 outline-text/50  rounded-md ${cardErrors.expiry ? 'border-accent' : 'border-text/20'}`}
                     placeholder="MM/YY"
                   />
                   {cardErrors.expiry && (
@@ -211,7 +211,7 @@ const CardDetailsModal = ({ isOpen, onClose, onSave }) => {
                     value={cardData.cvv}
                     onChange={handleCardDataChange}
                     maxLength={4}
-                    className={`w-full p-3 borfocus:outline-text focus:outline-1 outline-1 outline-text/50 der rounded-md ${cardErrors.cvv ? 'border-accent' : 'border-text/20'}`}
+                    className={`w-full p-3 borfocus:outline-text focus:outline-2 outline-1 outline-text/50 der rounded-md ${cardErrors.cvv ? 'border-accent' : 'border-text/20'}`}
                     placeholder="123"
                   />
                   {cardErrors.cvv && (

@@ -534,7 +534,7 @@ const CheckoutPage = () => {
                       name="fullName"
                       value={formData.fullName}
                       onChange={handleChange}
-                      className={`w-full p-3 focus:outline-text focus:outline-1 outline-1 outline-text/50  rounded-md ${errors.fullName ? 'border-accent' : 'border-text/20'}`}
+                      className={`w-full p-3 focus:outline-text focus:outline-2 outline-1 outline-text/50  rounded-md ${errors.fullName ? 'border-accent' : 'border-text/20'}`}
                       placeholder="John Doe"
                     />
                     {errors.fullName && <p className="text-accent text-sm mt-1 font-montserrat">{errors.fullName}</p>}
@@ -551,7 +551,7 @@ const CheckoutPage = () => {
                       name="email"
                       value={formData.email}
                       onChange={handleChange}
-                      className={`w-full p-3 focus:outline-text focus:outline-1 outline-1 outline-text/50  rounded-md ${errors.email ? 'border-accent' : 'border-text/20'}`}
+                      className={`w-full p-3 focus:outline-text focus:outline-2 outline-1 outline-text/50  rounded-md ${errors.email ? 'border-accent' : 'border-text/20'}`}
                       placeholder="email@example.com"
                     />
                     {errors.email && <p className="text-accent text-sm mt-1 font-montserrat">{errors.email}</p>}
@@ -569,7 +569,7 @@ const CheckoutPage = () => {
                       value={formData.phone}
                       onChange={handleChange}
                       maxLength={11}
-                      className={`w-full p-3 focus:outline-text focus:outline-1 outline-1 outline-text/50  rounded-md ${errors.phone ? 'border-accent' : 'border-text/20'}`}
+                      className={`w-full p-3 focus:outline-text focus:outline-2 outline-1 outline-text/50  rounded-md ${errors.phone ? 'border-accent' : 'border-text/20'}`}
                       placeholder="03XX1234567"
                     />
                     {errors.phone && <p className="text-accent text-sm mt-1 font-montserrat">{errors.phone}</p>}
@@ -595,7 +595,7 @@ const CheckoutPage = () => {
                         name="address"
                         value={formData.address}
                         onChange={handleChange}
-                        className={`w-full p-3 focus:outline-text focus:outline-1 outline-1 outline-text/50  rounded-md ${errors.address ? 'border-accent' : 'border-text/20'} sm:pr-40`}
+                        className={`w-full p-3 focus:outline-text focus:outline-2 outline-1 outline-text/50  rounded-md ${errors.address ? 'border-accent' : 'border-text/20'} sm:pr-40`}
                         placeholder="Enter your complete address"
                       />
                       {selectedAddressFromStore && (
@@ -653,7 +653,7 @@ const CheckoutPage = () => {
                       value={formData.notes}
                       onChange={handleChange}
                       rows="3"
-                      className="w-full p-3 focus:outline-text focus:outline-1 outline-1 outline-text/50  rounded-md"
+                      className="w-full p-3 focus:outline-text focus:outline-2 outline-1 outline-text/50  rounded-md"
                       placeholder="Special instructions for delivery or food preparation..."
                     ></textarea>
                   </div>

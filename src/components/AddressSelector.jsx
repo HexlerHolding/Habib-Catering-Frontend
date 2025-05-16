@@ -603,7 +603,7 @@ const closeConfirmModal = () => {
                       onChange={(e) => setSearchQuery(e.target.value)}
                       onKeyDown={handleKeyDown}
                       placeholder="Enter location"
-                      className="w-full p-3 pl-10 pr-20 focus:outline-text focus:outline-1 outline-1 outline-text/50  rounded-full  truncate"
+                      className="w-full p-3 pl-10 pr-20 focus:outline-text focus:outline-2 outline-1 outline-text/50  rounded-full  truncate"
                     />
                     {searchQuery && (
                       <button
@@ -665,7 +665,7 @@ const closeConfirmModal = () => {
                         value={addressName}
                         onChange={(e) => setAddressName(e.target.value)}
                         placeholder="Location name (e.g. Home, Office)"
-                        className="w-full p-3 focus:outline-text focus:outline-1 outline-1 outline-text/50 rounded-lg  mb-3"
+                        className="w-full p-3 focus:outline-text focus:outline-2 outline-1 outline-text/50 rounded-lg  mb-3"
                       />
                       <button
                         onClick={handleSaveAddress}

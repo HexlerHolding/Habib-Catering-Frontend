@@ -132,7 +132,7 @@ const Register = () => {
                                 value={formData.name}
                                 onChange={handleChange}
                                 placeholder="Full Name"
-                                className="w-full py-3 pl-10 pr-4  bg-text/5 rounded focus:outline-text focus:outline-1 outline-1 outline-text/50 "
+                                className="w-full py-3 pl-10 pr-4  bg-text/5 rounded focus:outline-text focus:outline-2 outline-1 outline-text/50 "
                             />
                         </div>
 
@@ -144,7 +144,7 @@ const Register = () => {
                                 value={formData.phone}
                                 onChange={handleChange}
                                 placeholder="Phone Number"
-                                className="w-full py-3 pl-10 pr-4  bg-text/5 rounded focus:outline-text focus:outline-1 outline-1 outline-text/50"
+                                className="w-full py-3 pl-10 pr-4  bg-text/5 rounded focus:outline-text focus:outline-2 outline-1 outline-text/50"
                             />
                         </div>                        
                         <div className="relative">
@@ -155,7 +155,7 @@ const Register = () => {
                                 value={formData.password}
                                 onChange={handleChange}
                                 placeholder="Password"
-                                className="w-full py-3 pl-10 pr-12  bg-text/5 rounded focus:outline-text focus:outline-1 outline-1 outline-text/50"
+                                className="w-full py-3 pl-10 pr-12  bg-text/5 rounded focus:outline-text focus:outline-2 outline-1 outline-text/50"
                             />
                             <button
                                 type="button"

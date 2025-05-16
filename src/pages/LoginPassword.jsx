@@ -105,7 +105,7 @@ const LoginPassword = () => {
                 value={formData.password}
                 onChange={(e) => setFormData(prev => ({ ...prev, password: e.target.value }))}
                 placeholder="Enter your password"
-                className="w-full py-3 pl-10 pr-12 focus:outline-text focus:outline-1 outline-1 bg-text/5  outline-text/50  "
+                className="w-full py-3 pl-10 pr-12 focus:outline-text focus:outline-2 outline-1 bg-text/5  outline-text/50  "
               />
               <button
                 type="button"

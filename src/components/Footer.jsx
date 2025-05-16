@@ -20,11 +20,11 @@ const Footer = () => {
             
             {/* Links */}
             <div className="text-sm sm:text-base  space-x-4 text-text hidden sm:flex ">
-              <Link to="/terms" className="hover:text-text/50 transition-colors">
+              <Link to="#" className="hover:text-text/50 transition-colors">
                 TERMS & CONDITIONS
               </Link>
               <span>|</span>
-              <Link to="/privacy" className="hover:text-text/50 transition-colors text-negative">
+              <Link to="/privacy-policy" className="hover:text-text/50 transition-colors text-negative">
                 PRIVACY POLICY
               </Link>
             </div>

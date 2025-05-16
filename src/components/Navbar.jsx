@@ -89,7 +89,7 @@ const Navbar = ({ toggleSidebar }) => {
       <div className="flex items-center">
         {/* Menu toggle button */}
         <button 
-          className="text-xl flex items-center text-text cursor-pointer justify-center mr-4"
+          className="text-xl flex items-center text-text-secondary cursor-pointer justify-center mr-4"
           onClick={toggleSidebar}
         >
           <FaBars />

@@ -71,7 +71,7 @@ const BlogDetail = () => {
       
       {/* Hero Section */}
       <div className="w-full h-[50vh] md:h-[60vh] relative mt-4">
-        <div className="absolute inset-0 bg-gradient-to-b from-text/30 to-text/70 z-10"></div>
+        <div className="absolute inset-0 bg-gradient-to-b from-text-secondary/30 to-text-secondary/70 z-10"></div>
         <img 
           src={blog.image || blog.altImage} 
           alt={blog.title}

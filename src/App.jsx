@@ -27,6 +27,7 @@ import OrderSuccessPage from "./pages/OrderSuccessPage";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import Register from "./pages/Register";
 import { logout, selectCurrentUser, selectIsAuthenticated } from "./redux/slices/authSlice";
+import { TITLE } from "./data/globalText";
 
 function App() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -45,6 +46,10 @@ function App() {
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
+   useEffect(() => {
+    document.title = TITLE;
+  }, []);
+
 
   // Logout function
   const handleLogout = () => {

@@ -18,13 +18,13 @@ const ConfirmationModal = ({
         <div className="flex justify-end space-x-3">
           <button
             onClick={onCancel}
-            className="px-4 py-2 text-text/70 hover:text-text rounded"
+            className="px-4 py-2 text-text/70 cursor-pointer bg-primary/20 hover:bg-primary/30 hover:text-text rounded"
           >
             {cancelText}
           </button>
           <button
             onClick={onConfirm}
-            className="px-4 py-2 bg-accent text-text rounded hover:bg-accent/80 transition"
+            className="px-4 py-2 bg-accent text-text cursor-pointer rounded hover:bg-accent/80 transition"
           >
             {confirmText}
           </button>

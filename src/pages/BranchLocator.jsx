@@ -1,8 +1,8 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { FaArrowLeft, FaChevronDown, FaSearch, FaMapMarkerAlt } from 'react-icons/fa';
-import { Link, useNavigate } from 'react-router-dom';
-import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
+import { useEffect, useRef, useState } from 'react';
+import { FaArrowLeft, FaChevronDown, FaMapMarkerAlt, FaSearch } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
 import branchService from '../../Services/branchService';
 
 // Fix for Leaflet marker icons in React
@@ -317,7 +317,7 @@ const BranchLocator = () => {
                       </div>
                       <div className="ml-4">
                         <h3 className="text-lg font-medium text-text/80">{branch.name}</h3>
-                        <p className="mt-1 text-sm text-text/70">{branch.address}</p>
+                        <p className="mt-1 text-sm text-text/70">{branch.address}, {branch.city}</p>
                         <button 
                           className="mt-3 inline-flex items-center px-4 cursor-pointer py-2 border border-transparent text-sm font-medium rounded-md text-secondary bg-primary hover:bg-primary/80 hover:brightness-105 transition duration-300"
                           onClick={() => handleViewDetails(branch.id)}

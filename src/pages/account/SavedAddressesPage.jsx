@@ -1,19 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { FaMapMarkerAlt, FaPencilAlt, FaTrash, FaCheck } from 'react-icons/fa';
-import { selectIsAuthenticated } from '../../redux/slices/authSlice';
+import { selectIsAuthenticated, selectUserId } from '../../redux/slices/authSlice';
 import { 
   selectSavedAddresses, 
   selectSelectedAddress, 
   setSelectedAddress, 
-  removeAddress,
-  updateAddressName
+  deleteUserAddress, 
+  updateUserAddressName, 
 } from '../../redux/slices/locationSlice';
 import ConfirmationModal from '../../components/ConfirmationModal';
+import toast from 'react-hot-toast';
 
 const SavedAddressesPage = () => {
   const dispatch = useDispatch();
   const isAuthenticated = useSelector(selectIsAuthenticated);
+  const userId = useSelector(selectUserId);
   const savedAddresses = useSelector(selectSavedAddresses) || []; // Ensure it's never undefined
   const selectedAddress = useSelector(selectSelectedAddress);
   console.log("SavedAddressesPage - savedAddresses:", savedAddresses);
@@ -37,6 +39,7 @@ const SavedAddressesPage = () => {
   // Handle setting an address as default
   const handleSetDefault = (address) => {
     dispatch(setSelectedAddress(address));
+    toast.success('Default address updated!');
     // Scroll to top to show confirmation message
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -48,7 +51,14 @@ const SavedAddressesPage = () => {
       title: 'Delete Address',
       message: 'Are you sure you want to delete this address?',
       onConfirm: () => {
-        dispatch(removeAddress(addressId));
+        dispatch(deleteUserAddress({ userId: userId, addressId }))
+          .unwrap()
+          .then(() => {
+            toast.success('Address deleted!');
+          })
+          .catch(() => {
+            toast.error('Failed to delete address.');
+          });
         setConfirmModal({ ...confirmModal, open: false });
       }
     });
@@ -68,7 +78,14 @@ const SavedAddressesPage = () => {
   // Save edited address name
   const saveAddressName = (addressId) => {
     if (editName.trim()) {
-      dispatch(updateAddressName({ id: addressId, name: editName.trim() }));
+      dispatch(updateUserAddressName({ userId: userId, addressId, name: editName.trim() }))
+        .unwrap()
+        .then(() => {
+          toast.success('Address name updated!');
+        })
+        .catch(() => {
+          toast.error('Failed to update address name.');
+        });
     }
     setEditingId(null);
   };

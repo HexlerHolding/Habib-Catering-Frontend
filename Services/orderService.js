@@ -78,7 +78,7 @@ export const orderService = {
         shop_id: import.meta.env.VITE_DEFAULT_SHOP_ID,
         
         // New optional fields from the updated schema
-        customer_phone: orderData.customer_phone || orderData.phone,
+      customer_phone: orderData.phone || "", // Change from orderData.customerPhone to orderData.phone
         delivery_charges: deliveryFee,
         comment: orderData.comment || orderData.notes || '',
         source_system: "ordering-system",

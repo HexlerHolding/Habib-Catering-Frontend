@@ -91,10 +91,7 @@ const FavoritesPage = () => {
   }, [isLoggedIn, token]);
 
   const handleAddToCart = (item) => {
-    if (!isLoggedIn || !token) {
-      toast.error('You are not logged in, login first');
-      return;
-    }
+    // Allow guests to add to cart from favorites page as well
     dispatch(addToCart(item));
     toast.success(`${item.name} has been added to your cart`);
   };

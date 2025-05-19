@@ -124,9 +124,9 @@ const CartItem = ({ item }) => (
       <p className="text-sm text-text/70">Qty: {item.quantity}</p>
       <p className="font-medium text-text">{CURRENCY_SYMBOL} {item.price.toFixed(2)}</p>
     </div>
-    <div className="font-medium text-text">
+    {/* <div className="font-medium text-text">
       {CURRENCY_SYMBOL} {(item.price * item.quantity).toFixed(2)}
-    </div>
+    </div> */}
   </div>
 );
 

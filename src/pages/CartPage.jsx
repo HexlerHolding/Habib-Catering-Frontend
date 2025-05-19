@@ -13,6 +13,7 @@ import {
   selectCartTotalQuantity
 } from '../redux/slices/cartSlice';
 import { CURRENCY_SYMBOL } from '../data/globalText';
+import toast from 'react-hot-toast';
 
 const CartPage = () => {
   const dispatch = useDispatch();
@@ -22,6 +23,7 @@ const CartPage = () => {
   const cartItems = useSelector(selectCartItems);
   const totalQuantity = useSelector(selectCartTotalQuantity);
   const subtotal = useSelector(selectCartTotalAmount);
+  const isLoggedIn = useSelector(state => state.auth.isAuthenticated);
   
   // Voucher state
   const [showVoucherModal, setShowVoucherModal] = useState(false);
@@ -135,6 +137,10 @@ const CartPage = () => {
   
   // Handle checkout navigation
   const handleCheckout = () => {
+    if (!isLoggedIn) {
+      toast.error('You are not logged in, login before checkout');
+      return;
+    }
     navigate('/checkout');
   };
   

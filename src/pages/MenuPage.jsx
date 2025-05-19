@@ -177,10 +177,7 @@ const fetchMenuData = async () => {
 
   // Handle adding item to cart
   const handleAddToCart = (item) => {
-    if (!isLoggedIn || !token) {
-      toast.error('You are not logged in, login first');
-      return;
-    }
+    // Allow guests to add to cart (no login check)
     if (item.variations && item.variations.length > 0) {
       setVariationItem(item);
       setShowVariationModal(true);

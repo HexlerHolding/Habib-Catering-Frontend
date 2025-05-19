@@ -6,17 +6,18 @@ import { favoritesService } from '../../../Services/favoritesService';
 import { menuService } from '../../../Services/menuService';
 import { selectIsAuthenticated, selectToken } from '../../redux/slices/authSlice';
 import { addToCart } from '../../redux/slices/cartSlice';
+import { CURRENCY_SYMBOL } from '../../data/globalText';
 
 // MenuItem component copied from MenuPage for consistent card UI
 const MenuItem = ({ item, onRemoveFavorite, onAddToCart }) => (
-  <div className="bg-secondary rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all p-4 flex flex-col h-full">
+  <div className="bg-background rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all p-4 flex flex-col h-full">
     <div className="relative">
       {/* Heart icon for remove */}
       <button
         className="absolute top-2 right-2"
         onClick={() => onRemoveFavorite(item)}
       >
-        <FaHeart className="w-6 h-6 cursor-pointer text-accent fill-current" />
+        <FaHeart className="w-6 h-6 cursor-pointer text-accent hover:text-accent/80 fill-current" />
       </button>
       {/* Image container */}
       <div className="bg-text/10 rounded-lg p-2 mb-3">
@@ -39,7 +40,7 @@ const MenuItem = ({ item, onRemoveFavorite, onAddToCart }) => (
     <div className="mt-auto">
       <div className="flex justify-between items-center mb-3">
         <span className="text-accent font-bold text-xl">
-          $ {item.price?.toFixed(2)}
+          {CURRENCY_SYMBOL} {item.price?.toFixed(2)}
         </span>
       </div>
       <button
@@ -90,10 +91,7 @@ const FavoritesPage = () => {
   }, [isLoggedIn, token]);
 
   const handleAddToCart = (item) => {
-    if (!isLoggedIn || !token) {
-      toast.error('You are not logged in, login first');
-      return;
-    }
+    // Allow guests to add to cart from favorites page as well
     dispatch(addToCart(item));
     toast.success(`${item.name} has been added to your cart`);
   };

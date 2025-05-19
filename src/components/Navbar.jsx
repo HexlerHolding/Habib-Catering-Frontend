@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 import { selectIsAuthenticated } from '../redux/slices/authSlice';
 import { decreaseQuantity, increaseQuantity, removeFromCart, selectCartItems, selectCartTotalAmount, selectCartTotalQuantity } from '../redux/slices/cartSlice';
 import AddressSelector from './AddressSelector';
+import { CURRENCY_SYMBOL, TITLE } from '../data/globalText';
 
 const Navbar = ({ toggleSidebar }) => {
   const [isCartOpen, setIsCartOpen] = useState(false);
@@ -88,17 +89,17 @@ const Navbar = ({ toggleSidebar }) => {
       <div className="flex items-center">
         {/* Menu toggle button */}
         <button 
-          className="text-xl flex items-center cursor-pointer justify-center mr-4"
+          className="text-xl flex items-center text-text-secondary cursor-pointer justify-center mr-4"
           onClick={toggleSidebar}
         >
           <FaBars />
         </button>
         
         {/* Logo */}
-        <Link to="/" className=" hidden sm:flex items-center cursor-pointer">
+        <Link to="/" className=" hidden sm:flex text-sm items-center cursor-pointer">
           <img 
-            src='/habiblogo2.jpg'
-            alt="Habib Catering Logo" 
+            src='/habiblogo1.jpg'
+            alt={`${TITLE} Logo`} 
             className="h-16 w-16 rounded-full"
           />
         </Link>
@@ -141,7 +142,7 @@ const Navbar = ({ toggleSidebar }) => {
             }`}
           >
             <div className="p-4 hidden sm:block">
-              <h3 className="font-bold text-lg border-b pb-2 text-secondary">Your Cart</h3>
+              <h3 className="font-bold text-lg border-b pb-2 text-primary">Your Cart</h3>
               
               {isLoading ? (
                 <div className="py-12 flex flex-col items-center justify-center">
@@ -156,8 +157,8 @@ const Navbar = ({ toggleSidebar }) => {
                         <div className="flex items-center">
                           <img src={item.image} alt={item.name} className="w-10 h-10 object-cover rounded" />
                           <div className="ml-2">
-                            <p className="font-medium text-sm">{item.name}</p>
-                            <p className="text-sm text-text/70">${item.price.toFixed(2)}</p>
+                            <p className="font-medium text-sm text-text">{item.name}</p>
+                            <p className="text-sm text-text/70">{CURRENCY_SYMBOL} {item.price.toFixed(2)}</p>
                           </div>
                         </div>
                         <div className="flex items-center space-x-2">
@@ -165,14 +166,14 @@ const Navbar = ({ toggleSidebar }) => {
                           <div className="flex items-center bg-text/10 rounded">
                             <button 
                               onClick={(e) => handleDecreaseQuantity(item.id, e)}
-                              className="px-2 py-1 text-xs"
+                              className="px-2 py-1 text-text text-xs"
                             >
                               <FaMinus size={10} />
                             </button>
-                            <span className="px-2 text-sm">{item.quantity}</span>
+                            <span className="px-2 text-sm text-text">{item.quantity}</span>
                             <button 
                               onClick={(e) => handleIncreaseQuantity(item.id, e)}
-                              className="px-2 py-1 text-xs"
+                              className="px-2 py-1 text-text text-xs"
                             >
                               <FaPlus size={10} />
                             </button>
@@ -190,15 +191,15 @@ const Navbar = ({ toggleSidebar }) => {
                     ))}
                   </div>
                   
-                  <div className="mt-4 flex justify-between font-bold">
+                  <div className="mt-4 text-text flex justify-between font-bold">
                     <span>Total:</span>
-                    <span>$ {totalAmount.toFixed(2)}</span>
+                    <span>{CURRENCY_SYMBOL} {totalAmount.toFixed(2)}</span>
                   </div>
                   
                   <div className="mt-4 grid grid-cols-2 gap-2">
                     <Link 
                       to="/cart" 
-                      className="bg-text/10 hover:bg-text/20 text-center py-2 rounded font-medium text-sm"
+                      className="bg-text/10 hover:bg-text/20 text-center py-2 text-text rounded font-medium text-sm"
                     >
                       View Cart
                     </Link>

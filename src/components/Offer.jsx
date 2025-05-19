@@ -1,4 +1,7 @@
 
+import React from 'react';
+import { TITLE } from '../data/globalText';
+
 const Offer = () => {
   return (
     <div className="relative w-full overflow-hidden h-[31rem] flex bg-background" 
@@ -21,7 +24,7 @@ const Offer = () => {
               <input
                 type="email"
                 placeholder="Enter Email Address"
-                className="w-full px-4 py-3 border border-text/50 rounded-md "
+                className="w-full px-4 py-3  focus:outline-text focus:outline-2 outline-1 outline-text/50  rounded-md"
               />
             </div>
             
@@ -38,7 +41,7 @@ const Offer = () => {
               <h2 className="text-6xl font-extrabold  leading-tight drop-shadow-lg">
                 let's talk
                 <br />
-                <span className="text-8xl">Habib Catering</span>
+                <span className="text-8xl">{TITLE}</span>
               </h2>
             </div>
             

@@ -5,6 +5,7 @@ import { useDispatch } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import { authService } from '../../Services/authService';
 import { login } from '../redux/slices/authSlice';
+import { TITLE, PHONE_INPUT_CONFIG } from '../data/globalText';
 
 const Register = () => {    
     const [showPassword, setShowPassword] = useState(false);
@@ -23,9 +24,9 @@ const Register = () => {
         
         // Phone number validation
         if (name === 'phone') {
-            // Only allow numbers and limit to 11 digits
+            // Only allow numbers and limit to PHONE_INPUT_CONFIG.maxLength digits
             const numbersOnly = value.replace(/[^\d]/g, '');
-            if (numbersOnly.length <= 11) {
+            if (numbersOnly.length <= PHONE_INPUT_CONFIG.maxLength) {
                 setFormData(prev => ({
                     ...prev,
                     [name]: numbersOnly
@@ -53,8 +54,10 @@ const Register = () => {
         }
 
         // Phone number validation
-        if (formData.phone.length < 11) {
-            setError('Phone number must be 11 digits');
+        if (formData.phone.length < PHONE_INPUT_CONFIG.maxLength) {
+            const msg = `Phone number must be ${PHONE_INPUT_CONFIG.maxLength} digits`;
+            setError(msg);
+            toast.error(msg);
             setLoading(false);
             return;
         }
@@ -103,10 +106,10 @@ const Register = () => {
                 <Link to="/" className="flex items-center">
                     <img 
                         src='/offerSectionImage34.png'
-                        alt="Habib Catering Logo" 
+                        alt={`${TITLE} Logo`}
                         className="w-8 md:w-10"
                     />
-                    <h1 className='font-bold text-xl md:text-2xl ml-2'>Habib Catering</h1>
+                    <h1 className='font-bold text-xl md:text-2xl ml-2 text-text'>{TITLE}</h1>
                 </Link>
             </div>
 
@@ -131,7 +134,7 @@ const Register = () => {
                                 value={formData.name}
                                 onChange={handleChange}
                                 placeholder="Full Name"
-                                className="w-full py-3 pl-10 pr-4 border border-text/20 rounded focus:outline-none focus:border-primary bg-background"
+                                className="w-full py-3 pl-10 pr-4  bg-text/5 rounded focus:outline-text focus:outline-2 outline-1 outline-text/50 "
                             />
                         </div>
 
@@ -142,8 +145,9 @@ const Register = () => {
                                 name="phone"
                                 value={formData.phone}
                                 onChange={handleChange}
-                                placeholder="Phone Number"
-                                className="w-full py-3 pl-10 pr-4 border border-text/20 rounded focus:outline-none focus:border-primary bg-background"
+                                placeholder={PHONE_INPUT_CONFIG.placeholder}
+                                maxLength={PHONE_INPUT_CONFIG.maxLength}
+                                className="w-full py-3 pl-10 pr-4  bg-text/5 rounded focus:outline-text focus:outline-2 outline-1 outline-text/50"
                             />
                         </div>                        
                         <div className="relative">
@@ -154,7 +158,7 @@ const Register = () => {
                                 value={formData.password}
                                 onChange={handleChange}
                                 placeholder="Password"
-                                className="w-full py-3 pl-10 pr-12 border border-text/20 rounded focus:outline-none focus:border-primary bg-background"
+                                className="w-full py-3 pl-10 pr-12  bg-text/5 rounded focus:outline-text focus:outline-2 outline-1 outline-text/50"
                             />
                             <button
                                 type="button"

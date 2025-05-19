@@ -60,7 +60,7 @@ const BlogDetail = () => {
   }
 
   return (
-    <div className="bg-background min-h-screen pb-20 mt-10">
+    <div className="bg-background min-h-screen pb-20 mt-9">
       {/* Navigation Link */}
       <div className="container mx-auto px-4 sm:px-6 pt-6">
         <Link to="/blogs" className="inline-flex items-center text-accent hover:text-accent/70 font-medium bg-background py-2 px-4 rounded-lg shadow-md transition-colors border-b-2 border-accent mb-2">
@@ -71,7 +71,7 @@ const BlogDetail = () => {
       
       {/* Hero Section */}
       <div className="w-full h-[50vh] md:h-[60vh] relative mt-4">
-        <div className="absolute inset-0 bg-gradient-to-b from-text/30 to-text/70 z-10"></div>
+        <div className="absolute inset-0 bg-gradient-to-b from-text-secondary/30 to-text-secondary/70 z-10"></div>
         <img 
           src={blog.image || blog.altImage} 
           alt={blog.title}
@@ -165,7 +165,7 @@ const BlogDetail = () => {
                     </Link>
                     <div className="p-5">
                       <Link to={`/blogs/${post.slug}`}>
-                        <h4 className="font-bold text-lg mb-2 hover:text-accent transition-colors line-clamp-2">
+                        <h4 className="font-bold text-lg mb-2 text-text hover:text-accent transition-colors line-clamp-2">
                           {post.title}
                         </h4>
                       </Link>

@@ -15,6 +15,7 @@ export const fetchUserAddresses = createAsyncThunk(
           Authorization: `Bearer ${token}`
         }
       });
+      console.log("Fetched addresses:", response.data);
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response?.data?.error || 'Failed to fetch addresses');
@@ -77,6 +78,37 @@ export const setUserSelectedAddress = createAsyncThunk(
       return response.data.selected_address;
     } catch (error) {
       return rejectWithValue(error.response?.data?.error || 'Failed to set selected address');
+    }
+  }
+);
+
+// Update user address name (new async thunk)
+export const updateUserAddressName = createAsyncThunk(
+  'location/updateUserAddressName',
+  async ({ userId, addressId, name }, { getState, rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem('userToken');
+      // Find the full address object from current state
+      const state = getState();
+      const addresses = state.location.savedAddresses || [];
+      const address = addresses.find(addr => addr.id === addressId);
+      if (!address) throw new Error('Address not found');
+      // Update the name
+      const updatedAddress = { ...address, name };
+      // Use POST to update (not PUT), as per backend
+      const response = await axios.post(
+        `${API_URL}/user/addresses/${userId}`,
+        { address: updatedAddress },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+      return response.data; // Should return updated addresses array
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.error || error.message || 'Failed to update address name');
     }
   }
 );
@@ -232,6 +264,20 @@ const locationSlice = createSlice({
         localStorage.setItem('selectedAddress', JSON.stringify(action.payload));
       })
       .addCase(setUserSelectedAddress.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.payload;
+      })
+      
+      // Update user address name
+      .addCase(updateUserAddressName.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(updateUserAddressName.fulfilled, (state, action) => {
+        state.status = 'succeeded';
+        state.savedAddresses = action.payload;
+        localStorage.setItem('savedAddresses', JSON.stringify(action.payload));
+      })
+      .addCase(updateUserAddressName.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.payload;
       });

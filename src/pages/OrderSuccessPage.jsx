@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { FaCheckCircle, FaClipboard, FaHome, FaArrowLeft } from 'react-icons/fa';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { CURRENCY_SYMBOL } from '../data/globalText';
 
 const OrderSuccessPage = () => {
   const location = useLocation();
@@ -39,8 +40,8 @@ const OrderSuccessPage = () => {
   }
   
   return (
-    <div className="min-h-screen bg-background flex flex-col items-center justify-center p-2 sm:p-4 mt-4 sm:mt-10">
-      <div className="w-full max-w-md bg-secondary rounded-lg shadow-lg p-4 sm:p-8 text-center overflow-x-auto">
+    <div className="min-h-screen bg-background flex flex-col items-center justify-center p-2 sm:p-4 mt-4 sm:mt-9">
+      <div className="w-full max-w-md bg-background rounded-lg shadow-lg p-4 sm:p-8 text-center overflow-x-auto">
       {/* Go Back Arrow */}
       <button
         className="flex items-center text-primary cursor-pointer hover:text-accent font-medium mb-4 px-2 py-1 rounded transition-colors self-start"
@@ -52,7 +53,7 @@ const OrderSuccessPage = () => {
         <div className="mb-6">
           <FaCheckCircle className="text-green-500 text-6xl mx-auto" />
         </div>
-        <h1 className="text-2xl sm:text-3xl font-bold mb-4 text-text font-poppins">Order Successful!</h1>
+        <h1 className="text-2xl md:text-3xl font-bold mb-4 text-text font-poppins">Order Successful!</h1>
         <p className="text-text/70 mb-6 font-montserrat text-sm sm:text-base">
           Thank you for your order. We've received your order and will begin processing it right away.
         </p>
@@ -75,15 +76,15 @@ const OrderSuccessPage = () => {
                 </div>
                 <div className="flex flex-wrap justify-between mb-2">
                   <span className="text-text/70 font-montserrat">Subtotal:</span>
-                  <span className="font-medium text-text font-montserrat">$ {orderDetails.subtotal.toFixed(2)}</span>
+                  <span className="font-medium text-text font-montserrat">{CURRENCY_SYMBOL} {orderDetails.subtotal.toFixed(2)}</span>
                 </div>
                 <div className="flex flex-wrap justify-between mb-2">
                   <span className="text-text/70 font-montserrat">Tax:</span>
-                  <span className="font-medium text-text font-montserrat">$ {orderDetails.tax.toFixed(2)}</span>
+                  <span className="font-medium text-text font-montserrat">{CURRENCY_SYMBOL} {orderDetails.tax.toFixed(2)}</span>
                 </div>
                 <div className="flex flex-wrap justify-between font-bold">
                   <span className="text-text font-poppins">Total:</span>
-                  <span className="text-text font-poppins">$ {orderDetails.total.toFixed(2)}</span>
+                  <span className="text-text font-poppins">{CURRENCY_SYMBOL} {orderDetails.total.toFixed(2)}</span>
                 </div>
               </>
             )}

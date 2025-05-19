@@ -18,6 +18,7 @@ import {
   setUserSelectedAddress
 } from '../redux/slices/locationSlice';
 import toast from 'react-hot-toast';
+import ConfirmationModal from './ConfirmationModal';
 
 // Fix Leaflet marker icon issue
 delete L.Icon.Default.prototype._getIconUrl;
@@ -49,6 +50,29 @@ const AddressSelector = () => {
   const mapInstanceRef = useRef(null);
   const markerRef = useRef(null);
 
+  // Modal state for confirmation
+const [confirmModal, setConfirmModal] = useState({
+  open: false,
+  title: '',
+  message: '',
+  onConfirm: null,
+});
+
+
+// Helper to open confirmation modal
+const openConfirmModal = ({ title, message, onConfirm }) => {
+  setConfirmModal({
+    open: true,
+    title,
+    message,
+    onConfirm,
+  });
+};
+
+// Helper to close modal
+const closeConfirmModal = () => {
+  setConfirmModal({ ...confirmModal, open: false });
+};
   // Fetch user's addresses when component mounts and user is authenticated
   useEffect(() => {
     if (isAuthenticated && userId) {
@@ -360,10 +384,13 @@ const AddressSelector = () => {
   };
   
   // Delete an address
-  const handleDeleteAddress = (addressId) => {
-    if (!addressId) return;
-    
-    if (window.confirm('Are you sure you want to delete this address?')) {
+ const handleDeleteAddress = (addressId) => {
+  if (!addressId) return;
+  
+  openConfirmModal({
+    title: 'Delete Address',
+    message: 'Are you sure you want to delete this address?',
+    onConfirm: () => {
       if (isAuthenticated && userId) {
         // Delete from user's profile in database
         dispatch(deleteUserAddress({ userId, addressId }))
@@ -376,8 +403,10 @@ const AddressSelector = () => {
         // Delete locally if not authenticated
         dispatch(removeAddress(addressId));
       }
+      closeConfirmModal();
     }
-  };
+  });
+};
 
   // Select a saved address
   const handleSelectSavedAddress = (address) => {
@@ -455,10 +484,10 @@ const AddressSelector = () => {
 
       {/* Modal Overlay */}
       {isModalOpen && (
-        <div className="fixed inset-0 bg-text/70 z-50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 bg-modal/50 z-50 flex items-center justify-center p-4">
           <div
             ref={modalRef}
-            className="bg-background rounded-lg w-full h-[90vh] overflow-auto max-w-xl shadow-xl"
+            className="bg-background rounded-lg w-full h-auto overflow-auto max-w-xl shadow-xl max-h-[90vh] overflow-y-auto"
           >
             {/* Modal Header */}
             <div className="flex justify-between items-center p-4 border-b border-text/10">
@@ -532,7 +561,7 @@ const AddressSelector = () => {
                             e.stopPropagation();
                             handleDeleteAddress(address.id);
                           }}
-                          className="text-accent hover:text-red-600 p-2"
+                          className="text-accent cursor-pointer hover:text-red-600 p-2"
                         >
                           <FaTimes />
                         </button>
@@ -574,19 +603,19 @@ const AddressSelector = () => {
                       onChange={(e) => setSearchQuery(e.target.value)}
                       onKeyDown={handleKeyDown}
                       placeholder="Enter location"
-                      className="w-full p-3 pl-10 pr-20 border border-primary/20 rounded-full focus:outline-none focus:ring-1 focus:ring-primary truncate"
+                      className="w-full p-3 pl-10 pr-20 focus:outline-text focus:outline-2 outline-1 outline-text/50  rounded-full  truncate"
                     />
                     {searchQuery && (
                       <button
                         onClick={() => setSearchQuery('')}
-                        className="absolute right-12 text-text/50 hover:text-accent"
+                        className="absolute right-12 text-text/50 cursor-pointer hover:text-accent"
                       >
                         <FaTimes />
                       </button>
                     )}
                     <button 
                       onClick={handleSearch} 
-                      className="absolute right-3 text-accent hover:text-accent/80"
+                      className="absolute right-3 text-accent cursor-pointer hover:text-accent/80"
                     >
                       <FaMapMarkerAlt />
                     </button>
@@ -636,7 +665,7 @@ const AddressSelector = () => {
                         value={addressName}
                         onChange={(e) => setAddressName(e.target.value)}
                         placeholder="Location name (e.g. Home, Office)"
-                        className="w-full p-3 border border-primary/20 rounded-lg focus:outline-none focus:ring-1 focus:ring-primary mb-3"
+                        className="w-full p-3 focus:outline-text focus:outline-2 outline-1 outline-text/50 rounded-lg  mb-3"
                       />
                       <button
                         onClick={handleSaveAddress}
@@ -663,6 +692,16 @@ const AddressSelector = () => {
           </div>
         </div>
       )}
+      {/* Confirmation Modal */}
+<ConfirmationModal
+  open={confirmModal.open}
+  title={confirmModal.title}
+  message={confirmModal.message}
+  onConfirm={confirmModal.onConfirm}
+  onCancel={closeConfirmModal}
+  confirmText="Yes"
+  cancelText="No"
+/>
     </>
   );
 };

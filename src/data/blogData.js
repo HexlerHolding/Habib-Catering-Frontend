@@ -1,17 +1,19 @@
+import { TITLE } from "../data/globalText";
+
 const blogPosts = [
   {
     id: 1,
-    title: "5 Tips for Effortless Food Ordering with Habib Catering",
+    title: `5 Tips for Effortless Food Ordering with ${TITLE}`,
     image: "/blog1.jpg",
     altImage: "https://via.placeholder.com/800x400/FFD700/8B4513?text=Effortless+Food+Ordering",
     author: "Syed Arslan",
     date: "May 1, 2025",
-    excerpt: "Discover how to make your next meal a breeze with these simple food ordering tips from Habib Catering.",
+    excerpt: `Discover how to make your next meal a breeze with these simple food ordering tips from  ${TITLE}.`,
     slug: "effortless-food-ordering-tips",
     content: [
       {
         type: "paragraph",
-        text: "Ordering food should be easy and enjoyable! At Habib Catering, we want to make sure your experience is smooth from start to finish. Here are our top 5 tips for effortless food ordering."
+        text: `Ordering food should be easy and enjoyable! At ${TITLE}, we want to make sure your experience is smooth from start to finish. Here are our top 5 tips for effortless food ordering.`
       },
       {
         type: "heading",
@@ -51,7 +53,7 @@ const blogPosts = [
       },
       {
         type: "paragraph",
-        text: "We love hearing from you! Tag us on social media with your Habib Catering order and let us know how we did."
+        text: `We love hearing from you! Tag us on social media with your ${TITLE} order and let us know how we did.`
       }
     ]
   },
@@ -67,7 +69,7 @@ const blogPosts = [
     content: [
       {
         type: "paragraph",
-        text: "Planning an event? The food you serve can make or break the experience. Here’s why choosing Habib Catering is the best decision for your next gathering."
+        text: `Planning an event? The food you serve can make or break the experience. Here’s why choosing ${TITLE} is the best decision for your next gathering.`
       },
       {
         type: "heading",
@@ -99,7 +101,7 @@ const blogPosts = [
       },
       {
         type: "paragraph",
-        text: "With Habib Catering, you can count on fresh, flavorful food delivered on time, every time."
+        text: `With ${TITLE}, you can count on fresh, flavorful food delivered on time, every time.`
       },
       {
         type: "paragraph",
@@ -114,12 +116,12 @@ const blogPosts = [
     altImage: "https://via.placeholder.com/800x400/FFD700/000000?text=Menu+Planning",
     author: "Syed Arslan",
     date: "March 30, 2025",
-    excerpt: "Not sure what to serve at your next event? Here’s a simple guide to picking the right menu with Habib Catering.",
+    excerpt: `Not sure what to serve at your next event? Here’s a simple guide to picking the right menu with ${TITLE}.`,
     slug: "choose-perfect-menu-party",
     content: [
       {
         type: "paragraph",
-        text: "Choosing the right menu is key to a successful party. Here’s how Habib Catering can help you make the best choice."
+        text: `Choosing the right menu is key to a successful party. Here’s how ${TITLE} can help you make the best choice.`
       },
       {
         type: "heading",

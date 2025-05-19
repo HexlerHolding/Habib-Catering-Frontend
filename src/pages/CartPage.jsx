@@ -12,6 +12,8 @@ import {
   selectCartTotalAmount,
   selectCartTotalQuantity
 } from '../redux/slices/cartSlice';
+import { CURRENCY_SYMBOL } from '../data/globalText';
+import toast from 'react-hot-toast';
 
 const CartPage = () => {
   const dispatch = useDispatch();
@@ -21,6 +23,7 @@ const CartPage = () => {
   const cartItems = useSelector(selectCartItems);
   const totalQuantity = useSelector(selectCartTotalQuantity);
   const subtotal = useSelector(selectCartTotalAmount);
+  const isLoggedIn = useSelector(state => state.auth.isAuthenticated);
   
   // Voucher state
   const [showVoucherModal, setShowVoucherModal] = useState(false);
@@ -134,11 +137,15 @@ const CartPage = () => {
   
   // Handle checkout navigation
   const handleCheckout = () => {
+    // if (!isLoggedIn) {
+    //   toast.error('You are not logged in, login before checkout');
+    //   return;
+    // }
     navigate('/checkout');
   };
   
   return (
-    <div className="min-h-screen pt-14 sm:pt-5 pb-16 mt-10">
+    <div className="min-h-screen pt-14 sm:pt-5 pb-16 mt-9 bg-background">
       <div className="container mx-auto px-4">
         {/* Go Back Arrow */}
         <button
@@ -149,7 +156,7 @@ const CartPage = () => {
           Back
         </button>
         <div className="flex items-center justify-between mb-8">
-          <h1 className="text-3xl font-bold text-text">Your Cart</h1>
+          <h1 className="text-2xl md:text-3xl font-bold text-text">Your Cart</h1>
           {cartItems.length > 0 && (
             <button 
               onClick={handleClearCart}
@@ -164,12 +171,14 @@ const CartPage = () => {
           <div className="lg:grid lg:grid-cols-3 lg:gap-8">
             {/* Cart Items Section (2/3 width on large screens) */}
             <div className="lg:col-span-2 mb-8 lg:mb-0">
-              <div className="bg-secondary rounded-lg shadow-sm p-6 h-auto overflow-y-auto ">
+              <div className="bg-background rounded-lg shadow-sm p-6 h-auto overflow-y-auto ">
                 <h2 className="text-xl font-bold mb-6 text-text">Cart Items ({totalQuantity})</h2>
                 
                 {/* Cart items list */}
                 <div className="space-y-6">
+                      {console.log("cart items",cartItems)}
                   {cartItems.map(item => (
+                
                     <div key={item.id} className="flex flex-col sm:flex-row border-b pb-6">
                       {/* Product Image and Info */}
                       <div className="flex sm:w-3/5 mb-4 sm:mb-0">
@@ -183,7 +192,15 @@ const CartPage = () => {
                         <div className="ml-4">
                           <h3 className="font-bold text-lg text-text">{item.name}</h3>
                           <p className="text-sm text-text/60 line-clamp-2 mb-1">{item.description}</p>
-                          <p className="text-accent font-bold">$ {item.price.toFixed(2)}</p>
+                          <p className="text-accent font-bold">{CURRENCY_SYMBOL} {item.price.toFixed(2)}</p>
+                          {/* Show selected variations if present */}
+                          {item.selectedVariations && (
+                            <div className="text-xs text-[var(--color-primary)] mt-1">
+                              {Object.entries(item.selectedVariations).map(([vName, oName]) => (
+                                <div key={vName}>{vName}: <span className="text-[var(--color-accent)]">{oName}</span></div>
+                              ))}
+                            </div>
+                          )}
                         </div>
                       </div>
                       
@@ -265,7 +282,7 @@ const CartPage = () => {
             
             {/* Order Summary Section (1/3 width on large screens) */}
             <div className="lg:col-span-1">
-              <div className="bg-secondary rounded-lg shadow-sm p-6 sticky top-24">
+              <div className="bg-background rounded-lg shadow-sm p-6 sticky top-24">
                 <h2 className="text-xl font-bold mb-6 text-text">Order Summary</h2>
                 
                 {/* Price breakdown */}
@@ -277,7 +294,7 @@ const CartPage = () => {
                         <span className="font-medium">
                           {item.name} <span className="text-text/60">× {item.quantity}</span>
                         </span>
-                        <span className="font-medium">$ {(item.price * item.quantity).toFixed(2)}</span>
+                        <span className="font-medium">{CURRENCY_SYMBOL} {(item.price * item.quantity).toFixed(2)}</span>
                       </div>
                     ))}
                   </div>
@@ -285,20 +302,20 @@ const CartPage = () => {
                   {/* Subtotal row */}
                   <div className="flex justify-between text-text border-t pt-3">
                     <span className="font-medium">Subtotal</span>
-                    <span className="font-medium">$ {subtotal.toFixed(2)}</span>
+                    <span className="font-medium">{CURRENCY_SYMBOL} {subtotal.toFixed(2)}</span>
                   </div>
                   
                   {/* Show discount if voucher is applied */}
                   {appliedVoucher && (
                     <div className="flex justify-between text-primary">
                       <span className="font-medium">Discount</span>
-                      <span className="font-medium">- $ {discountAmount.toFixed(2)}</span>
+                      <span className="font-medium">- {CURRENCY_SYMBOL} {discountAmount.toFixed(2)}</span>
                     </div>
                   )}
                   
                   <div className="border-t pt-4 flex justify-between">
                     <span className="text-text font-bold">Total</span>
-                    <span className="text-accent font-bold text-xl">$ {(subtotal - discountAmount).toFixed(2)}</span>
+                    <span className="text-accent font-bold text-xl">{CURRENCY_SYMBOL} {(subtotal - discountAmount).toFixed(2)}</span>
                   </div>
                 </div>
                 
@@ -324,7 +341,7 @@ const CartPage = () => {
           </div>
         ) : (
           // Empty cart view
-          <div className="bg-secondary rounded-lg shadow-sm p-12 text-center">
+          <div className="bg-background rounded-lg shadow-sm p-12 text-center">
             <div className="flex justify-center mb-6">
               <div className="bg-text/5 w-24 h-24 rounded-full flex items-center justify-center">
                 <FaShoppingCart size={48} className="text-text/30" />

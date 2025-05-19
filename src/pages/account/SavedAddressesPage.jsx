@@ -1,22 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { FaMapMarkerAlt, FaPencilAlt, FaTrash, FaCheck } from 'react-icons/fa';
-import { selectIsAuthenticated } from '../../redux/slices/authSlice';
+import { selectIsAuthenticated, selectUserId } from '../../redux/slices/authSlice';
 import { 
   selectSavedAddresses, 
   selectSelectedAddress, 
   setSelectedAddress, 
-  removeAddress,
-  updateAddressName
+  deleteUserAddress, 
+  updateUserAddressName, 
 } from '../../redux/slices/locationSlice';
 import ConfirmationModal from '../../components/ConfirmationModal';
+import toast from 'react-hot-toast';
 
 const SavedAddressesPage = () => {
   const dispatch = useDispatch();
   const isAuthenticated = useSelector(selectIsAuthenticated);
+  const userId = useSelector(selectUserId);
   const savedAddresses = useSelector(selectSavedAddresses) || []; // Ensure it's never undefined
   const selectedAddress = useSelector(selectSelectedAddress);
-  
+  console.log("SavedAddressesPage - savedAddresses:", savedAddresses);
+  console.log("selected - selectedAddress:", selectedAddress);
   // State for editing address name
   const [editingId, setEditingId] = useState(null);
   const [editName, setEditName] = useState('');
@@ -36,6 +39,7 @@ const SavedAddressesPage = () => {
   // Handle setting an address as default
   const handleSetDefault = (address) => {
     dispatch(setSelectedAddress(address));
+    toast.success('Default address updated!');
     // Scroll to top to show confirmation message
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -47,7 +51,14 @@ const SavedAddressesPage = () => {
       title: 'Delete Address',
       message: 'Are you sure you want to delete this address?',
       onConfirm: () => {
-        dispatch(removeAddress(addressId));
+        dispatch(deleteUserAddress({ userId: userId, addressId }))
+          .unwrap()
+          .then(() => {
+            toast.success('Address deleted!');
+          })
+          .catch(() => {
+            toast.error('Failed to delete address.');
+          });
         setConfirmModal({ ...confirmModal, open: false });
       }
     });
@@ -67,7 +78,14 @@ const SavedAddressesPage = () => {
   // Save edited address name
   const saveAddressName = (addressId) => {
     if (editName.trim()) {
-      dispatch(updateAddressName({ id: addressId, name: editName.trim() }));
+      dispatch(updateUserAddressName({ userId: userId, addressId, name: editName.trim() }))
+        .unwrap()
+        .then(() => {
+          toast.success('Address name updated!');
+        })
+        .catch(() => {
+          toast.error('Failed to update address name.');
+        });
     }
     setEditingId(null);
   };
@@ -89,7 +107,7 @@ const SavedAddressesPage = () => {
   return (
     <div>
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-semibold">Saved Addresses</h2>
+        <h2 className="text-xl font-semibold text-text">Saved Addresses</h2>
         <a 
           href="#address-selector" 
           onClick={(e) => {
@@ -106,8 +124,8 @@ const SavedAddressesPage = () => {
       
       {selectedAddress && (
         <div className="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-6 rounded shadow-sm">
-          <p className="font-medium">Your current delivery address is:</p>
-          <p className="text-sm">{selectedAddress.address}</p>
+          <p className="font-medium text-primary">Your current delivery address is:</p>
+          <p className="text-sm text-primary">{selectedAddress.address}</p>
         </div>
       )}
       
@@ -136,7 +154,7 @@ const SavedAddressesPage = () => {
                         placeholder="Location name (e.g. Home, Office)"
                       />
                     ) : (
-                      <span className="font-medium text-lg">
+                      <span className="font-medium text-lg text-text">
                         {address.name || 'Unnamed Location'}
                       </span>
                     )}
@@ -212,7 +230,7 @@ const SavedAddressesPage = () => {
               const addressSelectorBtn = document.querySelector('[data-testid="address-selector-btn"]');
               if (addressSelectorBtn) addressSelectorBtn.click();
             }}
-            className="bg-primary text-text px-6 py-2 rounded-lg font-medium hover:bg-primary/80 hover:brightness-105 transition-colors"
+            className="bg-primary text-secondary px-6 py-2 rounded-lg font-medium hover:bg-primary/80 hover:brightness-105 transition-colors"
           >
             Add Your First Address
           </button>

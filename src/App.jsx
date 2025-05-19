@@ -27,6 +27,7 @@ import OrderSuccessPage from "./pages/OrderSuccessPage";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import Register from "./pages/Register";
 import { logout, selectCurrentUser, selectIsAuthenticated } from "./redux/slices/authSlice";
+import { TITLE } from "./data/globalText";
 
 function App() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -45,6 +46,10 @@ function App() {
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
+   useEffect(() => {
+    document.title = TITLE;
+  }, []);
+
 
   // Logout function
   const handleLogout = () => {
@@ -151,25 +156,20 @@ function App() {
             </MainLayout>
           }
         />
-        {/* Protected Routes - Require Authentication */}
         <Route
           path="/checkout"
           element={
-            <ProtectedRoutes {...layoutProps}>
-              <MainLayout {...layoutProps}>
-                <CheckoutPage />
-              </MainLayout>
-            </ProtectedRoutes>
+            <MainLayout {...layoutProps}>
+              <CheckoutPage />
+            </MainLayout>
           }
         />
         <Route
           path="/order-success"
           element={
-            <ProtectedRoutes {...layoutProps}>
-              <MainLayout {...layoutProps}>
-                <OrderSuccessPage />
-              </MainLayout>
-            </ProtectedRoutes>
+            <MainLayout {...layoutProps}>
+              <OrderSuccessPage />
+            </MainLayout>
           }
         />
         {/* Protected account routes */}

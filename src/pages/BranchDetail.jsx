@@ -249,7 +249,7 @@ const BranchDetail = () => {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 z-10 mt-10">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 z-10 mt-9 bg-background">
       {/* Back Button and Header */}
         <button
         className="flex items-center text-primary cursor-pointer hover:text-accent font-medium mb-4 px-2 py-1 rounded transition-colors self-start"

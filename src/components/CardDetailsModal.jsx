@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { AiOutlineInfoCircle } from 'react-icons/ai';
+import { IoClose } from 'react-icons/io5';
 
 const CardDetailsModal = ({ isOpen, onClose, onSave }) => {
   const [cardData, setCardData] = useState({
@@ -126,18 +128,16 @@ const CardDetailsModal = ({ isOpen, onClose, onSave }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-text/50 flex items-center justify-center z-50">
-      <div className="bg-secondary rounded-lg shadow-xl w-full max-w-md mx-4 border border-primary/20">
+    <div className="fixed inset-0 bg-modal/50 flex items-center justify-center z-50">
+      <div className="bg-background rounded-lg shadow-xl w-full max-w-md mx-4 border border-primary/20">
         <div className="p-6">
           <div className="flex justify-between items-center mb-6">
             <h3 className="text-xl font-bold text-text font-poppins">Enter Card Details</h3>
             <button 
               onClick={onClose} 
-              className="text-text/70 hover:text-text"
+              className="text-text/70 cursor-pointer hover:text-text"
             >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
-              </svg>
+              <IoClose className="w-5 h-5" />
             </button>
           </div>
           
@@ -154,7 +154,7 @@ const CardDetailsModal = ({ isOpen, onClose, onSave }) => {
                   value={cardData.cardNumber}
                   onChange={handleCardDataChange}
                   maxLength={19} // 16 digits + 3 spaces
-                  className={`w-full p-3 border rounded-md ${cardErrors.cardNumber ? 'border-accent' : 'border-text/20'}`}
+                  className={`w-full p-3 focus:outline-text focus:outline-2 outline-1 outline-text/50  rounded-md ${cardErrors.cardNumber ? 'border-accent' : 'border-text/20'}`}
                   placeholder="0000 0000 0000 0000"
                 />
                 {cardErrors.cardNumber && (
@@ -172,7 +172,7 @@ const CardDetailsModal = ({ isOpen, onClose, onSave }) => {
                   name="cardHolder"
                   value={cardData.cardHolder}
                   onChange={handleCardDataChange}
-                  className={`w-full p-3 border rounded-md ${cardErrors.cardHolder ? 'border-accent' : 'border-text/20'}`}
+                  className={`w-full p-3 focus:outline-text focus:outline-2 outline-1 outline-text/50  rounded-md ${cardErrors.cardHolder ? 'border-accent' : 'border-text/20'}`}
                   placeholder="John Doe"
                 />
                 {cardErrors.cardHolder && (
@@ -192,7 +192,7 @@ const CardDetailsModal = ({ isOpen, onClose, onSave }) => {
                     value={cardData.expiry}
                     onChange={handleCardDataChange}
                     maxLength={5} // MM/YY format
-                    className={`w-full p-3 border rounded-md ${cardErrors.expiry ? 'border-accent' : 'border-text/20'}`}
+                    className={`w-full p-3 focus:outline-text focus:outline-2 outline-1 outline-text/50  rounded-md ${cardErrors.expiry ? 'border-accent' : 'border-text/20'}`}
                     placeholder="MM/YY"
                   />
                   {cardErrors.expiry && (
@@ -211,7 +211,7 @@ const CardDetailsModal = ({ isOpen, onClose, onSave }) => {
                     value={cardData.cvv}
                     onChange={handleCardDataChange}
                     maxLength={4}
-                    className={`w-full p-3 border rounded-md ${cardErrors.cvv ? 'border-accent' : 'border-text/20'}`}
+                    className={`w-full p-3 borfocus:outline-text focus:outline-2 outline-1 outline-text/50 der rounded-md ${cardErrors.cvv ? 'border-accent' : 'border-text/20'}`}
                     placeholder="123"
                   />
                   {cardErrors.cvv && (
@@ -250,9 +250,7 @@ const CardDetailsModal = ({ isOpen, onClose, onSave }) => {
         <div className="p-4 bg-primary/10 rounded-b-lg border-t border-primary/20">
           <div className="flex items-center">
             <div className="text-primary">
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-              </svg>
+              <AiOutlineInfoCircle className="w-6 h-6" />
             </div>
             <p className="ml-2 text-sm text-text/70 font-montserrat">
               Your card information is securely processed and never stored on our servers.

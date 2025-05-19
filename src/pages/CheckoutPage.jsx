@@ -9,6 +9,7 @@ import CardDetailsModal from '../components/CardDetailsModal';
 import { selectIsAuthenticated } from '../redux/slices/authSlice';
 import { clearCart, selectCartItems, selectCartTotalAmount } from '../redux/slices/cartSlice';
 import { selectSavedAddresses, selectSelectedAddress } from '../redux/slices/locationSlice';
+import { CURRENCY_SYMBOL } from '../data/globalText';
 
 // Component for displaying a single branch option
 const BranchOption = ({ branch, isSelected, onChange }) => (
@@ -121,11 +122,11 @@ const CartItem = ({ item }) => (
     <div className="ml-3 flex-1">
       <p className="font-medium text-text">{item.name}</p>
       <p className="text-sm text-text/70">Qty: {item.quantity}</p>
-      <p className="font-medium text-text">$ {item.price.toFixed(2)}</p>
+      <p className="font-medium text-text">{CURRENCY_SYMBOL} {item.price.toFixed(2)}</p>
     </div>
-    <div className="font-medium text-text">
-      $ {(item.price * item.quantity).toFixed(2)}
-    </div>
+    {/* <div className="font-medium text-text">
+      {CURRENCY_SYMBOL} {(item.price * item.quantity).toFixed(2)}
+    </div> */}
   </div>
 );
 
@@ -428,7 +429,7 @@ const CheckoutPage = () => {
   }
   
   return (
-    <>
+    <div className='bg-background min-h-screen'>
       {/* Address Selector Modal - Conditionally rendered */}
       {showAddressSelectorModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
@@ -447,16 +448,16 @@ const CheckoutPage = () => {
         </div>
       )}
 
-      <div className="max-w-6xl mx-auto px-4 py-8 bg-background mt-10">
+      <div className="max-w-6xl mx-auto px-4 py-8 bg-background mt-9">
         {/* Checkout header */}
         <div className="mb-8">
           <button 
             onClick={() => navigate('/cart')}
-            className="flex items-center text-sm font-medium mb-4 cursor-pointer text-text hover:text-accent transition-colors font-montserrat"
+            className="flex items-center ml-3 text-sm font-medium mb-4 cursor-pointer text-text hover:text-accent transition-colors font-montserrat"
           >
             <FaArrowLeft className="mr-2" /> Back to Cart
           </button>
-          <h1 className="text-3xl font-bold text-text font-poppins">Checkout</h1>
+          <h1 className="text-2xl md:text-3xl font-bold text-text font-poppins">Checkout</h1>
         </div>
         
         {/* Card Details Modal */}
@@ -481,7 +482,7 @@ const CheckoutPage = () => {
           {/* Customer information form - 2/3 width */}
           <div className="md:col-span-2">
             {/* Branch Selection Section */}
-            <div className="bg-secondary rounded-lg shadow-md p-6 mb-6 border border-primary/20">
+            <div className="bg-background rounded-lg shadow-md p-6 mb-6 border border-primary/20">
               <h2 className="text-xl font-bold mb-4 text-text font-poppins">Select Branch</h2>
               
               {branchLoading ? (
@@ -518,7 +519,7 @@ const CheckoutPage = () => {
             </div>
           
             {/* Customer Information Section */}
-            <div className="bg-secondary rounded-lg shadow-md p-6 mb-6 border border-primary/20">
+            <div className="bg-background rounded-lg shadow-md p-6 mb-6 border border-primary/20">
               <h2 className="text-xl font-bold mb-4 text-text font-poppins">Customer Information</h2>
               
               <form id="checkout-form" onSubmit={handleSubmit}>
@@ -534,7 +535,7 @@ const CheckoutPage = () => {
                       name="fullName"
                       value={formData.fullName}
                       onChange={handleChange}
-                      className={`w-full p-3 border rounded-md ${errors.fullName ? 'border-accent' : 'border-text/20'}`}
+                      className={`w-full p-3 focus:outline-text focus:outline-2 outline-1 outline-text/50  rounded-md ${errors.fullName ? 'border-accent' : 'border-text/20'}`}
                       placeholder="John Doe"
                     />
                     {errors.fullName && <p className="text-accent text-sm mt-1 font-montserrat">{errors.fullName}</p>}
@@ -551,7 +552,7 @@ const CheckoutPage = () => {
                       name="email"
                       value={formData.email}
                       onChange={handleChange}
-                      className={`w-full p-3 border rounded-md ${errors.email ? 'border-accent' : 'border-text/20'}`}
+                      className={`w-full p-3 focus:outline-text focus:outline-2 outline-1 outline-text/50  rounded-md ${errors.email ? 'border-accent' : 'border-text/20'}`}
                       placeholder="email@example.com"
                     />
                     {errors.email && <p className="text-accent text-sm mt-1 font-montserrat">{errors.email}</p>}
@@ -569,7 +570,7 @@ const CheckoutPage = () => {
                       value={formData.phone}
                       onChange={handleChange}
                       maxLength={11}
-                      className={`w-full p-3 border rounded-md ${errors.phone ? 'border-accent' : 'border-text/20'}`}
+                      className={`w-full p-3 focus:outline-text focus:outline-2 outline-1 outline-text/50  rounded-md ${errors.phone ? 'border-accent' : 'border-text/20'}`}
                       placeholder="03XX1234567"
                     />
                     {errors.phone && <p className="text-accent text-sm mt-1 font-montserrat">{errors.phone}</p>}
@@ -595,7 +596,7 @@ const CheckoutPage = () => {
                         name="address"
                         value={formData.address}
                         onChange={handleChange}
-                        className={`w-full p-3 border rounded-md ${errors.address ? 'border-accent' : 'border-text/20'} sm:pr-40`}
+                        className={`w-full p-3 focus:outline-text focus:outline-2 outline-1 outline-text/50  rounded-md ${errors.address ? 'border-accent' : 'border-text/20'} sm:pr-40`}
                         placeholder="Enter your complete address"
                       />
                       {selectedAddressFromStore && (
@@ -653,7 +654,7 @@ const CheckoutPage = () => {
                       value={formData.notes}
                       onChange={handleChange}
                       rows="3"
-                      className="w-full p-3 border border-text/20 rounded-md"
+                      className="w-full p-3 focus:outline-text focus:outline-2 outline-1 outline-text/50  rounded-md"
                       placeholder="Special instructions for delivery or food preparation..."
                     ></textarea>
                   </div>
@@ -695,7 +696,7 @@ const CheckoutPage = () => {
           
           {/* Order Summary - 1/3 width */}
           <div className="md:col-span-1">
-            <div className="bg-secondary rounded-lg shadow-md p-6 sticky top-20 border border-primary/20">
+            <div className="bg-background rounded-lg shadow-md p-6 sticky top-20 border border-primary/20">
               <h2 className="text-xl font-bold mb-4 text-text font-poppins">Order Summary</h2>
               
               {/* Product list */}
@@ -709,15 +710,15 @@ const CheckoutPage = () => {
               <div className="space-y-2 py-4 border-t border-b border-text/20">
                 <div className="flex justify-between">
                   <span className="text-text/70 font-montserrat">Subtotal</span>
-                  <span className="text-text font-montserrat">$ {subtotal.toFixed(2)}</span>
+                  <span className="text-text font-montserrat">{CURRENCY_SYMBOL} {subtotal.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-text/70 font-montserrat">Tax ({taxRate}%)</span>
-                  <span className="text-text font-montserrat">$ {taxAmount.toFixed(2)}</span>
+                  <span className="text-text font-montserrat">{CURRENCY_SYMBOL} {taxAmount.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between font-bold pt-2">
                   <span className="text-text font-poppins">Total</span>
-                  <span className="text-text font-poppins">$ {finalTotal.toFixed(2)}</span>
+                  <span className="text-text font-poppins">{CURRENCY_SYMBOL} {finalTotal.toFixed(2)}</span>
                 </div>
               </div>
               
@@ -742,7 +743,7 @@ const CheckoutPage = () => {
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

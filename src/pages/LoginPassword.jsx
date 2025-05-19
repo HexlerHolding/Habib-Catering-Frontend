@@ -5,6 +5,7 @@ import { useDispatch } from 'react-redux';
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { authService } from '../../Services/authService';
 import { login } from '../redux/slices/authSlice';
+import { TITLE } from "../data/globalText";
 
 const LoginPassword = () => {
   const location = useLocation();
@@ -84,8 +85,8 @@ const LoginPassword = () => {
           Back
         </button>
         <Link to="/" className="flex items-center">
-          <img src="/offerSectionImage34.png" alt="Habib Catering Logo" className="w-8 md:w-10" />
-          <h1 className="font-bold text-xl md:text-2xl ml-2">Habib Catering</h1>
+          <img src="/offerSectionImage34.png" alt={`${TITLE} Logo`} className="w-8 md:w-10" />
+          <h1 className="font-bold text-xl md:text-2xl ml-2 text-text">{TITLE}</h1>
         </Link>
       </div>
 
@@ -104,7 +105,7 @@ const LoginPassword = () => {
                 value={formData.password}
                 onChange={(e) => setFormData(prev => ({ ...prev, password: e.target.value }))}
                 placeholder="Enter your password"
-                className="w-full py-3 pl-10 pr-12 border border-text/20 rounded focus:outline-none focus:border-primary bg-background"
+                className="w-full py-3 pl-10 pr-12 focus:outline-text focus:outline-2 outline-1 bg-text/5  outline-text/50  "
               />
               <button
                 type="button"

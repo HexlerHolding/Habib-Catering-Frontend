@@ -36,7 +36,7 @@ const CategoryItem = ({ image, title, id }) => {
           />
         </div>
         <div className="p-3 text-center flex-1 flex items-center justify-center min-h-[60px]">
-          <h3 className="font-semibold text-base uppercase line-clamp-2">
+          <h3 className="font-semibold text-base uppercase line-clamp-2 text-text">
             {title}
           </h3>
         </div>
@@ -101,7 +101,7 @@ const CategorySlider = () => {
 
   return (
     <section className="py-12 px-4 relative" id='category-section'>
-      <div className="container mx-auto">
+      <div className="container mx-auto ">
         <div className="flex justify-between items-center mb-8">
           <h2 className="text-2xl md:text-3xl font-bold text-text">
             Explore Menu

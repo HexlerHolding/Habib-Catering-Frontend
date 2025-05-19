@@ -89,8 +89,17 @@ const BranchLocator = () => {
     fetchBranches();
   }, []);
   
-  // Extract unique cities from branches data
-  const cities = [...new Set(branches.map(branch => branch.city))].sort();
+  // Extract unique cities from branches data (case-insensitive, trimmed)
+  const cities = [
+    ...new Map(
+      branches
+        .filter(branch => branch.city)
+        .map(branch => {
+          const normalized = branch.city.trim().toLowerCase();
+          return [normalized, branch.city.trim()]; // [key, display value]
+        })
+    ).values()
+  ].sort();
   
   // Function to navigate to branch detail page
   const handleViewDetails = (branchId) => {
@@ -153,7 +162,7 @@ const BranchLocator = () => {
     
     // Filter branches based on selected city and search query
     const filteredBranches = branches.filter(branch => {
-      const matchesCity = !selectedCity || branch.city === selectedCity;
+      const matchesCity = !selectedCity || branch.city.trim().toLowerCase() === selectedCity.trim().toLowerCase();
       const matchesSearch = !searchQuery || 
         branch.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
         branch.address.toLowerCase().includes(searchQuery.toLowerCase());
@@ -208,7 +217,7 @@ const BranchLocator = () => {
   
   // Filter branches based on selected city and search query
   const filteredBranches = branches.filter(branch => {
-    const matchesCity = !selectedCity || branch.city === selectedCity;
+    const matchesCity = !selectedCity || branch.city.trim().toLowerCase() === selectedCity.trim().toLowerCase();
     const matchesSearch = !searchQuery || 
       branch.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
       branch.address.toLowerCase().includes(searchQuery.toLowerCase());
@@ -218,7 +227,7 @@ const BranchLocator = () => {
 
   
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 mt-10">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 mt-9 bg-background">
       {/* Back Button and Header */}
         <button
         className="flex items-center text-primary cursor-pointer hover:text-accent font-medium mb-4 px-2 py-1 rounded transition-colors self-start"
@@ -233,17 +242,17 @@ const BranchLocator = () => {
         <div>
           <div className="relative" ref={dropdownRef}>
             <button
-              className="block w-full pl-3 pr-10 py-3 text-left text-base border border-text/20 focus:outline-none focus:ring-primary focus:border-primary rounded-md bg-background"
+              className="block w-full pl-3 pr-10 py-3 text-left text-base border border-text/20 text-text-secondary focus:outline-none focus:ring-primary focus:border-primary rounded-md bg-background"
               onClick={() => setIsDropdownOpen(!isDropdownOpen)}
             >
               {selectedCity || "Select City"}
-              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-text/20">
+              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 !text-text/20">
                 <FaChevronDown className="h-5 w-5" />
               </div>
             </button>
             
             {isDropdownOpen && (
-              <div className="absolute z-10 mt-1 w-full bg-background shadow-lg max-h-60 rounded-md py-1 text-base overflow-y-auto focus:outline-none">
+              <div className="absolute z-10 mt-1 w-full bg-background text-text-secondary shadow-lg max-h-60 rounded-md py-1 text-base overflow-y-auto focus:outline-none">
                 <div 
                   className="cursor-pointer select-none relative py-2 pl-3 pr-9 hover:bg-text/5"
                   onClick={() => {
@@ -255,7 +264,7 @@ const BranchLocator = () => {
                 </div>
                 {cities.map((city) => (
                   <div
-                    key={city}
+                    key={city.toLowerCase()}
                     className="cursor-pointer select-none relative py-2 pl-3 pr-9 hover:bg-text/5"
                     onClick={() => {
                       setSelectedCity(city);
@@ -310,7 +319,7 @@ const BranchLocator = () => {
                         <h3 className="text-lg font-medium text-text/80">{branch.name}</h3>
                         <p className="mt-1 text-sm text-text/70">{branch.address}</p>
                         <button 
-                          className="mt-3 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-secondary bg-primary hover:bg-primary/80 hover:brightness-105 transition duration-300"
+                          className="mt-3 inline-flex items-center px-4 cursor-pointer py-2 border border-transparent text-sm font-medium rounded-md text-secondary bg-primary hover:bg-primary/80 hover:brightness-105 transition duration-300"
                           onClick={() => handleViewDetails(branch.id)}
                         >
                           VIEW DETAILS
@@ -330,6 +339,7 @@ const BranchLocator = () => {
         </div>
       </div>
     </div>
+   
   );
 };
 

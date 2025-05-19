@@ -1,9 +1,12 @@
 import { BiUser } from 'react-icons/bi';
 import { FaPhoneAlt, FaTimes } from 'react-icons/fa';
 import { MdHistory, MdLocationOn, MdRestaurantMenu } from 'react-icons/md';
+import { MdOutlineArticle, MdOutlinePrivacyTip } from 'react-icons/md';
 import { useDispatch } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import { logout } from '../redux/slices/authSlice';
+import { TITLE } from '../data/globalText';
+import { CONTACT_INFO } from '../data/globalText';
 
 const Sidebar = ({ isOpen, closeSidebar, isLoggedIn, user }) => {
   const navigate = useNavigate();
@@ -92,7 +95,7 @@ const Sidebar = ({ isOpen, closeSidebar, isLoggedIn, user }) => {
           ) : (
             <Link
               to="/login"
-              className="block w-full py-2 text-center rounded-md font-medium border border-text/30 text-text"
+              className="block w-full py-2 text-center rounded-md cursor-pointer hover:bg-primary/90 hover:text-secondary transition-all duration-300 font-medium border border-text/30 text-text"
               onClick={closeSidebar}
             >
               LOGIN
@@ -141,14 +144,30 @@ const Sidebar = ({ isOpen, closeSidebar, isLoggedIn, user }) => {
                 <span className="font-medium font-montserrat text-text">Branch Locator</span>
               </Link>
             </li>
-            <div className='flex flex-col items-start'>
-              <Link to='/blogs' className="px-9 py-2 hover:underline text-text" onClick={closeSidebar}a>
-                <span>Blog</span>
+            <li>
+              <Link 
+                to="/blogs"
+                className="flex items-center text-text py-2"
+                onClick={closeSidebar}
+              >
+                <div className="mr-3">
+                  <MdOutlineArticle className="w-6 h-6" />
+                </div>
+                <span className="font-medium text-text">Blog</span>
               </Link>
-              <Link to='/privacy-policy' className="px-9 py-2 hover:underline text-text" onClick={closeSidebar}>
-                <span>Privacy Policy</span>
+            </li>
+            <li>
+              <Link 
+                to="/privacy-policy"
+                className="flex items-center text-text py-2"
+                onClick={closeSidebar}
+              >
+                <div className="mr-3">
+                  <MdOutlinePrivacyTip className="w-6 h-6" />
+                </div>
+                <span className="font-medium text-text">Privacy Policy</span>
               </Link>
-            </div>
+            </li>
           </ul>
         </nav>
         
@@ -160,10 +179,10 @@ const Sidebar = ({ isOpen, closeSidebar, isLoggedIn, user }) => {
               alt="Cheezious Icon"
               className="h-6 mr-2"
             />
-            <div className="text-secondary font-medium">Habib Catering Hotline</div>
+            <div className="text-secondary font-medium">{TITLE} Hotline</div>
           </div>
           <a 
-            href="tel:111111111"
+            href={`tel:${CONTACT_INFO.phone}`}
             className={`bg-text text-secondary p-2 rounded-full flex items-center justify-center`}
           >
             <FaPhoneAlt className="w-5 h-5" />

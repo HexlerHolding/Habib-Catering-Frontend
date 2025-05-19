@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { TITLE } from '../data/globalText';
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -11,19 +12,19 @@ const Footer = () => {
           <div className="flex flex-col items-center sm:gap-3 justify-center text-sm">
             {/* Logo and Copyright */}
             <div className="flex  items-center  sm:mb-4 md:mb-0 ">
-              <img src="/offerSectionImage34.png" alt="Habib Catering" className="h-6 mr-2 filter grayscale contrast-200 brightness-20" />
+              <img src="/offerSectionImage34.png" alt=         {TITLE} className="h-6 mr-2 filter grayscale contrast-200 brightness-20" />
               <span className="text-text">
-                Habib Catering Copyright © {currentYear}. All Rights Reserved.
+                         {TITLE} Copyright © {currentYear}. All Rights Reserved.
               </span>
             </div>
             
             {/* Links */}
             <div className="text-sm sm:text-base  space-x-4 text-text hidden sm:flex ">
-              <Link to="/terms" className="hover:text-text/50 transition-colors">
+              <Link to="#" className="hover:text-text/50 transition-colors">
                 TERMS & CONDITIONS
               </Link>
               <span>|</span>
-              <Link to="/privacy" className="hover:text-text/50 transition-colors text-negative">
+              <Link to="/privacy-policy" className="hover:text-text/50 transition-colors text-negative">
                 PRIVACY POLICY
               </Link>
             </div>

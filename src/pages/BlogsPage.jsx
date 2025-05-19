@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { FaArrowRight, FaCalendarAlt, FaUser, FaTag, FaArrowLeft } from 'react-icons/fa';
 import { getAllBlogs } from '../data/blogData';
+import { TITLE } from '../data/globalText';
 
 const BlogsPage = () => {
   const blogPosts = getAllBlogs();
@@ -28,12 +29,12 @@ const BlogsPage = () => {
         
         {/* Header Section */}
         <div className="max-w-3xl mx-auto text-center mb-12 sm:mb-16">
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 text-text font-montserrat leading-tight">
+          <h1 className="text-3xl md:text-4xl  font-bold mb-4 text-text font-montserrat leading-tight">
             Our Blog
           </h1>
           <div className="w-20 h-1 bg-primary mx-auto mb-6 sm:mb-8 rounded-full"></div>
           <p className="text-text/80 max-w-2xl mx-auto text-base sm:text-lg leading-relaxed">
-            Discover the latest news, tips, and delicious stories from the world of Habib Catering
+            Discover the latest news, tips, and delicious stories from the world of {TITLE}
           </p>
         </div>
         
@@ -131,7 +132,7 @@ const BlogsPage = () => {
                 </div>
                 
                 <Link to={`/blogs/${post.slug}`} className="group">
-                  <h3 className="text-lg sm:text-xl font-bold mb-2 sm:mb-3 group-hover:text-accent transition-colors line-clamp-2 font-montserrat">
+                  <h3 className="text-lg sm:text-xl font-bold mb-2 sm:mb-3 text-text group-hover:text-accent transition-colors line-clamp-2 font-montserrat">
                     {post.title}
                   </h3>
                 </Link>

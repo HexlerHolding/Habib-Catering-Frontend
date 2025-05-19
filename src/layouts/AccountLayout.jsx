@@ -40,7 +40,7 @@ const AccountLayout = () => {
 
   return (
     <div className="mx-auto px-4 mt-10 py-8 min-h-screen">
-      <h1 className="text-3xl font-bold mb-4 text-text">My Account</h1>
+      <h1 className="text-2xl md:text-3xl font-bold mb-4 text-text">My Account</h1>
       
       <div className="flex flex-col gap-6">
         {/* Top Navigation */}

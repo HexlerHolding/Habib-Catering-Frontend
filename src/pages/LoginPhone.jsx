@@ -4,6 +4,7 @@ import { FaEnvelope, FaArrowLeft } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { authService } from "../../Services/authService";
+import { TITLE, PHONE_INPUT_CONFIG } from "../data/globalText";
 
 const LoginPhone = () => {
   const [phoneNumber, setPhoneNumber] = useState("");
@@ -19,15 +20,14 @@ const LoginPhone = () => {
     }
   }, [isAuthenticated, navigate]);
 
+  // Removed strict validation, only check for length
   const validatePhoneNumber = (number) => {
-    // Check if number starts with 0 and has exactly 11 digits
-    const phoneRegex = /^0\d{10}$/;
-    return phoneRegex.test(number);
+    return number.length === PHONE_INPUT_CONFIG.maxLength;
   };
 
   const handleVerifyPhone = async () => {
     if (!validatePhoneNumber(phoneNumber)) {
-      toast.error('Please enter a valid phone number starting with 3');
+      toast.error(`Please enter a valid phone number (${PHONE_INPUT_CONFIG.maxLength} digits)`);
       return;
     }
 
@@ -38,7 +38,7 @@ const LoginPhone = () => {
         toast.success('Phone number verified');
         navigate("/login/password", { 
           state: { 
-            phoneNumber: phoneNumber, // This will be a 10-digit number starting with 3
+            phoneNumber: phoneNumber, // Pass as entered
             verified: true 
           } 
         });
@@ -54,11 +54,9 @@ const LoginPhone = () => {
 
   const handlePhoneNumberChange = (e) => {
     const input = e.target.value;
-    // Only allow digits and limit to 11 characters
+    // Only allow digits and limit to maxLength
     let digitsOnly = input.replace(/\D/g, '');
-    
-    // Ensure the number starts with '0' and limit to 11 digits
-    if (digitsOnly.length <= 11 && (!digitsOnly || digitsOnly.startsWith('0'))) {
+    if (digitsOnly.length <= PHONE_INPUT_CONFIG.maxLength) {
       setPhoneNumber(digitsOnly);
     }
   };
@@ -78,8 +76,8 @@ const LoginPhone = () => {
           to="/"
           className="flex items-center"
         >
-          <img src="/offerSectionImage34.png" alt="Habib Catering Logo" className="w-8 md:w-10" />
-          <h1 className="font-bold text-xl md:text-2xl ml-2">Habib Catering</h1>
+          <img src="/offerSectionImage34.png" alt={`${TITLE} Logo`} className="w-8 md:w-10" />
+          <h1 className="font-bold text-xl md:text-2xl ml-2 text-text">{TITLE}</h1>
         </Link>
       </div>
 
@@ -91,11 +89,11 @@ const LoginPhone = () => {
           <div className="flex w-full mb-6">
             <input
               type="tel"
-              placeholder="03XX-XXXXXXX"
+              placeholder={PHONE_INPUT_CONFIG.placeholder}
               value={phoneNumber}
               onChange={handlePhoneNumberChange}
-              maxLength={11}
-              className="flex-grow p-3 bg-text/5 rounded-lg focus:outline-none"
+              maxLength={PHONE_INPUT_CONFIG.maxLength}
+              className="flex-grow p-3 bg-text/5 rounded focus:outline-text focus:outline-2 outline-1 outline-text/50 "
             />
           </div>
           <button

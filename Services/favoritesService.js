@@ -14,7 +14,7 @@ function getUserIdFromToken(token) {
 export const favoritesService = {
   async getFavorites(token) {
     const userId = getUserIdFromToken(token);
-    console.log('token', token);
+
     if (!userId) return [];
     try {
       const response = await fetch(`${API_URL}/user/fav/${userId}`, {

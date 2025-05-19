@@ -137,10 +137,10 @@ const CartPage = () => {
   
   // Handle checkout navigation
   const handleCheckout = () => {
-    if (!isLoggedIn) {
-      toast.error('You are not logged in, login before checkout');
-      return;
-    }
+    // if (!isLoggedIn) {
+    //   toast.error('You are not logged in, login before checkout');
+    //   return;
+    // }
     navigate('/checkout');
   };
   

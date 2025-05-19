@@ -16,7 +16,8 @@ const SavedAddressesPage = () => {
   const isAuthenticated = useSelector(selectIsAuthenticated);
   const savedAddresses = useSelector(selectSavedAddresses) || []; // Ensure it's never undefined
   const selectedAddress = useSelector(selectSelectedAddress);
-  
+  console.log("SavedAddressesPage - savedAddresses:", savedAddresses);
+  console.log("selected - selectedAddress:", selectedAddress);
   // State for editing address name
   const [editingId, setEditingId] = useState(null);
   const [editName, setEditName] = useState('');
@@ -212,7 +213,7 @@ const SavedAddressesPage = () => {
               const addressSelectorBtn = document.querySelector('[data-testid="address-selector-btn"]');
               if (addressSelectorBtn) addressSelectorBtn.click();
             }}
-            className="bg-primary text-text px-6 py-2 rounded-lg font-medium hover:bg-primary/80 hover:brightness-105 transition-colors"
+            className="bg-primary text-secondary px-6 py-2 rounded-lg font-medium hover:bg-primary/80 hover:brightness-105 transition-colors"
           >
             Add Your First Address
           </button>

@@ -156,25 +156,20 @@ function App() {
             </MainLayout>
           }
         />
-        {/* Protected Routes - Require Authentication */}
         <Route
           path="/checkout"
           element={
-            <ProtectedRoutes {...layoutProps}>
-              <MainLayout {...layoutProps}>
-                <CheckoutPage />
-              </MainLayout>
-            </ProtectedRoutes>
+            <MainLayout {...layoutProps}>
+              <CheckoutPage />
+            </MainLayout>
           }
         />
         <Route
           path="/order-success"
           element={
-            <ProtectedRoutes {...layoutProps}>
-              <MainLayout {...layoutProps}>
-                <OrderSuccessPage />
-              </MainLayout>
-            </ProtectedRoutes>
+            <MainLayout {...layoutProps}>
+              <OrderSuccessPage />
+            </MainLayout>
           }
         />
         {/* Protected account routes */}

@@ -98,7 +98,7 @@ const Navbar = ({ toggleSidebar }) => {
         {/* Logo */}
         <Link to="/" className=" hidden sm:flex text-sm items-center cursor-pointer">
           <img 
-            src='/habiblogo2.jpg'
+            src='/habiblogo1.jpg'
             alt={`${TITLE} Logo`} 
             className="h-16 w-16 rounded-full"
           />

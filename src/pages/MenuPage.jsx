@@ -22,7 +22,7 @@ import { CURRENCY_SYMBOL } from '../data/globalText';
 // end
 
 const MenuItem = ({ item, isFavorite, onToggleFavorite, onAddToCart, isLoggedIn }) => {
-  console.log('Rendering MenuItem:', item);
+  // console.log('Rendering MenuItem:', item);
     const [imgSrc, setImgSrc] = useState(item.image);
   return (
     <div className="bg-background rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all p-4 flex flex-col h-full">

@@ -114,9 +114,9 @@ export const authService = {
       }
 
       // Validate phone format (must be 11 digits starting with 0)
-      if (!/^0\d{10}$/.test(credentials.phone)) {
-        throw new Error('Invalid phone number format. Must be 11 digits starting with 0');
-      }
+      // if (!/^0\d{10}$/.test(credentials.phone)) {
+      //   throw new Error('Invalid phone number format. Must be 11 digits starting with 0');
+      // }
 
       // Send phone number exactly as stored in database
       const formattedPhone = credentials.phone;

@@ -5,7 +5,7 @@ import { useDispatch } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import { authService } from '../../Services/authService';
 import { login } from '../redux/slices/authSlice';
-import { TITLE } from '../data/globalText';
+import { TITLE, PHONE_INPUT_CONFIG } from '../data/globalText';
 
 const Register = () => {    
     const [showPassword, setShowPassword] = useState(false);
@@ -24,9 +24,9 @@ const Register = () => {
         
         // Phone number validation
         if (name === 'phone') {
-            // Only allow numbers and limit to 11 digits
+            // Only allow numbers and limit to PHONE_INPUT_CONFIG.maxLength digits
             const numbersOnly = value.replace(/[^\d]/g, '');
-            if (numbersOnly.length <= 11) {
+            if (numbersOnly.length <= PHONE_INPUT_CONFIG.maxLength) {
                 setFormData(prev => ({
                     ...prev,
                     [name]: numbersOnly
@@ -54,8 +54,10 @@ const Register = () => {
         }
 
         // Phone number validation
-        if (formData.phone.length < 11) {
-            setError('Phone number must be 11 digits');
+        if (formData.phone.length < PHONE_INPUT_CONFIG.maxLength) {
+            const msg = `Phone number must be ${PHONE_INPUT_CONFIG.maxLength} digits`;
+            setError(msg);
+            toast.error(msg);
             setLoading(false);
             return;
         }
@@ -143,7 +145,8 @@ const Register = () => {
                                 name="phone"
                                 value={formData.phone}
                                 onChange={handleChange}
-                                placeholder="Phone Number"
+                                placeholder={PHONE_INPUT_CONFIG.placeholder}
+                                maxLength={PHONE_INPUT_CONFIG.maxLength}
                                 className="w-full py-3 pl-10 pr-4  bg-text/5 rounded focus:outline-text focus:outline-2 outline-1 outline-text/50"
                             />
                         </div>                        

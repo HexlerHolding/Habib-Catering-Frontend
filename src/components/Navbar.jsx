@@ -98,10 +98,10 @@ const Navbar = ({ toggleSidebar }) => {
         {/* Logo */}
         <Link to="/" className=" hidden sm:flex items-center cursor-pointer">
           <img 
-            src='/habiblogo2.jpg'
+            src='/habiblogo3.jpg'
             alt={`${TITLE} Logo`} 
             className="h-16 w-16 rounded-full"
-          />
+          />c
         </Link>
 
         {/* Add the AddressSelector component here */}

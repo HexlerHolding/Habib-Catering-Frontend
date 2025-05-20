@@ -83,83 +83,125 @@ const closeConfirmModal = () => {
   // Initialize map when modal opens
   useEffect(() => {
     if (isModalOpen && mapRef.current && !mapInstanceRef.current && !isAddressList) {
-      // Default center - Islamabad
-      const defaultLatLng = [33.6844, 73.0479];
-      
-      // Create map
-      const map = L.map(mapRef.current).setView(defaultLatLng, 13);
-      
-      // Add tile layer (OpenStreetMap)
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-      }).addTo(map);
-      
-      // Add marker
-      const marker = L.marker(defaultLatLng, {
-        draggable: true
-      }).addTo(map);
-      
-      // Handle marker drag end
-      marker.on('dragend', async function(e) {
-        const position = marker.getLatLng();
-        setIsLoading(true);
-        
-        try {
-          // Reverse geocoding using Nominatim with English language parameter
-          const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${position.lat}&lon=${position.lng}&accept-language=en&addressdetails=1`);
-          const data = await response.json();
-          
-          if (data.display_name) {
-            const addressObj = {
-              address: data.display_name,
-              lat: position.lat,
-              lng: position.lng
-            };
-            setSearchQuery(data.display_name);
-            setSelectedAddressLocal(addressObj);
+      // Try to get user's current location first
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          async (position) => {
+            const { latitude, longitude } = position.coords;
+            const userLatLng = [latitude, longitude];
+            // Create map centered on user's location
+            const map = L.map(mapRef.current).setView(userLatLng, 15);
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+              attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+              subdomains: 'abcd',
+              maxZoom: 19
+            }).addTo(map);
+            const marker = L.marker(userLatLng, { draggable: true }).addTo(map);
+            // Reverse geocode to get address, but do NOT set it in the input field
+            setIsLoading(true);
+            try {
+              const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&accept-language=en&addressdetails=1`);
+              const data = await response.json();
+              if (data.display_name) {
+                const addressObj = {
+                  address: data.display_name,
+                  lat: latitude,
+                  lng: longitude
+                };
+                // Do NOT setSearchQuery(data.display_name);
+                setSelectedAddressLocal(addressObj);
+              }
+            } catch (error) {
+              console.error('Error reverse geocoding:', error);
+            } finally {
+              setIsLoading(false);
+            }
+            // Handle marker drag end
+            marker.on('dragend', async function(e) {
+              const position = marker.getLatLng();
+              setIsLoading(true);
+              
+              try {
+                // Reverse geocoding using Nominatim with English language parameter
+                const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${position.lat}&lon=${position.lng}&accept-language=en&addressdetails=1`);
+                const data = await response.json();
+                
+                if (data.display_name) {
+                  const addressObj = {
+                    address: data.display_name,
+                    lat: position.lat,
+                    lng: position.lng
+                  };
+                  setSearchQuery(data.display_name);
+                  setSelectedAddressLocal(addressObj);
+                }
+              } catch (error) {
+                console.error('Error reverse geocoding:', error);
+              } finally {
+                setIsLoading(false);
+              }
+            });
+            
+            // Handle map click
+            map.on('click', async function(e) {
+              const { lat, lng } = e.latlng;
+              marker.setLatLng([lat, lng]);
+              setIsLoading(true);
+              
+              try {
+                // Reverse geocoding with English language parameter
+                const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&accept-language=en&addressdetails=1`);
+                const data = await response.json();
+                
+                if (data.display_name) {
+                  const addressObj = {
+                    address: data.display_name,
+                    lat: lat,
+                    lng: lng
+                  };
+                  setSearchQuery(data.display_name);
+                  setSelectedAddressLocal(addressObj);
+                }
+              } catch (error) {
+                console.error('Error reverse geocoding:', error);
+              } finally {
+                setIsLoading(false);
+              }
+            });
+            
+            mapInstanceRef.current = map;
+            markerRef.current = marker;
+          },
+          // If geolocation fails, fallback to selectedAddress or Islamabad
+          () => {
+            const fallbackLatLng = selectedAddress
+              ? [selectedAddress.lat, selectedAddress.lng]
+              : [33.6844, 73.0479];
+            const map = L.map(mapRef.current).setView(fallbackLatLng, 13);
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+              attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+              subdomains: 'abcd',
+              maxZoom: 19
+            }).addTo(map);
+            const marker = L.marker(fallbackLatLng, { draggable: true }).addTo(map);
+            mapInstanceRef.current = map;
+            markerRef.current = marker;
           }
-        } catch (error) {
-          console.error('Error reverse geocoding:', error);
-        } finally {
-          setIsLoading(false);
-        }
-      });
-      
-      // Handle map click
-      map.on('click', async function(e) {
-        const { lat, lng } = e.latlng;
-        marker.setLatLng([lat, lng]);
-        setIsLoading(true);
-        
-        try {
-          // Reverse geocoding with English language parameter
-          const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&accept-language=en&addressdetails=1`);
-          const data = await response.json();
-          
-          if (data.display_name) {
-            const addressObj = {
-              address: data.display_name,
-              lat: lat,
-              lng: lng
-            };
-            setSearchQuery(data.display_name);
-            setSelectedAddressLocal(addressObj);
-          }
-        } catch (error) {
-          console.error('Error reverse geocoding:', error);
-        } finally {
-          setIsLoading(false);
-        }
-      });
-      
-      mapInstanceRef.current = map;
-      markerRef.current = marker;
-      
-      // If there's a selected address, set the map view to it
-      if (selectedAddress) {
-        map.setView([selectedAddress.lat, selectedAddress.lng], 15);
-        marker.setLatLng([selectedAddress.lat, selectedAddress.lng]);
-        setSearchQuery(selectedAddress.address);
+        );
+      } else {
+        // If geolocation is not supported, fallback to selectedAddress or Islamabad
+        const fallbackLatLng = selectedAddress
+          ? [selectedAddress.lat, selectedAddress.lng]
+          : [33.6844, 73.0479];
+        const map = L.map(mapRef.current).setView(fallbackLatLng, 13);
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+          subdomains: 'abcd',
+          maxZoom: 19
+        }).addTo(map);
+        const marker = L.marker(fallbackLatLng, { draggable: true }).addTo(map);
+        mapInstanceRef.current = map;
+        markerRef.current = marker;
       }
     }
     
@@ -248,7 +290,7 @@ const closeConfirmModal = () => {
                   lat: latitude,
                   lng: longitude
                 };
-                setSearchQuery(data.display_name);
+                // Do NOT setSearchQuery(data.display_name);
                 setSelectedAddressLocal(addressObj);
               }
             } catch (error) {

@@ -60,34 +60,47 @@ const BranchDetail = () => {
         setLoading(true);
         setError(null);
         const branchData = await branchService.getBranchDetails(branchId);
+        console.log('Branch data:', branchData);
         
         if (!branchData) {
           throw new Error('Branch not found');
         }
         
-        // If coordinates are missing or invalid, add approximate ones based on city
+        // If coordinates are missing or invalid, add approximate ones based on city/address using geocoding
         if (!branchService.hasValidCoordinates(branchData)) {
-          // Create a deep copy to avoid mutating the original data
           const branchWithCoords = { ...branchData };
-          
-          // Add coordinates based on city or address
-          if (branchWithCoords.city) {
+          // Try geocoding the address for more accurate coordinates
+          const geocodeAddress = async (address, city) => {
+            const query = encodeURIComponent(`${address}, ${city}`);
+            const url = `https://nominatim.openstreetmap.org/search?q=${query}&format=json&limit=1`;
+            try {
+              const response = await fetch(url, { headers: { 'Accept-Language': 'en' } });
+              const data = await response.json();
+              if (data && data.length > 0) {
+                return { lat: parseFloat(data[0].lat), lng: parseFloat(data[0].lon) };
+              }
+            } catch (e) {
+              console.warn('Geocoding failed for', address, city, e);
+            }
+            return null;
+          };
+          let coords = null;
+          if (branchWithCoords.address && branchWithCoords.city) {
+            coords = await geocodeAddress(branchWithCoords.address, branchWithCoords.city);
+          }
+          if (coords) {
+            branchWithCoords.coordinates = coords;
+          } else if (branchWithCoords.city) {
             branchWithCoords.coordinates = getCityCoordinates(branchWithCoords.city);
-            console.log(`Generated coordinates for ${branchWithCoords.name} based on city:`, branchWithCoords.coordinates);
-          } 
-          // If no city, try to extract from address
-          else if (branchWithCoords.address) {
+          } else if (branchWithCoords.address) {
             const addressLower = branchWithCoords.address.toLowerCase();
-            // Check if address contains a known city
             for (const city of Object.keys(getCityCoordinates(""))) {
               if (addressLower.includes(city.toLowerCase())) {
                 branchWithCoords.coordinates = getCityCoordinates(city);
-                console.log(`Generated coordinates for ${branchWithCoords.name} based on address:`, branchWithCoords.coordinates);
                 break;
               }
             }
           }
-          
           setBranch(branchWithCoords);
         } else {
           setBranch(branchData);
@@ -143,8 +156,8 @@ const BranchDetail = () => {
       // Add marker for branch location with custom popup
       const popupContent = `
         <div style="min-width: 200px;">
-          <h3 style="font-weight: bold; margin-bottom: 5px;">${branch.name}</h3>
-          <p style="font-size: 0.9rem; margin-bottom: 8px;">${branch.address}</p>
+          <h3 style="font-weight: bold; margin-bottom: 5px;">${branch.city}</h3>
+       
         </div>
       `;
 
@@ -290,7 +303,7 @@ const BranchDetail = () => {
 
               <button
                 onClick={getDirections}
-                className="mt-6 w-full flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-base font-medium bg-primary hover:bg-primary/80 hover:brightness-105 transition duration-300 text-secondary"
+                className="mt-6 w-full flex cursor-pointer items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-base font-medium bg-primary hover:bg-primary/80 hover:brightness-105 transition duration-300 text-secondary"
               >
                 <FaDirections className="mr-2" />
                 Get Directions

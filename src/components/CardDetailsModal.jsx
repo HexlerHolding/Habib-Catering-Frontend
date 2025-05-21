@@ -1,128 +1,122 @@
-import React, { useState } from 'react';
+// src/components/CardDetailsModal.js
+import { CardElement, useElements, useStripe } from '@stripe/react-stripe-js';
+import { useEffect, useState } from 'react';
 import { AiOutlineInfoCircle } from 'react-icons/ai';
 import { IoClose } from 'react-icons/io5';
 
-const CardDetailsModal = ({ isOpen, onClose, onSave }) => {
-  const [cardData, setCardData] = useState({
-    cardNumber: '',
-    cardHolder: '',
-    expiry: '',
-    cvv: ''
-  });
-  const [cardErrors, setCardErrors] = useState({});
-  const [isSaving, setIsSaving] = useState(false);
+const CardDetailsModal = ({ isOpen, onClose, onSave, clientSecret }) => {
+  const stripe = useStripe();
+  const elements = useElements();
+  
+  const [cardComplete, setCardComplete] = useState(false);
+  const [cardHolder, setCardHolder] = useState('');
+  const [processing, setProcessing] = useState(false);
+  const [error, setError] = useState(null);
+  const [cardBrand, setCardBrand] = useState(null);
+  const [lastFour, setLastFour] = useState(null);
 
-  // Format card number with spaces
-  const formatCardNumber = (value) => {
-    const digits = value.replace(/\D/g, '');
-    const groups = [];
+  // Reset state when modal is closed
+  useEffect(() => {
+    if (!isOpen) {
+      setCardComplete(false);
+      setCardHolder('');
+      setError(null);
+      setProcessing(false);
+    }
+  }, [isOpen]);
+
+  // Handle card element change event
+  const handleCardChange = (event) => {
+    setCardComplete(event.complete);
+    setError(event.error ? event.error.message : null);
     
-    for (let i = 0; i < digits.length && i < 16; i += 4) {
-      groups.push(digits.slice(i, i + 4));
+    if (event.brand) {
+      setCardBrand(event.brand);
     }
     
-    return groups.join(' ');
-  };
-
-  // Format expiry date (MM/YY)
-  const formatExpiry = (value) => {
-    const digits = value.replace(/\D/g, '');
-    
-    if (digits.length <= 2) {
-      return digits;
-    }
-    
-    return `${digits.slice(0, 2)}/${digits.slice(2, 4)}`;
-  };
-
-  const handleCardDataChange = (e) => {
-    const { name, value } = e.target;
-    
-    if (name === 'cardNumber') {
-      setCardData({
-        ...cardData,
-        [name]: formatCardNumber(value)
-      });
-    } else if (name === 'expiry') {
-      setCardData({
-        ...cardData,
-        [name]: formatExpiry(value)
-      });
-    } else if (name === 'cvv') {
-      const cvvDigits = value.replace(/\D/g, '');
-      if (cvvDigits.length <= 4) {
-        setCardData({
-          ...cardData,
-          [name]: cvvDigits
-        });
-      }
-    } else {
-      setCardData({
-        ...cardData,
-        [name]: value
-      });
-    }
-    
-    if (cardErrors[name]) {
-      setCardErrors({
-        ...cardErrors,
-        [name]: null
-      });
+    if (event.value && event.value.postalCode) {
+      setLastFour(event.value.postalCode);
     }
   };
 
-  const validateCardData = () => {
-    const newErrors = {};
-    const cardNumberDigits = cardData.cardNumber.replace(/\D/g, '');
-    const expiryDigits = cardData.expiry.replace(/\D/g, '');
-    
-    if (!cardData.cardHolder.trim()) {
-      newErrors.cardHolder = 'Cardholder name is required';
-    }
-    
-    if (cardNumberDigits.length < 16) {
-      newErrors.cardNumber = 'Please enter a valid 16-digit card number';
-    }
-    
-    if (expiryDigits.length < 4) {
-      newErrors.expiry = 'Please enter a valid expiry date (MM/YY)';
-    } else {
-      const month = parseInt(expiryDigits.substring(0, 2), 10);
-      const year = parseInt(`20${expiryDigits.substring(2, 4)}`, 10);
-      const currentDate = new Date();
-      const currentYear = currentDate.getFullYear();
-      const currentMonth = currentDate.getMonth() + 1;
-      
-      if (month < 1 || month > 12) {
-        newErrors.expiry = 'Invalid month';
-      } else if (year < currentYear || (year === currentYear && month < currentMonth)) {
-        newErrors.expiry = 'Card has expired';
-      }
-    }
-    
-    if (!cardData.cvv.trim() || cardData.cvv.length < 3) {
-      newErrors.cvv = 'Please enter a valid CVV/CVC code';
-    }
-    
-    return newErrors;
+  // Handle cardholder name change
+  const handleCardHolderChange = (e) => {
+    setCardHolder(e.target.value);
   };
 
-  const handleSave = (e) => {
+  // Handle form submission
+  const handleSubmit = async (e) => {
     e.preventDefault();
     
-    const validationErrors = validateCardData();
-    if (Object.keys(validationErrors).length > 0) {
-      setCardErrors(validationErrors);
+    if (!stripe || !elements) {
+      // Stripe.js has not loaded yet
       return;
     }
     
-    setIsSaving(true);
+    if (!cardComplete || !cardHolder.trim()) {
+      setError('Please complete all required fields');
+      return;
+    }
     
-    // Simulate saving card data
-    setTimeout(() => {
+    setProcessing(true);
+    setError(null);
+    
+    try {
+      // Get card details
+      const cardElement = elements.getElement(CardElement);
+      
+      // Create payment method
+      const { paymentMethod, error } = await stripe.createPaymentMethod({
+        type: 'card',
+        card: cardElement,
+        billing_details: {
+          name: cardHolder,
+        },
+      });
+      
+      if (error) {
+        setError(error.message);
+        setProcessing(false);
+        return;
+      }
+      
+      // For the checkout implementation
+      const cardData = {
+        cardHolder: cardHolder,
+        cardNumber: `•••• •••• •••• ${paymentMethod.card.last4}`,
+        expiry: `${paymentMethod.card.exp_month}/${paymentMethod.card.exp_year.toString().slice(-2)}`,
+        cvv: '•••',
+        brand: paymentMethod.card.brand,
+        last4: paymentMethod.card.last4,
+        paymentMethodId: paymentMethod.id,
+      };
+      
+      // Pass the payment method to the parent component
       onSave(cardData);
-      setIsSaving(false);
-    }, 1000);
+      setProcessing(false);
+    } catch (err) {
+      console.error("Error processing card:", err);
+      setError('An unexpected error occurred. Please try again.');
+      setProcessing(false);
+    }
+  };
+
+  // Style for the Stripe CardElement
+  const cardElementOptions = {
+    style: {
+      base: {
+        fontSize: '16px',
+        color: '#30313d',
+        fontFamily: 'Montserrat, system-ui, sans-serif',
+        '::placeholder': {
+          color: '#aab7c4',
+        },
+      },
+      invalid: {
+        color: '#df1b41',
+        iconColor: '#df1b41',
+      },
+    },
   };
 
   if (!isOpen) return null;
@@ -141,27 +135,8 @@ const CardDetailsModal = ({ isOpen, onClose, onSave }) => {
             </button>
           </div>
           
-          <form onSubmit={handleSave}>
+          <form onSubmit={handleSubmit}>
             <div className="space-y-4">
-              {/* Card Number */}
-              <div>
-                <label className="block text-sm font-medium mb-1 text-text font-montserrat">
-                  Card Number *
-                </label>
-                <input
-                  type="text"
-                  name="cardNumber"
-                  value={cardData.cardNumber}
-                  onChange={handleCardDataChange}
-                  maxLength={19} // 16 digits + 3 spaces
-                  className={`w-full p-3 focus:outline-text focus:outline-2 outline-1 outline-text/50  rounded-md ${cardErrors.cardNumber ? 'border-accent' : 'border-text/20'}`}
-                  placeholder="0000 0000 0000 0000"
-                />
-                {cardErrors.cardNumber && (
-                  <p className="text-accent text-sm mt-1 font-montserrat">{cardErrors.cardNumber}</p>
-                )}
-              </div>
-              
               {/* Card Holder */}
               <div>
                 <label className="block text-sm font-medium mb-1 text-text font-montserrat">
@@ -169,55 +144,25 @@ const CardDetailsModal = ({ isOpen, onClose, onSave }) => {
                 </label>
                 <input
                   type="text"
-                  name="cardHolder"
-                  value={cardData.cardHolder}
-                  onChange={handleCardDataChange}
-                  className={`w-full p-3 focus:outline-text focus:outline-2 outline-1 outline-text/50  rounded-md ${cardErrors.cardHolder ? 'border-accent' : 'border-text/20'}`}
+                  value={cardHolder}
+                  onChange={handleCardHolderChange}
+                  className="w-full p-3 focus:outline-text focus:outline-2 outline-1 outline-text/50 rounded-md border-text/20"
                   placeholder="John Doe"
+                  required
                 />
-                {cardErrors.cardHolder && (
-                  <p className="text-accent text-sm mt-1 font-montserrat">{cardErrors.cardHolder}</p>
-                )}
               </div>
               
-              <div className="grid grid-cols-2 gap-4">
-                {/* Expiry Date */}
-                <div>
-                  <label className="block text-sm font-medium mb-1 text-text font-montserrat">
-                    Expiry Date *
-                  </label>
-                  <input
-                    type="text"
-                    name="expiry"
-                    value={cardData.expiry}
-                    onChange={handleCardDataChange}
-                    maxLength={5} // MM/YY format
-                    className={`w-full p-3 focus:outline-text focus:outline-2 outline-1 outline-text/50  rounded-md ${cardErrors.expiry ? 'border-accent' : 'border-text/20'}`}
-                    placeholder="MM/YY"
-                  />
-                  {cardErrors.expiry && (
-                    <p className="text-accent text-sm mt-1 font-montserrat">{cardErrors.expiry}</p>
-                  )}
+              {/* Stripe Card Element */}
+              <div>
+                <label className="block text-sm font-medium mb-1 text-text font-montserrat">
+                  Card Information *
+                </label>
+                <div className="w-full p-3 border border-text/20 rounded-md bg-white focus-within:outline-text focus-within:outline-2 focus-within:outline-1 focus-within:outline-text/50">
+                  <CardElement options={cardElementOptions} onChange={handleCardChange} />
                 </div>
-                
-                {/* CVV */}
-                <div>
-                  <label className="block text-sm font-medium mb-1 text-text font-montserrat">
-                    CVV/CVC *
-                  </label>
-                  <input
-                    type="text"
-                    name="cvv"
-                    value={cardData.cvv}
-                    onChange={handleCardDataChange}
-                    maxLength={4}
-                    className={`w-full p-3 borfocus:outline-text focus:outline-2 outline-1 outline-text/50 der rounded-md ${cardErrors.cvv ? 'border-accent' : 'border-text/20'}`}
-                    placeholder="123"
-                  />
-                  {cardErrors.cvv && (
-                    <p className="text-accent text-sm mt-1 font-montserrat">{cardErrors.cvv}</p>
-                  )}
-                </div>
+                {error && (
+                  <p className="text-accent text-sm mt-1 font-montserrat">{error}</p>
+                )}
               </div>
             </div>
             
@@ -226,18 +171,19 @@ const CardDetailsModal = ({ isOpen, onClose, onSave }) => {
                 type="button"
                 onClick={onClose}
                 className="py-2 px-4 border border-text/20 rounded-md text-text font-medium hover:bg-text/10 transition-colors font-montserrat"
+                disabled={processing}
               >
                 Cancel
               </button>
               <button
                 type="submit"
-                disabled={isSaving}
+                disabled={!stripe || !elements || !cardComplete || processing}
                 className="py-2 px-4 bg-primary text-secondary rounded-md font-medium hover:bg-primary/80 hover:brightness-105 transition-colors font-poppins flex items-center"
               >
-                {isSaving ? (
+                {processing ? (
                   <>
                     <div className="w-4 h-4 border-2 border-text/30 border-t-text/80 rounded-full animate-spin mr-2"></div>
-                    Saving...
+                    Processing...
                   </>
                 ) : (
                   'Save Card'
@@ -253,7 +199,7 @@ const CardDetailsModal = ({ isOpen, onClose, onSave }) => {
               <AiOutlineInfoCircle className="w-6 h-6" />
             </div>
             <p className="ml-2 text-sm text-text/70 font-montserrat">
-              Your card information is securely processed and never stored on our servers.
+              Your payment is securely processed by Stripe. We never store your full card details.
             </p>
           </div>
         </div>

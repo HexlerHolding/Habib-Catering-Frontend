@@ -115,7 +115,7 @@ const PrivacyPolicy = () => {
               <p className="font-medium">{TITLE} Customer Service</p>
               <p>Email: {CONTACT_INFO.email}</p>
               <p>Phone: {CONTACT_INFO.phone}</p>
-              <p>Address: {CONTACT_INFO.address}</p>
+              {/* <p>Address: {CONTACT_INFO.address}</p> */}
             </div>
           </section>
         </div>

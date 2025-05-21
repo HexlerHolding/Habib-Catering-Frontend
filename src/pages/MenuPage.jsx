@@ -157,7 +157,6 @@ const fetchMenuData = async () => {
       }
       try {
         const favs = await favoritesService.getFavorites(token);
-        console.log('Fetched favorites:', favs);
         // Ensure all IDs are strings for consistent comparison
         setFavoriteIds(favs.map(f => f.toString()));
       } catch {

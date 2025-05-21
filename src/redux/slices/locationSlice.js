@@ -15,7 +15,6 @@ export const fetchUserAddresses = createAsyncThunk(
           Authorization: `Bearer ${token}`
         }
       });
-      console.log("Fetched addresses:", response.data);
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response?.data?.error || 'Failed to fetch addresses');

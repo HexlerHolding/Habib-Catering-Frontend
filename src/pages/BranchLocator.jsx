@@ -64,19 +64,39 @@ const BranchLocator = () => {
       try {
         setIsLoading(true);
         const branchData = await branchService.getBranches();
-        
-        // Process branch data to ensure coordinates
-        const processedBranches = branchData.map(branch => {
-          // If coordinates are missing or invalid, generate approximate ones based on city
-          if (!branchService.hasValidCoordinates(branch)) {
-            // Create a deep copy to avoid mutating the original data
-            const branchWithCoords = { ...branch };
-            branchWithCoords.coordinates = getCityCoordinates(branch.city);
-            return branchWithCoords;
+
+        // Helper to geocode address if coordinates are missing
+        const geocodeAddress = async (address, city) => {
+          const query = encodeURIComponent(`${address}, ${city}`);
+          const url = `https://nominatim.openstreetmap.org/search?q=${query}&format=json&limit=1`;
+          try {
+            const response = await fetch(url, { headers: { 'Accept-Language': 'en' } });
+            const data = await response.json();
+            if (data && data.length > 0) {
+              return { lat: parseFloat(data[0].lat), lng: parseFloat(data[0].lon) };
+            }
+          } catch (e) {
+            console.warn('Geocoding failed for', address, city, e);
           }
-          return branch;
-        });
-        
+          return null;
+        };
+
+        // Process branch data to ensure coordinates
+        const processedBranches = await Promise.all(
+          branchData.map(async branch => {
+            if (!branchService.hasValidCoordinates(branch)) {
+              // Try to geocode the address
+              const coords = await geocodeAddress(branch.address, branch.city);
+              if (coords) {
+                return { ...branch, coordinates: coords };
+              }
+              // Fallback to city coordinates if geocoding fails
+              return { ...branch, coordinates: getCityCoordinates(branch.city) };
+            }
+            return branch;
+          })
+        );
+
         setBranches(processedBranches);
       } catch (error) {
         console.error('Failed to load branches:', error);
@@ -135,19 +155,36 @@ const BranchLocator = () => {
   useEffect(() => {
     if (leafletMap.current && branches.length > 0) {
       addBranchMarkers();
-      
-      // If a city is selected, zoom to that city
-      if (selectedCity) {
-        // Find the first branch of the selected city to get coordinates
-        const cityBranch = branches.find(branch => branch.city === selectedCity);
-        if (cityBranch && cityBranch.coordinates) {
+
+      const filteredBranches = branches.filter(branch => {
+        const matchesCity = !selectedCity || branch.city.trim().toLowerCase() === selectedCity.trim().toLowerCase();
+        const matchesSearch = !searchQuery || 
+          branch.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+          branch.address.toLowerCase().includes(searchQuery.toLowerCase());
+        return matchesCity && matchesSearch;
+      });
+
+      if (selectedCity && filteredBranches.length > 0) {
+        const firstBranch = filteredBranches[0];
+        if (firstBranch && firstBranch.coordinates) {
           leafletMap.current.setView(
-            [cityBranch.coordinates.lat, cityBranch.coordinates.lng], 
-            12
+            [firstBranch.coordinates.lat, firstBranch.coordinates.lng],
+            12 // keep city zoom
           );
         }
+      } else if (!selectedCity && filteredBranches.length > 0) {
+        // If no city is selected, fit map to all branch markers
+        const markers = filteredBranches
+          .filter(branch => branch.coordinates && branch.coordinates.lat && branch.coordinates.lng)
+          .map(branch => L.marker([branch.coordinates.lat, branch.coordinates.lng]));
+        if (markers.length > 0) {
+          const group = L.featureGroup(markers);
+          // Use a slightly higher max zoom for a more balanced view
+          leafletMap.current.fitBounds(group.getBounds().pad(0.2), { maxZoom: 13  });
+        } else {
+          leafletMap.current.setView([30.3753, 69.3451], 5);
+        }
       } else {
-        // If no city selected, show all of Pakistan
         leafletMap.current.setView([30.3753, 69.3451], 5);
       }
     }

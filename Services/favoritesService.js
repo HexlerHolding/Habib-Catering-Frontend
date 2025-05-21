@@ -23,9 +23,7 @@ export const favoritesService = {
         }
       });
       if (!response.ok) throw new Error('Failed to fetch favorites');
-      console.log('response', response);
       const data = await response.json();
-      console.log('data', data);
       return data;
     } catch (error) {
       console.error('Error fetching favorites:', error);
@@ -34,10 +32,7 @@ export const favoritesService = {
   },
 
   async addFavorite(productId, token) {
-    console.log('item id', productId);
     const userId = getUserIdFromToken(token);
-    console.log('token', token);
-    console.log('userId', userId);
     if (!userId) return null;
     try {
       const response = await fetch(`${API_URL}/user/fav/${userId}`, {
@@ -48,7 +43,6 @@ export const favoritesService = {
         },
         body: JSON.stringify({ Product_Id: productId })
       });
-      console.log('response', response);
       if (!response.ok) throw new Error('Failed to add favorite');
       return await response.json();
     } catch (error) {

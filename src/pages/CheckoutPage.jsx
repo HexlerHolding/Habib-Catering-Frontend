@@ -16,8 +16,8 @@ import { selectSavedAddresses, selectSelectedAddress } from '../redux/slices/loc
 const BranchOption = ({ branch, isSelected, onChange }) => (
   <label
     className={`border rounded-md p-4 cursor-pointer transition-all font-montserrat ${isSelected
-        ? 'border-primary bg-primary/90 text-secondary'
-        : 'border-text/20 hover:border-text/30 text-secondary'
+      ? 'border-primary bg-primary/90 text-secondary'
+      : 'border-text/20 hover:border-text/30 text-secondary'
       }`}
   >
     <div className="flex items-center">
@@ -57,8 +57,8 @@ const BranchOption = ({ branch, isSelected, onChange }) => (
 const SavedAddressOption = ({ address, isSelected, onClick }) => (
   <div
     className={`border rounded-md p-4 cursor-pointer flex items-center font-montserrat ${isSelected
-        ? 'border-primary bg-primary/90'
-        : 'border-text/20 hover:border-text/30'
+      ? 'border-primary bg-primary/90'
+      : 'border-text/20 hover:border-text/30'
       }`}
     onClick={onClick}
   >
@@ -88,8 +88,8 @@ const SavedAddressOption = ({ address, isSelected, onClick }) => (
 const PaymentMethodOption = ({ id, icon: Icon, title, description, isSelected, onClick }) => (
   <div
     className={`border rounded-md p-4 cursor-pointer flex items-center font-montserrat ${isSelected
-        ? 'border-primary bg-primary/90 text-secondary'
-        : 'border-text/20 hover:border-text/30 text-secondary'
+      ? 'border-primary bg-primary/90 text-secondary'
+      : 'border-text/20 hover:border-text/30 text-secondary'
       }`}
     onClick={onClick}
   >
@@ -150,6 +150,7 @@ const CheckoutPage = () => {
   const [clientSecret, setClientSecret] = useState('');
   const [paymentLoading, setPaymentLoading] = useState(false);
   const [paymentError, setPaymentError] = useState('');
+
   // Form states
   const [formData, setFormData] = useState({
     fullName: '',
@@ -170,6 +171,7 @@ const CheckoutPage = () => {
     cvv: '',
     paymentMethodId: null, // Add this field
   });
+  const deliveryCharges = orderType === 'delivery' ? 100 : 0;
 
   // Tax state and calculations
   const [taxRate, setTaxRate] = useState(0);
@@ -180,7 +182,8 @@ const CheckoutPage = () => {
   // Loading and error states
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState('');
-
+const taxAmount = subtotal * (taxRate / 100);
+const finalTotal = subtotal + taxAmount;
   // Fetch branches on component mount
   useEffect(() => {
     const fetchBranches = async () => {
@@ -204,56 +207,30 @@ const CheckoutPage = () => {
     fetchBranches();
   }, []);
 
-  // Get tax rates when payment method or branch changes
-  useEffect(() => {
-    const fetchTaxRate = async () => {
-      try {
-        if (selectedBranchId) {
-          const taxInfo = await orderService.getBranchTaxes(selectedBranchId);
-          if (paymentMethod === 'card') {
-            setTaxRate(taxInfo.card_tax || 0);
-          } else {
-            setTaxRate(taxInfo.cash_tax || 0);
-          }
+const [taxRateFetched, setTaxRateFetched] = useState(false);
+
+useEffect(() => {
+  const fetchTaxRate = async () => {
+    try {
+      if (selectedBranchId) {
+        const taxInfo = await orderService.getBranchTaxes(selectedBranchId);
+        if (paymentMethod === 'card') {
+          setTaxRate(taxInfo.card_tax || 0);
+        } else {
+          setTaxRate(taxInfo.cash_tax || 0);
         }
-      } catch (error) {
-        console.error('Error fetching tax rate:', error);
-        setTaxRate(0);
+        setTaxRateFetched(true);
       }
-    };
-
-    fetchTaxRate();
-  }, [paymentMethod, selectedBranchId]);
-  useEffect(() => {
-    const createPaymentIntent = async () => {
-      if (paymentMethod === 'card' && selectedBranchId && finalTotal > 0) {
-        try {
-          setPaymentLoading(true);
-          // Call your backend to create a payment intent
-          const response = await orderService.createPaymentIntent({
-            amount: Math.round(finalTotal * 100), // Convert to cents
-            currency: 'pkr', // Adjust as needed
-            branchId: selectedBranchId
-          });
-
-          if (response.clientSecret) {
-            setClientSecret(response.clientSecret);
-          } else {
-            setPaymentError('Could not initiate payment. Please try again.');
-          }
-        } catch (error) {
-          console.error('Error creating payment intent:', error);
-          setPaymentError('Could not initiate payment. Please try again.');
-        } finally {
-          setPaymentLoading(false);
-        }
-      }
-    };
-
-    if (paymentMethod === 'card') {
-      createPaymentIntent();
+    } catch (error) {
+      console.error('Error fetching tax rate:', error);
+      setTaxRate(0);
+      setTaxRateFetched(true);
     }
-  }, [paymentMethod, selectedBranchId, finalTotal]);
+  };
+  fetchTaxRate();
+}, [paymentMethod, selectedBranchId]);
+
+
   // Update address field when selectedAddress changes in Redux
   useEffect(() => {
     if (selectedAddressFromStore) {
@@ -264,10 +241,7 @@ const CheckoutPage = () => {
     }
   }, [selectedAddressFromStore]);
 
-  // Calculate tax amount and final total
-  const taxAmount = subtotal * (taxRate / 100);
-  const finalTotal = subtotal + taxAmount;
-
+ 
   // Define order type options
   const orderTypeOptions = [
     { id: 'delivery', label: 'Delivery', description: 'Delivered to your address' },
@@ -381,112 +355,131 @@ const CheckoutPage = () => {
   };
 
   // Handle form submission
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    console.log("Place order button clicked");
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  console.log("Place order button clicked");
 
-    const formErrors = validateForm();
-    if (Object.keys(formErrors).length > 0) {
-      console.log("Form validation errors:", formErrors);
-      setErrors(formErrors);
-      const firstErrorField = Object.keys(formErrors)[0];
-      document.getElementsByName(firstErrorField)?.[0]?.scrollIntoView({ behavior: 'smooth' });
-      return;
+  const formErrors = validateForm();
+  if (Object.keys(formErrors).length > 0) {
+    console.log("Form validation errors:", formErrors);
+    setErrors(formErrors);
+    const firstErrorField = Object.keys(formErrors)[0];
+    document.getElementsByName(firstErrorField)?.[0]?.scrollIntoView({ behavior: 'smooth' });
+    return;
+  }
+
+  if (paymentMethod === 'card' && !cardDetails.paymentMethodId) {
+    setShowCardModal(true);
+    return;
+  }
+
+  setSubmitError('');
+  setIsSubmitting(true);
+
+  try {
+    let paymentResult = { success: true };
+    let clientSecret = '';
+
+    // Create PaymentIntent for card payments
+    if (paymentMethod === 'card') {
+      setPaymentLoading(true);
+      console.log('Creating PaymentIntent with amount:', Math.round(finalTotal * 100));
+      const response = await orderService.createPaymentIntent({
+        amount: Math.round(finalTotal * 100),
+        currency: 'usd',
+        branchId: selectedBranchId
+      });
+      if (!response.clientSecret) {
+        throw new Error('Could not initiate payment.');
+      }
+      clientSecret = response.clientSecret;
+      setPaymentLoading(false);
     }
 
-    // Check if card payment is selected but no card details are provided
-    if (paymentMethod === 'card' && !cardDetails.paymentMethodId) {
-      setShowCardModal(true);
-      return;
-    }
+    // Confirm card payment
+    if (paymentMethod === 'card' && cardDetails.paymentMethodId && clientSecret) {
+      const { error, paymentIntent } = await stripe.confirmCardPayment(clientSecret, {
+        payment_method: cardDetails.paymentMethodId,
+      });
 
-    setSubmitError('');
-    setIsSubmitting(true);
-
-    try {
-      let paymentResult = { success: true };
-
-      // If using card payment, confirm the payment
-      if (paymentMethod === 'card' && cardDetails.paymentMethodId && clientSecret) {
-        const { error, paymentIntent } = await stripe.confirmCardPayment(clientSecret, {
-          payment_method: cardDetails.paymentMethodId,
-        });
-
-        if (error) {
-          setSubmitError(error.message || 'Payment failed. Please try again.');
-          setIsSubmitting(false);
-          return;
-        }
-
-        if (paymentIntent.status !== 'succeeded') {
-          setSubmitError('Payment processing failed. Please try again.');
-          setIsSubmitting(false);
-          return;
-        }
-
-        paymentResult = {
-          success: true,
-          paymentIntentId: paymentIntent.id,
-          paymentMethodId: cardDetails.paymentMethodId,
-        };
+      if (error) {
+        setSubmitError(error.message || 'Payment failed. Please try again.');
+        setIsSubmitting(false);
+        return;
       }
 
-      const orderData = {
-        items: cartItems,
-        customerName: formData.fullName,
-        email: formData.email,
-        phone: formData.phone,
-        address: formData.address,
-        notes: formData.notes,
-        paymentMethod: paymentMethod,
-        orderType: orderType,
-        branchId: selectedBranchId,
+      if (paymentIntent.status !== 'succeeded') {
+        setSubmitError('Payment processing failed. Please try again.');
+        setIsSubmitting(false);
+        return;
+      }
 
-        // Add payment details if card payment was used
-        ...(paymentMethod === 'card' && {
-          paymentDetails: {
-            paymentIntentId: paymentResult.paymentIntentId,
-            paymentMethodId: paymentResult.paymentMethodId,
-            last4: cardDetails.last4,
-            brand: cardDetails.brand
-          }
-        })
+      paymentResult = {
+        success: true,
+        paymentIntentId: paymentIntent.id,
+        paymentMethodId: cardDetails.paymentMethodId,
       };
-
-      console.log("Submitting order data:", orderData);
-
-      const response = await orderService.submitOrder(orderData);
-      console.log("API response:", response);
-
-      if (response.success) {
-        dispatch(clearCart());
-        navigate('/order-success', {
-          state: {
-            orderId: response.orderId,
-            orderDetails: response.orderDetails
-          }
-        });
-      } else {
-        setSubmitError(response.message || 'Failed to place your order. Please try again.');
-      }
-    } catch (error) {
-      console.error('Order submission error:', error);
-      setSubmitError(error.message || 'An error occurred while placing your order. Please try again.');
-    } finally {
-      setIsSubmitting(false);
     }
-  };
 
-  // Early return if cart is empty
-  if (cartItems.length === 0) {
-    return (
-      <div className="max-w-4xl mx-auto px-4 py-8 bg-background">
-        <div className="text-center py-16">
-          <h2 className="text-2xl font-bold mb-4 text-text font-poppins">Your cart is empty</h2>
-          <p className="mb-6 text-text/70 font-montserrat">Please add some items to your cart before proceeding to checkout.</p>
-          <button
-            onClick={() => navigate('/menu')}
-            className="bg-primary text-text py-3 px-8 rounded-lg font-bold hover:bg-primary/80 transition font-poppins"
+    const orderData = {
+      items: cartItems,
+      customerName: formData.fullName,
+      email: formData.email,
+      phone: formData.phone,
+      address: formData.address,
+      notes: formData.notes,
+      paymentMethod: paymentMethod,
+      orderType: orderType,
+      branchId: selectedBranchId,
+      total: subtotal,
+      deliveryCharges: deliveryCharges,
+      tax: taxAmount,
+      grandTotal: finalTotal,
+      ...(paymentMethod === 'card' && {
+        paymentDetails: {
+          paymentIntentId: paymentResult.paymentIntentId,
+          paymentMethodId: paymentResult.paymentMethodId,
+          last4: cardDetails.last4,
+          brand: cardDetails.brand
+        }
+      })
+    };
+
+    console.log("Submitting order data:", orderData);
+const grandTotal = subtotal + taxAmount + deliveryCharges;
+    const response = await orderService.submitOrder(orderData);
+    console.log("API response:", response);
+
+    if (response.success) {
+      dispatch(clearCart());
+      navigate('/order-success', {
+        state: {
+          orderId: response.orderId,
+          orderDetails: response.orderDetails
+        }
+      });
+    } else {
+      setSubmitError(response.message || 'Failed to place your order. Please try again.');
+    }
+  } catch (error) {
+    console.error('Order submission error:', error);
+    setSubmitError(error.message || 'An error occurred while placing your order. Please try again.');
+  } finally {
+    setIsSubmitting(false);
+    setPaymentLoading(false);
+  }
+};
+
+// Early return if cart is empty
+if (cartItems.length === 0) {
+  return (
+    <div className="max-w-4xl mx-auto px-4 py-8 bg-background">
+      <div className="text-center py-16">
+        <h2 className="text-2xl font-bold mb-4 text-text font-poppins">Your cart is empty</h2>
+        <p className="mb-6 text-text/70 font-montserrat">Please add some items to your cart before proceeding to checkout.</p>
+        <button
+          onClick={() => navigate('/menu')}
+          className="bg-primary text-text py-3 px-8 rounded-lg font-bold hover:bg-primary/80 transition font-poppins"
           >
             Browse Menu
           </button>
@@ -689,8 +682,8 @@ const CheckoutPage = () => {
                         <div
                           key={option.id}
                           className={`border rounded-md p-3 cursor-pointer transition-all font-montserrat ${orderType === option.id
-                              ? 'border-primary bg-primary/90 text-secondary'
-                              : 'border-text/20 hover:border-text/30 text-secondary'
+                            ? 'border-primary bg-primary/90 text-secondary'
+                            : 'border-text/20 hover:border-text/30 text-secondary'
                             }`}
                           onClick={() => setOrderType(option.id)}
                         >
@@ -801,18 +794,17 @@ const CheckoutPage = () => {
               </div>
 
               {/* Place Order Button */}
-             <button
-  type="submit"
-  form="checkout-form"
-  disabled={isSubmitting || branchLoading || branches.length === 0 || paymentLoading}
-  className={`w-full cursor-pointer mt-6 py-3 rounded-md text-center font-bold text-secondary transition-all font-poppins ${
-    isSubmitting || branchLoading || branches.length === 0 || paymentLoading
-      ? 'bg-text/20 cursor-not-allowed'
-      : 'bg-primary hover:bg-primary/80 hover:brightness-105'
-  }`}
->
-  {isSubmitting ? 'Processing...' : (paymentLoading ? 'Preparing Payment...' : 'Place Order')}
-</button>
+              <button
+                type="submit"
+                form="checkout-form"
+                disabled={isSubmitting || branchLoading || branches.length === 0 || paymentLoading}
+                className={`w-full cursor-pointer mt-6 py-3 rounded-md text-center font-bold text-secondary transition-all font-poppins ${isSubmitting || branchLoading || branches.length === 0 || paymentLoading
+                    ? 'bg-text/20 cursor-not-allowed'
+                    : 'bg-primary hover:bg-primary/80 hover:brightness-105'
+                  }`}
+              >
+                {isSubmitting ? 'Processing...' : (paymentLoading ? 'Preparing Payment...' : 'Place Order')}
+              </button>
 
               <p className="text-xs text-text/50 text-center mt-4 font-montserrat">
                 By placing your order, you agree to our Terms of Service and Privacy Policy

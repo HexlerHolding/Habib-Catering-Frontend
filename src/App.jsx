@@ -10,6 +10,8 @@ import EditProfilePage from "./pages/account/EditProfilePage";
 import FavoritesPage from "./pages/account/FavoritesPage";
 // import OrderHistoryPage from "./pages/account/OrderHistoryPage";
 // import OrderTrackingPage from "./pages/account/OrderTrackingPage";
+import { Elements } from '@stripe/react-stripe-js';
+import { TITLE } from "./data/globalText";
 import SavedAddressesPage from "./pages/account/SavedAddressesPage";
 import BlogDetail from "./pages/BlogDetail";
 import BlogsPage from "./pages/BlogsPage";
@@ -26,8 +28,9 @@ import MenuPage from "./pages/MenuPage";
 import OrderSuccessPage from "./pages/OrderSuccessPage";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import Register from "./pages/Register";
+//define loadstripe
+import { loadStripe } from '@stripe/stripe-js';
 import { logout, selectCurrentUser, selectIsAuthenticated } from "./redux/slices/authSlice";
-import { TITLE } from "./data/globalText";
 
 function App() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -36,8 +39,21 @@ function App() {
   const user = useSelector(selectCurrentUser);
   const navigate = useNavigate();
   const [authChecked, setAuthChecked] = useState(false);
+  //load stripe promise from env
 
-  // Add effect to log authentication state on app mount
+// use env instead of publishable key const stripePromise = loadStripe('your-publishable-key');
+  const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
+
+  // Check if user is authenticated
+  useEffect(() => {
+    if (isAuthenticated) {
+      console.log("User is authenticated:", user);
+    } else {
+      console.log("User is not authenticated");
+    }
+  }, [isAuthenticated, user]);
+  
+// Add effect to log authentication state on app mount
   useEffect(() => {
     console.log("App mounted - Auth state:", { isAuthenticated, user });
     setAuthChecked(true);
@@ -46,7 +62,7 @@ function App() {
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
-   useEffect(() => {
+  useEffect(() => {
     document.title = TITLE;
   }, []);
 
@@ -160,7 +176,9 @@ function App() {
           path="/checkout"
           element={
             <MainLayout {...layoutProps}>
-              <CheckoutPage />
+              <Elements stripe={stripePromise}>
+                <CheckoutPage />
+              </Elements>
             </MainLayout>
           }
         />

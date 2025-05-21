@@ -12,6 +12,7 @@ const Register = () => {
     const [formData, setFormData] = useState({
         name: '',
         phone: '',
+        email: '', // Add email field
         password: ''
     });
     const [error, setError] = useState('');
@@ -45,9 +46,10 @@ const Register = () => {
         e.preventDefault();
         setLoading(true);
         setError('');
+        console.log('Form Data:', formData);
 
         // Basic validation
-        if (!formData.name || !formData.phone || !formData.password) {
+        if (!formData.name || !formData.phone || !formData.password || !formData.email) {
             setError('All fields are required');
             setLoading(false);
             return;
@@ -66,6 +68,7 @@ const Register = () => {
             const response = await authService.register({
                 name: formData.name,
                 phone: formData.phone,
+                email: formData.email, // Pass email to service
                 password: formData.password
             });
             
@@ -149,7 +152,18 @@ const Register = () => {
                                 maxLength={PHONE_INPUT_CONFIG.maxLength}
                                 className="w-full py-3 pl-10 pr-4  bg-text/5 rounded focus:outline-text focus:outline-2 outline-1 outline-text/50"
                             />
-                        </div>                        
+                        </div>
+                        <div className="relative">
+                            <FaUser className="absolute left-3 top-1/2 transform -translate-y-1/2 text-text/60" />
+                            <input
+                                type="email"
+                                name="email"
+                                value={formData.email}
+                                onChange={handleChange}
+                                placeholder="Email Address"
+                                className="w-full py-3 pl-10 pr-4  bg-text/5 rounded focus:outline-text focus:outline-2 outline-1 outline-text/50 "
+                            />
+                        </div>
                         <div className="relative">
                             <FaLock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-text/60" />
                             <input

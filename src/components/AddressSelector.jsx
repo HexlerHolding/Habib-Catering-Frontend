@@ -260,44 +260,40 @@ const closeConfirmModal = () => {
   
   const setSelectedAddressLocal = (address) => {
     setLocalSelectedAddress(address);
-    // When a new address is selected, show the save option
+    // Autofill the search input with the selected address
+    setSearchQuery(address.address || '');
     setShowSaveOption(true);
   };
   
   // Get current location
   const getCurrentLocation = () => {
     setIsLoading(true);
-    
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         async (position) => {
           const { latitude, longitude } = position.coords;
-          
           if (mapInstanceRef.current && markerRef.current) {
             mapInstanceRef.current.setView([latitude, longitude], 15);
             markerRef.current.setLatLng([latitude, longitude]);
-            
             try {
               // Reverse geocoding with English language parameter
               const response = await fetch(
                 `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&accept-language=en&addressdetails=1`
               );
               const data = await response.json();
-              
               if (data.display_name) {
                 const addressObj = {
                   address: data.display_name,
                   lat: latitude,
                   lng: longitude
                 };
-                // Do NOT setSearchQuery(data.display_name);
                 setSelectedAddressLocal(addressObj);
+                setSearchQuery(data.display_name); // Ensure input field is updated
               }
             } catch (error) {
               console.error('Error reverse geocoding:', error);
             }
           }
-          
           setIsLoading(false);
         },
         (error) => {
@@ -307,7 +303,7 @@ const closeConfirmModal = () => {
         }
       );
     } else {
-     toast.error('Geolocation is not supported by this browser.');
+      toast.error('Geolocation is not supported by this browser.');
       setIsLoading(false);
     }
   };
@@ -627,6 +623,18 @@ const closeConfirmModal = () => {
             ) : (
               /* Map View */
               <>
+                {/* Use Current Location Button - now styled as a small link/button for better UI/UX */}
+                <div className="px-4 pt-4 flex justify-end">
+                  <button
+                    onClick={getCurrentLocation}
+                    className="inline-flex items-center text-primary text-sm font-medium hover:underline hover:text-accent bg-transparent p-0 m-0 border-0 shadow-none focus:outline-none"
+                    style={{ background: 'none', boxShadow: 'none' }}
+                  >
+                    <FaMapMarkerAlt className="mr-1 text-base" />
+                    Use Current Location
+                  </button>
+                </div>
+
                 {/* Instruction text */}
                 <div className="px-4 py-3">
                   <p className="text-text/70">
@@ -711,24 +719,14 @@ const closeConfirmModal = () => {
                       />
                       <button
                         onClick={handleSaveAddress}
-                        className="w-full bg-accent text-secondary cursor-pointer py-2 rounded-lg font-medium hover:bg-accent/90"
+                        className="w-full bg-accent text-secondary cursor-pointer py-2 rounded-lg font-medium hover:bg-accent/90 disabled:opacity-50 disabled:cursor-not-allowed"
+                        disabled={!addressName.trim()}
                       >
                         Save Address
                       </button>
                     </div>
                   </div>
                 )}
-
-                {/* Use Current Location Button */}
-                <div className="px-4 pb-4">
-                  <button
-                    onClick={getCurrentLocation}
-                    className="w-full bg-primary text-secondary cursor-pointer py-3 rounded-lg font-medium hover:bg-primary/80 flex items-center justify-center"
-                  >
-                    <FaMapMarkerAlt className="mr-2" />
-                    Use Current Location
-                  </button>
-                </div>
               </>
             )}
           </div>

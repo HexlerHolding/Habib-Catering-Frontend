@@ -41,6 +41,7 @@ export const authService = {
    * @param {Object} userData - User registration data
    * @param {string} userData.name - User's name
    * @param {string} userData.phone - User's phone number
+   * @param {string} userData.email - User's email
    * @param {string} userData.password - User's password
    * @returns {Promise<Object>} - Registration response with token
    */
@@ -54,6 +55,7 @@ export const authService = {
         body: JSON.stringify({
           name: userData.name,
           phone: userData.phone,
+          email: userData.email, // Send email to backend
           password: userData.password,
         }),
       });

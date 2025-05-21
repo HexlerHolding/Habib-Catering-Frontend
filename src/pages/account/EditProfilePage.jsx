@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { FaUser, FaPhone, FaLock, FaEye, FaEyeSlash } from 'react-icons/fa';
+import { FaUser, FaPhone, FaLock, FaEye, FaEyeSlash, FaEnvelope } from 'react-icons/fa';
 import authService from '../../../Services/authService';
 import { toast } from 'react-hot-toast';
 
-const EditProfilePage = () => {
-  const [userData, setUserData] = useState({
+const EditProfilePage = () => {  const [userData, setUserData] = useState({
     name: '',
+    email: '',
     phone: '',
     password: '',
   });
@@ -19,9 +19,10 @@ const EditProfilePage = () => {
         const user = JSON.parse(localStorage.getItem('user'));
         if (!user || !user._id) return;
         const profile = await authService.getProfile(user._id);
-        console.log('Fetched profile:', profile);
-        setUserData({
+        console
+        console.log('Fetched profile:', profile);        setUserData({
           name: profile.Name || profile.name || '',
+          email: profile.Email || profile.email || '',
           phone: profile.Phone || profile.phone || '',
           password: '', // Never pre-fill password for security
         });
@@ -42,10 +43,10 @@ const EditProfilePage = () => {
     setLoading(true);
     try {
       const user = JSON.parse(localStorage.getItem('user'));
-      if (!user || !user._id) throw new Error('User not found');
-      // Only send fields that are filled
+      if (!user || !user._id) throw new Error('User not found');      // Only send fields that are filled
       const updates = {};
       if (userData.name) updates.name = userData.name;
+      if (userData.email) updates.email = userData.email;
       if (userData.phone) updates.phone = userData.phone;
       if (userData.password) updates.password = userData.password;
       await authService.updateProfile(user._id, updates);
@@ -62,8 +63,7 @@ const EditProfilePage = () => {
     <div>
       <h2 className="text-2xl font-semibold mb-6 text-text">Edit Profile</h2>
       <form onSubmit={handleSubmit} className="space-y-6">
-        <div className="space-y-4">
-          <div>
+        <div className="space-y-4">          <div>
             <label className="block text-text/70 mb-2" htmlFor="name">Full Name</label>
             <div className="relative">
               <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-text/50">
@@ -74,6 +74,23 @@ const EditProfilePage = () => {
                 id="name"
                 name="name"
                 value={userData.name}
+                onChange={handleChange}
+                className="bg-background border border-text/10 text-text rounded-lg block w-full pl-10 p-3 focus:outline-none focus:ring-2 focus:ring-primary"
+                required
+              />
+            </div>
+          </div>
+          <div>
+            <label className="block text-text/70 mb-2" htmlFor="email">Email Address</label>
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-text/50">
+                <FaEnvelope />
+              </div>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                value={userData.email}
                 onChange={handleChange}
                 className="bg-background border border-text/10 text-text rounded-lg block w-full pl-10 p-3 focus:outline-none focus:ring-2 focus:ring-primary"
                 required
@@ -94,6 +111,7 @@ const EditProfilePage = () => {
                 onChange={handleChange}
                 className="bg-background border border-text/10 text-text rounded-lg block w-full pl-10 p-3 focus:outline-none focus:ring-2 focus:ring-primary"
                 required
+                readOnly
               />
             </div>
           </div>

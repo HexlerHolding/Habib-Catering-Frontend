@@ -19,9 +19,9 @@ const HomePage = () => {
         {/* <HomePageCards /> */}
         
         {/* App Download Component - Added here */}
-        <div className="my-12">
+        {/* <div className="my-12">
           <AppDownload />
-        </div>
+        </div> */}
         <div className="my-12">
           <BlogSection />
         </div>

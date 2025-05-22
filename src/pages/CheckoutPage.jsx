@@ -348,7 +348,8 @@ useEffect(() => {
 
   // Show address selector modal
   const handleShowAddressSelector = () => {
-    setShowAddressSelectorModal(true);
+    // Open the AddressSelector modal globally
+    window.dispatchEvent(new Event('open-address-selector-modal'));
   };
 
   // Hide address selector modal
@@ -515,7 +516,8 @@ if (cartItems.length === 0) {
   return (
     <div className='bg-background min-h-screen'>
       {/* Address Selector Modal - Conditionally rendered */}
-      {showAddressSelectorModal && (
+      {/* REMOVE this block, modal is now globally controlled */}
+      {/* {showAddressSelectorModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
           <div className="bg-background rounded-lg w-full max-w-lg p-6">
             <div className="flex justify-between items-center mb-4">
@@ -530,7 +532,7 @@ if (cartItems.length === 0) {
             <AddressSelector onAddressSelected={handleAddressSelectorClose} />
           </div>
         </div>
-      )}
+      )} */}
 
       <div className="max-w-6xl mx-auto px-4 py-8 bg-background mt-9">
         {/* Checkout header */}

@@ -554,6 +554,13 @@ const closeConfirmModal = () => {
     };
   }, []);
 
+  // Listen for global open modal event
+  useEffect(() => {
+    const openModal = () => setIsModalOpen(true);
+    window.addEventListener('open-address-selector-modal', openModal);
+    return () => window.removeEventListener('open-address-selector-modal', openModal);
+  }, []);
+
   // Don't render if not authenticated
   if (!isAuthenticated) return null;
 

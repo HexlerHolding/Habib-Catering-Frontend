@@ -515,17 +515,16 @@ const closeConfirmModal = () => {
   useEffect(() => {
     const openModal = (e) => {
       setIsModalOpen(true);
-      // If event has detail.showSaved, open saved addresses list
-      if (e && e.detail && e.detail.showSaved) {
+      // If event has detail.showSaved, open saved addresses list; otherwise, open map entry
+      if (e && e.detail && typeof e.detail.showSaved === 'boolean') {
+        setIsAddressList(!!e.detail.showSaved);
+      } else {
         setIsAddressList(true);
       }
     };
     window.addEventListener('open-address-selector-modal', openModal);
     return () => window.removeEventListener('open-address-selector-modal', openModal);
   }, []);
-
-  // Don't render if not authenticated
-  if (!isAuthenticated) return null;
 
   return (
     <>
@@ -554,13 +553,16 @@ const closeConfirmModal = () => {
                 {isAddressList ? 'Your Saved Addresses' : 'Enter Address'}
               </h2>
               <div className="flex items-center space-x-3">
-                <button
-                  onClick={toggleAddressList}
-                  className="text-primary cursor-pointer hover:text-primary/80"
-                  title={isAddressList ? "Find New Address" : "View Saved Addresses"}
-                >
-                  {isAddressList ? <FaMapMarkerAlt size={20} /> : <FaList size={20} />}
-                </button>
+                {/* Only allow toggling to saved addresses if authenticated */}
+                {isAuthenticated && (
+                  <button
+                    onClick={toggleAddressList}
+                    className="text-primary cursor-pointer hover:text-primary/80"
+                    title={isAddressList ? "Find New Address" : "View Saved Addresses"}
+                  >
+                    {isAddressList ? <FaMapMarkerAlt size={20} /> : <FaList size={20} />}
+                  </button>
+                )}
                 <button
                   onClick={() => {
                     setIsModalOpen(false);
@@ -583,7 +585,8 @@ const closeConfirmModal = () => {
               </div>
             )}
 
-            {isAddressList ? (
+            {/* Only show saved addresses list if authenticated, otherwise always show map entry */}
+            {isAddressList && isAuthenticated ? (
               /* Saved Addresses List */
               <div className="p-4">
                 {savedAddresses && savedAddresses.length > 0 ? (
@@ -724,13 +727,25 @@ const closeConfirmModal = () => {
                       <div className="flex-1 overflow-hidden pr-2">
                         <p className="font-medium text-text truncate">{localSelectedAddress.address}</p>
                       </div>
-                      {/* SELECT button removed */}
                     </div>
+                    {/* Show 'Select this location' button for guests only */}
+                    {!isAuthenticated && (
+                      <button
+                        className="w-full bg-primary text-secondary py-2 rounded-lg font-medium hover:bg-primary/90 mb-2"
+                        onClick={() => {
+                          dispatch(setSelectedAddress(localSelectedAddress));
+                          setIsModalOpen(false);
+                          setIsAddressList(false);
+                        }}
+                      >
+                        Select this location
+                      </button>
+                    )}
                   </div>
                 )}
                 
                 {/* Save Address Option */}
-                {showSaveOption && localSelectedAddress && (
+                {isAuthenticated && showSaveOption && localSelectedAddress && (
                   <div className="px-4 pb-4">
                     <div className="border border-primary/20 rounded-lg p-4">
                       <div className="flex items-center mb-3">

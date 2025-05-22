@@ -348,8 +348,12 @@ useEffect(() => {
 
   // Show address selector modal
   const handleShowAddressSelector = () => {
-    // Open the AddressSelector modal globally, always show saved addresses first
-    window.dispatchEvent(new CustomEvent('open-address-selector-modal', { detail: { showSaved: true } }));
+    // If logged in, show saved addresses first; if not, show map entry directly
+    if (isAuthenticated) {
+      window.dispatchEvent(new CustomEvent('open-address-selector-modal', { detail: { showSaved: true } }));
+    } else {
+      window.dispatchEvent(new CustomEvent('open-address-selector-modal', { detail: { showSaved: false } }));
+    }
   };
 
   // Hide address selector modal
@@ -504,7 +508,7 @@ if (cartItems.length === 0) {
         <p className="mb-6 text-text/70 font-montserrat">Please add some items to your cart before proceeding to checkout.</p>
         <button
           onClick={() => navigate('/menu')}
-          className="bg-primary text-text py-3 px-8 rounded-lg font-bold hover:bg-primary/80 transition font-poppins"
+          className="bg-primary text-secondary py-3 px-8 rounded-lg font-bold hover:bg-primary/80 transition font-poppins"
           >
             Browse Menu
           </button>

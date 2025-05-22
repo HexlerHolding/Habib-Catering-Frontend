@@ -105,10 +105,11 @@ const Navbar = ({ toggleSidebar }) => {
         </Link>
 
         {/* Add the AddressSelector component here */}
-        <div className='sm:ml-7 '>
-
-  <AddressSelector />
-    </div>
+        {isAuthenticated && (
+          <div className='sm:ml-7 '>
+            <AddressSelector />
+          </div>
+        )}
       </div>
       
       {/* Desktop navigation - hidden */}

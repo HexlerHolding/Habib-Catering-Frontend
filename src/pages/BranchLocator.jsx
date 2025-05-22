@@ -13,39 +13,6 @@ L.Icon.Default.mergeOptions({
   shadowUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png',
 });
 
-// Helper function to generate approximate coordinates for cities
-// This will be used if coordinates aren't available from the API
-const getCityCoordinates = (city) => {
-  const cityCoordinates = {
-    'Lahore': { lat: 31.5204, lng: 74.3587 },
-    'Islamabad': { lat: 33.6844, lng: 73.0479 },
-    'Karachi': { lat: 24.8607, lng: 67.0011 },
-    'Rawalpindi': { lat: 33.6007, lng: 73.0679 },
-    'Faisalabad': { lat: 31.4180, lng: 73.0793 },
-    'Multan': { lat: 30.1959, lng: 71.4693 },
-    'Peshawar': { lat: 34.0081, lng: 71.5249 },
-    // Add more cities as needed
-  };
-  
-  // Normalize city name by converting to lowercase and removing extra spaces
-  const normalizedCity = city ? city.toLowerCase().trim() : '';
-  
-  // Find city in cityCoordinates (case-insensitive match)
-  for (const [key, value] of Object.entries(cityCoordinates)) {
-    if (key.toLowerCase() === normalizedCity) {
-      return value;
-    }
-  }
-  
-  // If we can extract a city name from the address, try that
-  if (normalizedCity.includes("islamabad")) {
-    return cityCoordinates["Islamabad"];
-  }
-  
-  // Default to Pakistan's center
-  return { lat: 30.3753, lng: 69.3451 };
-};
-
 const BranchLocator = () => {
   const [selectedCity, setSelectedCity] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
@@ -64,39 +31,15 @@ const BranchLocator = () => {
       try {
         setIsLoading(true);
         const branchData = await branchService.getBranches();
-
-        // Helper to geocode address if coordinates are missing
-        const geocodeAddress = async (address, city) => {
-          const query = encodeURIComponent(`${address}, ${city}`);
-          const url = `https://nominatim.openstreetmap.org/search?q=${query}&format=json&limit=1`;
-          try {
-            const response = await fetch(url, { headers: { 'Accept-Language': 'en' } });
-            const data = await response.json();
-            if (data && data.length > 0) {
-              return { lat: parseFloat(data[0].lat), lng: parseFloat(data[0].lon) };
-            }
-          } catch (e) {
-            console.warn('Geocoding failed for', address, city, e);
+        // Directly use backend data, assuming latitude and longitude are present
+        console.log('Fetched :', branchData);
+        const processedBranches = branchData.map(branch => ({
+          ...branch,
+          coordinates: {
+            lat: branch.latitude,
+            lng: branch.longitude
           }
-          return null;
-        };
-
-        // Process branch data to ensure coordinates
-        const processedBranches = await Promise.all(
-          branchData.map(async branch => {
-            if (!branchService.hasValidCoordinates(branch)) {
-              // Try to geocode the address
-              const coords = await geocodeAddress(branch.address, branch.city);
-              if (coords) {
-                return { ...branch, coordinates: coords };
-              }
-              // Fallback to city coordinates if geocoding fails
-              return { ...branch, coordinates: getCityCoordinates(branch.city) };
-            }
-            return branch;
-          })
-        );
-
+        }));
         setBranches(processedBranches);
       } catch (error) {
         console.error('Failed to load branches:', error);
@@ -128,6 +71,7 @@ const BranchLocator = () => {
   
   // Initialize map
   useEffect(() => {
+    if (isLoading) return;
     if (mapRef.current && !leafletMap.current) {
       // Initialize map with Pakistan center
       leafletMap.current = L.map(mapRef.current).setView([30.3753, 69.3451], 5);
@@ -149,7 +93,7 @@ const BranchLocator = () => {
         leafletMap.current = null;
       }
     };
-  }, []);
+  }, [isLoading]);
   
   // Update markers when branches, selected city, or search query changes
   useEffect(() => {
@@ -372,7 +316,13 @@ const BranchLocator = () => {
         
         {/* Map Container */}
         <div className="bg-text/30 rounded-lg h-96 md:h-full overflow-hidden z-10">
-          <div ref={mapRef} className="h-full w-full"></div>
+          {isLoading ? (
+            <div className="flex items-center justify-center h-full w-full text-text/50 text-lg">
+              Loading map...
+            </div>
+          ) : (
+            <div ref={mapRef} className="h-full w-full"></div>
+          )}
         </div>
       </div>
     </div>

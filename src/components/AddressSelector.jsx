@@ -19,6 +19,7 @@ import {
 } from '../redux/slices/locationSlice';
 import toast from 'react-hot-toast';
 import ConfirmationModal from './ConfirmationModal';
+import branchService from '../../Services/branchService';
 
 // Fix Leaflet marker icon issue
 delete L.Icon.Default.prototype._getIconUrl;
@@ -28,6 +29,18 @@ L.Icon.Default.mergeOptions({
   shadowUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png',
 });
 
+// Haversine formula to calculate distance between two lat/lng points in km
+function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
+  const R = 6371; // Radius of the earth in km
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLon = (lon2 - lon1) * Math.PI / 180;
+  const a =
+    0.5 - Math.cos(dLat)/2 +
+    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+    (1 - Math.cos(dLon))/2;
+  return R * 2 * Math.asin(Math.sqrt(a));
+}
+
 const AddressSelector = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isAddressList, setIsAddressList] = useState(false);
@@ -35,6 +48,7 @@ const AddressSelector = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [addressName, setAddressName] = useState('');
   const [showSaveOption, setShowSaveOption] = useState(false);
+  const [branches, setBranches] = useState([]);
 
   const dispatch = useDispatch();
   const selectedAddress = useSelector(selectSelectedAddress);
@@ -79,6 +93,13 @@ const closeConfirmModal = () => {
       dispatch(fetchUserAddresses(userId));
     }
   }, [isAuthenticated, userId, dispatch]);
+
+  // Fetch branches on mount
+  useEffect(() => {
+    branchService.getBranches().then((data) => {
+      setBranches(data.filter(b => b.latitude && b.longitude));
+    });
+  }, []);
 
   // Initialize map when modal opens
   useEffect(() => {
@@ -145,6 +166,10 @@ const closeConfirmModal = () => {
             // Handle map click
             map.on('click', async function(e) {
               const { lat, lng } = e.latlng;
+              if (!isWithin10Km(lat, lng)) {
+                toast.error('Sorry, we only deliver within 10 km of our branches.');
+                return;
+              }
               marker.setLatLng([lat, lng]);
               setIsLoading(true);
               
@@ -218,7 +243,6 @@ const closeConfirmModal = () => {
   // Handle search
   const handleSearch = async () => {
     if (!searchQuery.trim()) return;
-    
     setIsLoading(true);
     try {
       // Geocoding using Nominatim with English language parameter
@@ -231,12 +255,15 @@ const closeConfirmModal = () => {
         const result = data[0];
         const lat = parseFloat(result.lat);
         const lng = parseFloat(result.lon);
-        
+        if (!isWithin10Km(lat, lng)) {
+          toast.error('Sorry, we only deliver within 10 km of our branches.');
+          setIsLoading(false);
+          return;
+        }
         // Update map and marker
         if (mapInstanceRef.current && markerRef.current) {
           mapInstanceRef.current.setView([lat, lng], 15);
           markerRef.current.setLatLng([lat, lng]);
-          
           const addressObj = {
             address: result.display_name,
             lat: lat,
@@ -258,20 +285,30 @@ const closeConfirmModal = () => {
   // Local state for selected address before saving to Redux
   const [localSelectedAddress, setLocalSelectedAddress] = useState(selectedAddress);
   
+  // Update setSelectedAddressLocal to check distance
   const setSelectedAddressLocal = (address) => {
+    if (!isWithin10Km(address.lat, address.lng)) {
+      toast.error('Sorry, we only deliver within 10 km of our branches.');
+      setShowSaveOption(false);
+      return;
+    }
     setLocalSelectedAddress(address);
-    // Autofill the search input with the selected address
     setSearchQuery(address.address || '');
     setShowSaveOption(true);
   };
   
-  // Get current location
+  // Update getCurrentLocation to check distance before allowing selection
   const getCurrentLocation = () => {
     setIsLoading(true);
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         async (position) => {
           const { latitude, longitude } = position.coords;
+          if (!isWithin10Km(latitude, longitude)) {
+            toast.error('Sorry, we only deliver within 10 km of our branches.');
+            setIsLoading(false);
+            return;
+          }
           if (mapInstanceRef.current && markerRef.current) {
             mapInstanceRef.current.setView([latitude, longitude], 15);
             markerRef.current.setLatLng([latitude, longitude]);
@@ -354,7 +391,10 @@ const closeConfirmModal = () => {
   // Save address to saved addresses list and user profile
   const handleSaveAddress = () => {
     if (!localSelectedAddress) return;
-    
+    if (!isWithin10Km(localSelectedAddress.lat, localSelectedAddress.lng)) {
+      toast.error('Sorry, we only deliver within 10 km of our branches.');
+      return;
+    }
     // Safely check if address is already saved by ensuring savedAddresses exists
     const addressList = savedAddresses || [];
     const isAlreadySaved = addressList.some(addr => 
@@ -468,6 +508,17 @@ const closeConfirmModal = () => {
       setIsAddressList(false);
     }
   };
+
+  // Helper to check if a location is within 10km of any branch
+  function isWithin10Km(lat, lng) {
+    if (!branches.length) return true; // fallback: allow if branches not loaded
+    return branches.some(branch => {
+      const branchLat = branch.latitude || (branch.coordinates && branch.coordinates.lat);
+      const branchLng = branch.longitude || (branch.coordinates && branch.coordinates.lng);
+      if (typeof branchLat !== 'number' || typeof branchLng !== 'number') return false;
+      return getDistanceFromLatLonInKm(lat, lng, branchLat, branchLng) <= 10;
+    });
+  }
 
   // Handle Enter key in search input
   const handleKeyDown = (e) => {

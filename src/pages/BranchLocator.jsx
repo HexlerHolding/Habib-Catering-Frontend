@@ -38,6 +38,9 @@ const BranchLocator = () => {
           coordinates: {
             lat: branch.latitude,
             lng: branch.longitude
+         // lat: 33.64618417591981,
+            // lng: 72.99668168572248
+            // 33.64618417591981, 72.99668168572248 // Example coordinates for  office location
           }
         }));
         setBranches(processedBranches);

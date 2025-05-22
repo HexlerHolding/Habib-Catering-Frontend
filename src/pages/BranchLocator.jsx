@@ -75,6 +75,11 @@ const BranchLocator = () => {
   // Initialize map
   useEffect(() => {
     if (isLoading) return;
+    // Check if there are any branches with valid coordinates
+    const hasValidCoordinates = branches.some(
+      branch => branch.coordinates && branch.coordinates.lat && branch.coordinates.lng
+    );
+    if (!hasValidCoordinates) return; // Do not initialize map if no valid coordinates
     if (mapRef.current && !leafletMap.current) {
       // Initialize map with Pakistan center
       leafletMap.current = L.map(mapRef.current).setView([30.3753, 69.3451], 5);
@@ -96,7 +101,7 @@ const BranchLocator = () => {
         leafletMap.current = null;
       }
     };
-  }, [isLoading]);
+  }, [isLoading, branches]);
   
   // Update markers when branches, selected city, or search query changes
   useEffect(() => {
@@ -323,8 +328,12 @@ const BranchLocator = () => {
             <div className="flex items-center justify-center h-full w-full text-text/50 text-lg">
               Loading map...
             </div>
-          ) : (
+          ) : branches.some(branch => branch.coordinates && branch.coordinates.lat && branch.coordinates.lng) ? (
             <div ref={mapRef} className="h-full w-full"></div>
+          ) : (
+            <div className="flex items-center justify-center h-full w-full text-text/50 text-lg">
+              No map found
+            </div>
           )}
         </div>
       </div>

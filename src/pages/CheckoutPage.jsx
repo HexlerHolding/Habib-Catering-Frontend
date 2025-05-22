@@ -276,12 +276,12 @@ useEffect(() => {
 
   // Define payment method options
   const paymentMethodOptions = [
-    {
-      id: 'cash',
-      icon: FaMoneyBillWave,
-      title: 'Cash on Delivery',
-      description: 'Pay when you receive your order'
-    },
+    // {
+    //   id: 'cash',
+    //   icon: FaMoneyBillWave,
+    //   title: 'Cash on Delivery',
+    //   description: 'Pay when you receive your order'
+    // },
     {
       id: 'card',
       icon: FaCreditCard,
@@ -680,6 +680,7 @@ if (cartItems.length === 0) {
                         id="address"
                         name="address"
                         value={formData.address}
+                        readOnly
                         onChange={handleChange}
                         className={`w-full p-3 focus:outline-text focus:outline-2 outline-1 outline-text/50  rounded-md ${errors.address ? 'border-accent' : 'border-text/20'} sm:pr-40`}
                         placeholder="Enter your complete address"

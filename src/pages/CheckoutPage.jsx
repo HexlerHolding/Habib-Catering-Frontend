@@ -348,8 +348,8 @@ useEffect(() => {
 
   // Show address selector modal
   const handleShowAddressSelector = () => {
-    // Open the AddressSelector modal globally
-    window.dispatchEvent(new Event('open-address-selector-modal'));
+    // Open the AddressSelector modal globally, always show saved addresses first
+    window.dispatchEvent(new CustomEvent('open-address-selector-modal', { detail: { showSaved: true } }));
   };
 
   // Hide address selector modal

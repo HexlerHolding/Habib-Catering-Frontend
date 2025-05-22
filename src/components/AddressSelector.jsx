@@ -43,7 +43,7 @@ function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
 
 const AddressSelector = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isAddressList, setIsAddressList] = useState(false);
+  const [isAddressList, setIsAddressList] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [addressName, setAddressName] = useState('');
@@ -556,7 +556,13 @@ const closeConfirmModal = () => {
 
   // Listen for global open modal event
   useEffect(() => {
-    const openModal = () => setIsModalOpen(true);
+    const openModal = (e) => {
+      setIsModalOpen(true);
+      // If event has detail.showSaved, open saved addresses list
+      if (e && e.detail && e.detail.showSaved) {
+        setIsAddressList(true);
+      }
+    };
     window.addEventListener('open-address-selector-modal', openModal);
     return () => window.removeEventListener('open-address-selector-modal', openModal);
   }, []);
@@ -568,7 +574,7 @@ const closeConfirmModal = () => {
     <>
       {/* Address Button in Navbar */}
       <button
-        onClick={() => setIsModalOpen(true)}
+        onClick={() => { setIsModalOpen(true); setIsAddressList(true); }}
         data-testid="address-selector-btn"
         className="flex items-center text-text cursor-pointer mr-4 hover:text-accent transition-colors"
       >
@@ -624,53 +630,64 @@ const closeConfirmModal = () => {
               /* Saved Addresses List */
               <div className="p-4">
                 {savedAddresses && savedAddresses.length > 0 ? (
-                  <div className="space-y-3">
-                    {savedAddresses.map((address) => (
-                      <div 
-                        key={address.id} 
-                        className={`p-4 border rounded-lg flex items-start cursor-pointer transition-colors ${
-                          selectedAddress && selectedAddress.id === address.id 
-                            ? 'border-primary bg-primary/10' 
-                            : 'border-text/10 hover:border-primary'
-                        }`}
-                        onClick={() => handleSelectSavedAddress(address)}
-                      >
-                        <div className={`p-3 rounded-full mr-3 ${
-                          selectedAddress && selectedAddress.id === address.id 
-                            ? 'bg-primary text-background' 
-                            : 'bg-text/10'
-                        }`}>
-                          {address.name && address.name.toLowerCase().includes('home') ? (
-                            <FaHome />
-                          ) : address.name && address.name.toLowerCase().includes('office') ? (
-                            <FaBuilding />
-                          ) : (
-                            <FaMapMarkerAlt />
-                          )}
-                        </div>
-                        <div className="flex-1">
-                          <h3 className="font-bold text-lg">{address.name || 'Unnamed Location'}</h3>
-                          <p className="text-text/70 text-sm line-clamp-2">{address.address}</p>
-                        </div>
-                        <button 
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleDeleteAddress(address.id);
-                          }}
-                          className="text-accent cursor-pointer hover:text-red-600 p-2"
+                  <>
+                    <div className="space-y-3">
+                      {savedAddresses.map((address) => (
+                        <div 
+                          key={address.id} 
+                          className={`p-4 border rounded-lg flex items-start cursor-pointer transition-colors ${
+                            selectedAddress && selectedAddress.id === address.id 
+                              ? 'border-primary bg-primary/10' 
+                              : 'border-text/10 hover:border-primary'
+                          }`}
+                          onClick={() => handleSelectSavedAddress(address)}
                         >
-                          <FaTimes />
-                        </button>
-                      </div>
-                    ))}
-                  </div>
+                          <div className={`p-3 rounded-full mr-3 ${
+                            selectedAddress && selectedAddress.id === address.id 
+                              ? 'bg-primary text-background' 
+                              : 'bg-text/10'
+                          }`}>
+                            {address.name && address.name.toLowerCase().includes('home') ? (
+                              <FaHome />
+                            ) : address.name && address.name.toLowerCase().includes('office') ? (
+                              <FaBuilding />
+                            ) : (
+                              <FaMapMarkerAlt />
+                            )}
+                          </div>
+                          <div className="flex-1">
+                            <h3 className="font-bold text-lg">{address.name || 'Unnamed Location'}</h3>
+                            <p className="text-text/70 text-sm line-clamp-2">{address.address}</p>
+                          </div>
+                          <button 
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleDeleteAddress(address.id);
+                            }}
+                            className="text-accent cursor-pointer hover:text-red-600 p-2"
+                          >
+                            <FaTimes />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                    {/* Add New Address button always at the end */}
+                    <div className="text-center mt-6">
+                      <button
+                        onClick={() => setIsAddressList(false)}
+                        className="bg-primary text-background px-6 py-3 rounded-lg font-medium"
+                      >
+                        Add New Address
+                      </button>
+                    </div>
+                  </>
                 ) : (
                   <div className="text-center py-8">
                     <FaMapMarkerAlt className="text-4xl mx-auto mb-4 text-text/30" />
                     <p className="text-lg font-medium mb-2">No saved addresses</p>
                     <p className="text-text/50 mb-4">You haven't saved any addresses yet.</p>
                     <button
-                      onClick={toggleAddressList}
+                      onClick={() => setIsAddressList(false)}
                       className="bg-primary text-background px-6 py-3 rounded-lg font-medium"
                     >
                       Add New Address

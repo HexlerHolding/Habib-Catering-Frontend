@@ -114,8 +114,8 @@ export const updateUserAddressName = createAsyncThunk(
 
 // Set up initial state properly with an empty array for savedAddresses
 const initialState = {
-  selectedAddress: JSON.parse(localStorage.getItem('selectedAddress')) || null,
-  savedAddresses: JSON.parse(localStorage.getItem('savedAddresses')) || [],
+  selectedAddress: null, // Do not load from localStorage
+  savedAddresses: [], // Always start empty
   status: 'idle', // 'idle' | 'loading' | 'succeeded' | 'failed'
   error: null
 };
@@ -127,7 +127,7 @@ const locationSlice = createSlice({
     // Set the currently selected address for delivery (local only)
     setSelectedAddress: (state, action) => {
       state.selectedAddress = action.payload;
-      localStorage.setItem('selectedAddress', JSON.stringify(action.payload));
+      // Removed: localStorage.setItem('selectedAddress', ...)
     },
     
     // Add a new address to the saved addresses list (local only)
@@ -136,7 +136,7 @@ const locationSlice = createSlice({
       const exists = state.savedAddresses.some(addr => addr.id === action.payload.id);
       if (!exists) {
         state.savedAddresses.push(action.payload);
-        localStorage.setItem('savedAddresses', JSON.stringify(state.savedAddresses));
+        // Removed: localStorage.setItem('savedAddresses', ...)
       }
     },
     
@@ -150,10 +150,9 @@ const locationSlice = createSlice({
         // If this is the selected address, update that too
         if (state.selectedAddress && state.selectedAddress.id === id) {
           state.selectedAddress.name = name;
-          localStorage.setItem('selectedAddress', JSON.stringify(state.selectedAddress));
+          // Removed: localStorage.setItem('selectedAddress', ...)
         }
-        
-        localStorage.setItem('savedAddresses', JSON.stringify(state.savedAddresses));
+        // Removed: localStorage.setItem('savedAddresses', ...)
       }
     },
     
@@ -166,23 +165,16 @@ const locationSlice = createSlice({
       // If the deleted address was the selected one, clear the selection
       if (state.selectedAddress && state.selectedAddress.id === action.payload) {
         state.selectedAddress = state.savedAddresses.length > 0 ? state.savedAddresses[0] : null;
-        
-        if (state.selectedAddress) {
-          localStorage.setItem('selectedAddress', JSON.stringify(state.selectedAddress));
-        } else {
-          localStorage.removeItem('selectedAddress');
-        }
+        // Removed: localStorage.setItem('selectedAddress', ...)
       }
-      
-      localStorage.setItem('savedAddresses', JSON.stringify(state.savedAddresses));
+      // Removed: localStorage.setItem('savedAddresses', ...)
     },
     
     // Clear addresses
     clearAddresses: (state) => {
       state.savedAddresses = [];
       state.selectedAddress = null;
-      localStorage.removeItem('savedAddresses');
-      localStorage.removeItem('selectedAddress');
+      // Removed: localStorage.removeItem('savedAddresses');
     }
   },
   extraReducers: (builder) => {
@@ -194,21 +186,17 @@ const locationSlice = createSlice({
       .addCase(fetchUserAddresses.fulfilled, (state, action) => {
         state.status = 'succeeded';
         state.savedAddresses = action.payload;
-        
         // If there are addresses but no selected address, select the first one
         if (action.payload.length > 0 && !state.selectedAddress) {
           state.selectedAddress = action.payload[0];
-          localStorage.setItem('selectedAddress', JSON.stringify(action.payload[0]));
+          // Removed: localStorage.setItem('selectedAddress', ...)
         }
-        
-        // Update localStorage
-        localStorage.setItem('savedAddresses', JSON.stringify(action.payload));
+        // Removed: localStorage.setItem('savedAddresses', ...)
       })
       .addCase(fetchUserAddresses.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.payload;
       })
-      
       // Save user address
       .addCase(saveUserAddress.pending, (state) => {
         state.status = 'loading';
@@ -216,15 +204,12 @@ const locationSlice = createSlice({
       .addCase(saveUserAddress.fulfilled, (state, action) => {
         state.status = 'succeeded';
         state.savedAddresses = action.payload;
-        
-        // Update localStorage
-        localStorage.setItem('savedAddresses', JSON.stringify(action.payload));
+        // Removed: localStorage.setItem('savedAddresses', ...)
       })
       .addCase(saveUserAddress.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.payload;
       })
-      
       // Delete user address
       .addCase(deleteUserAddress.pending, (state) => {
         state.status = 'loading';
@@ -232,27 +217,17 @@ const locationSlice = createSlice({
       .addCase(deleteUserAddress.fulfilled, (state, action) => {
         state.status = 'succeeded';
         state.savedAddresses = action.payload;
-        
-        // Update localStorage
-        localStorage.setItem('savedAddresses', JSON.stringify(action.payload));
-        
+        // Removed: localStorage.setItem('savedAddresses', ...)
         // If the selected address was deleted, select the first available one
         if (state.selectedAddress && 
             !action.payload.some(addr => addr.id === state.selectedAddress.id)) {
           state.selectedAddress = action.payload.length > 0 ? action.payload[0] : null;
-          
-          if (state.selectedAddress) {
-            localStorage.setItem('selectedAddress', JSON.stringify(state.selectedAddress));
-          } else {
-            localStorage.removeItem('selectedAddress');
-          }
         }
       })
       .addCase(deleteUserAddress.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.payload;
       })
-      
       // Set user selected address
       .addCase(setUserSelectedAddress.pending, (state) => {
         state.status = 'loading';
@@ -260,7 +235,7 @@ const locationSlice = createSlice({
       .addCase(setUserSelectedAddress.fulfilled, (state, action) => {
         state.status = 'succeeded';
         state.selectedAddress = action.payload;
-        localStorage.setItem('selectedAddress', JSON.stringify(action.payload));
+        // Removed: localStorage.setItem('selectedAddress', ...)
       })
       .addCase(setUserSelectedAddress.rejected, (state, action) => {
         state.status = 'failed';
@@ -274,7 +249,7 @@ const locationSlice = createSlice({
       .addCase(updateUserAddressName.fulfilled, (state, action) => {
         state.status = 'succeeded';
         state.savedAddresses = action.payload;
-        localStorage.setItem('savedAddresses', JSON.stringify(action.payload));
+        // Removed: localStorage.setItem('savedAddresses', ...)
       })
       .addCase(updateUserAddressName.rejected, (state, action) => {
         state.status = 'failed';

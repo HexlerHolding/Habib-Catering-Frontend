@@ -655,7 +655,7 @@ if (cartItems.length === 0) {
                       name="phone"
                       value={formData.phone}
                       onChange={handleChange}
-                      readOnly
+                      readOnly={isAuthenticated}
                       maxLength={PHONE_INPUT_CONFIG.maxLength}
                       className={`w-full p-3 focus:outline-text focus:outline-2 outline-1 outline-text/50  rounded-md ${errors.phone ? 'border-accent' : 'border-text/20'}`}
                       placeholder={PHONE_INPUT_CONFIG.placeholder}

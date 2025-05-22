@@ -118,7 +118,7 @@ const closeConfirmModal = () => {
               maxZoom: 19
             }).addTo(map);
             const marker = L.marker(userLatLng, { draggable: true }).addTo(map);
-            // Reverse geocode to get address, but do NOT set it in the input field
+            // Reverse geocode to get address, and set it in the input field
             setIsLoading(true);
             try {
               const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&accept-language=en&addressdetails=1`);
@@ -129,7 +129,7 @@ const closeConfirmModal = () => {
                   lat: latitude,
                   lng: longitude
                 };
-                // Do NOT setSearchQuery(data.display_name);
+                setSearchQuery(data.display_name); // Set input field to marker location
                 setSelectedAddressLocal(addressObj);
               }
             } catch (error) {
@@ -184,7 +184,7 @@ const closeConfirmModal = () => {
                     lat: lat,
                     lng: lng
                   };
-                  setSearchQuery(data.display_name);
+                  setSearchQuery(data.display_name); // Always update input field
                   setSelectedAddressLocal(addressObj);
                 }
               } catch (error) {
@@ -342,49 +342,6 @@ const closeConfirmModal = () => {
     } else {
       toast.error('Geolocation is not supported by this browser.');
       setIsLoading(false);
-    }
-  };
-  
-  // Save selected address to Redux and user profile
-  const handleSelectAddress = () => {
-    if (localSelectedAddress && isAuthenticated && userId) {
-      // Create a unique ID if this is a new address
-      const addressToSave = {
-        ...localSelectedAddress,
-        id: localSelectedAddress.id || Date.now().toString()
-      };
-      
-      // Dispatch to Redux and save to user profile
-      dispatch(setUserSelectedAddress({ userId, address: addressToSave }))
-        .unwrap()
-        .then(() => {
-          // Close modal and reset states
-          setIsModalOpen(false);
-          setIsAddressList(false);
-          setShowSaveOption(false);
-          setAddressName('');
-        })
-        .catch(error => {
-          console.error('Failed to set selected address:', error);
-          // Fallback to local storage if API call fails
-          dispatch(setSelectedAddress(addressToSave));
-          setIsModalOpen(false);
-          setIsAddressList(false);
-          setShowSaveOption(false);
-          setAddressName('');
-        });
-    } else if (localSelectedAddress) {
-      // If not authenticated, just use local Redux state
-      const addressToSave = {
-        ...localSelectedAddress,
-        id: localSelectedAddress.id || Date.now().toString()
-      };
-      
-      dispatch(setSelectedAddress(addressToSave));
-      setIsModalOpen(false);
-      setIsAddressList(false);
-      setShowSaveOption(false);
-      setAddressName('');
     }
   };
   
@@ -767,12 +724,7 @@ const closeConfirmModal = () => {
                       <div className="flex-1 overflow-hidden pr-2">
                         <p className="font-medium text-text truncate">{localSelectedAddress.address}</p>
                       </div>
-                      <button 
-                        onClick={handleSelectAddress}
-                        className="bg-primary text-secondary cursor-pointer px-4 py-2 rounded-lg font-bold hover:bg-primary/80 flex-shrink-0"
-                      >
-                        SELECT
-                      </button>
+                      {/* SELECT button removed */}
                     </div>
                   </div>
                 )}

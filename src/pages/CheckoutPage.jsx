@@ -8,7 +8,7 @@ import { orderService } from '../../Services/orderService';
 import authService from '../../Services/authService';
 import AddressSelector from '../components/AddressSelector';
 import CardDetailsModal from '../components/CardDetailsModal';
-import { CURRENCY_SYMBOL } from '../data/globalText';
+import { CURRENCY_SYMBOL, PHONE_INPUT_CONFIG } from '../data/globalText';
 import { selectIsAuthenticated } from '../redux/slices/authSlice';
 import { clearCart, selectCartItems, selectCartTotalAmount } from '../redux/slices/cartSlice';
 import { selectSavedAddresses, selectSelectedAddress } from '../redux/slices/locationSlice';
@@ -653,10 +653,10 @@ if (cartItems.length === 0) {
                       name="phone"
                       value={formData.phone}
                       onChange={handleChange}
-                      maxLength={11}
                       readOnly
+                      maxLength={PHONE_INPUT_CONFIG.maxLength}
                       className={`w-full p-3 focus:outline-text focus:outline-2 outline-1 outline-text/50  rounded-md ${errors.phone ? 'border-accent' : 'border-text/20'}`}
-                      placeholder="03XX1234567"
+                      placeholder={PHONE_INPUT_CONFIG.placeholder}
                     />
                     {errors.phone && <p className="text-accent text-sm mt-1 font-montserrat">{errors.phone}</p>}
                   </div>

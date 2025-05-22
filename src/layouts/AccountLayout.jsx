@@ -32,10 +32,10 @@ const AccountLayout = () => {
   };
 
   const navLinkClass = ({ isActive }) => 
-    `flex items-center py-2 px-4 rounded-lg transition-all ${
+    `flex items-center py-2 px-4 rounded-lg w-fit transition-all ${
       isActive 
-        ? 'bg-primary text-secondary font-medium' 
-        : 'hover:bg-text/5 text-text/70'
+        ? 'bg-primary text-secondary font-medium w-fit' 
+        : 'hover:bg-text/5 text-text/70 w-fit'
     }`;
 
   return (
@@ -47,7 +47,7 @@ const AccountLayout = () => {
         <div className="w-full">
           <div className="bg-background rounded-lg shadow-sm p-3">
             <nav className="flex flex-col sm:flex-row flex-wrap gap-2 justify-between w-full">
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-col sm:flex-row  gap-2">
                 <NavLink to="/account/profile" className={navLinkClass}>
                   <FaUser className="mr-2" />
                   Edit Profile
@@ -67,7 +67,7 @@ const AccountLayout = () => {
               </div>
               <button 
                 onClick={handleLogout}
-                className="flex items-center py-2 px-4 rounded-lg text-secondary bg-accent hover:bg-accent/80 hover:brightness-105 transition-all mt-2 sm:mt-0"
+                className="flex items-center py-2 px-4 rounded-lg w-fit text-secondary bg-accent hover:bg-accent/80 hover:brightness-105 transition-all mt-2 sm:mt-0"
               >
                 <FaSignOutAlt className="mr-2" />
                 Sign Out

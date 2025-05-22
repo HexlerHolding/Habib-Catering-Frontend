@@ -106,7 +106,7 @@ const SavedAddressesPage = () => {
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-4">
+      <div className="flex justify-between gap-3 flex-wrap items-center mb-4">
         <h2 className="text-xl font-semibold text-text">Saved Addresses</h2>
         <a 
           href="#address-selector" 
@@ -116,9 +116,13 @@ const SavedAddressesPage = () => {
             const addressSelectorBtn = document.querySelector('[data-testid="address-selector-btn"]');
             if (addressSelectorBtn) addressSelectorBtn.click();
           }}
-          className="flex items-center bg-primary text-secondary px-4 py-2 rounded-lg hover:bg-primary/80 hover:brightness-105 transition-colors"
+          className="flex items-center justify-center bg-primary text-secondary px-4 py-2 rounded-lg hover:bg-primary/80 hover:brightness-105 transition-colors"
         >
-          <FaMapMarkerAlt className="mr-2" /> Add New Address
+          <FaMapMarkerAlt className="mr-2" /> 
+          <span>
+
+          Add New Address
+          </span>
         </a>
       </div>
       

@@ -5,38 +5,34 @@ export const branchService = {
    * Get all branches from the API
    * @returns {Promise<Array>} - Array of branches with validated coordinates
    */
-  async getBranches() {
-    try {
-      const response = await fetch(`${API_URL}/api/public/menu/branches`);
-      
-      if (!response.ok) {
-        throw new Error('Failed to fetch branches');
-      }
-      
-      const data = await response.json();
-      console.log('Fetched branches:', data);
-      const branches = data.branches || [];
-      
-      // Validate and normalize branch data
-      return branches.map(branch => {
-        // If coordinates are missing or invalid, log warning but still return branch
-        if (!branch.coordinates || 
-            typeof branch.coordinates !== 'object' ||
-            !branch.coordinates.lat || 
-            !branch.coordinates.lng) {
-          console.warn(`Branch ${branch.id} - ${branch.name} has missing or invalid coordinates`);
-          
-          // Ensure coordinates object exists to prevent destructuring errors
-          branch.coordinates = branch.coordinates || {};
-        }
-        
-        return branch;
-      });
-    } catch (error) {
-      console.error('Error fetching branches:', error);
-      return [];
+ async getBranches() {
+  try {
+    const response = await fetch(`${API_URL}/api/public/menu/branches`);
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch branches');
     }
-  },
+
+    const data = await response.json();
+    console.log('Fetched branches:', data);
+    const branches = data.branches || [];
+
+    return branches.map(branch => {
+      if (branch.latitude == null || branch.longitude == null) 
+        {
+        console.warn(`Branch ${branch.id} - ${branch.name} has missing latitude or longitude`);
+      }
+
+      // Log the latitude and longitude
+      console.log(`Branch ${branch.id} - ${branch.name} | Latitude: ${branch.latitude}, Longitude: ${branch.longitude}`);
+
+      return branch;
+    });
+  } catch (error) {
+    console.error('Error fetching branches:', error);
+    return [];
+  }
+},
   
   /**
    * Get details for a specific branch

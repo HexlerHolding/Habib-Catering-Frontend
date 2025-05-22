@@ -115,11 +115,7 @@ export const authService = {
         throw new Error('Phone and password are required');
       }
 
-      // Validate phone format (must be 11 digits starting with 0)
-      // if (!/^0\d{10}$/.test(credentials.phone)) {
-      //   throw new Error('Invalid phone number format. Must be 11 digits starting with 0');
-      // }
-
+     
       // Send phone number exactly as stored in database
       const formattedPhone = credentials.phone;
       
@@ -248,12 +244,13 @@ export const authService = {
       if (!response.ok) {
         throw new Error(data.error || 'Failed to update profile');
       }
-      // Update localStorage if name or phone changed
+      // Update localStorage if name, phone, or email changed
       if (data.token && data.user) {
         const essentialUserData = {
           _id: data.user._id || data.user.id || '',
           Name: data.user.Name || data.user.name || '',
           Phone: data.user.Phone || data.user.phone || '',
+          Email: data.user.Email || data.user.email || '',
         };
         localStorage.setItem('userToken', data.token);
         localStorage.setItem('user', JSON.stringify(essentialUserData));

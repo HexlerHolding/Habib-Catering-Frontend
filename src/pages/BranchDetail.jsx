@@ -13,38 +13,6 @@ L.Icon.Default.mergeOptions({
   shadowUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png',
 });
 
-// Helper function to generate approximate coordinates for cities
-const getCityCoordinates = (city) => {
-  const cityCoordinates = {
-    'Lahore': { lat: 31.5204, lng: 74.3587 },
-    'Islamabad': { lat: 33.6844, lng: 73.0479 },
-    'Karachi': { lat: 24.8607, lng: 67.0011 },
-    'Rawalpindi': { lat: 33.6007, lng: 73.0679 },
-    'Faisalabad': { lat: 31.4180, lng: 73.0793 },
-    'Multan': { lat: 30.1959, lng: 71.4693 },
-    'Peshawar': { lat: 34.0081, lng: 71.5249 },
-    // Add more cities as needed
-  };
-  
-  // Normalize city name by converting to lowercase and removing extra spaces
-  const normalizedCity = city ? city.toLowerCase().trim() : '';
-  
-  // Find city in cityCoordinates (case-insensitive match)
-  for (const [key, value] of Object.entries(cityCoordinates)) {
-    if (key.toLowerCase() === normalizedCity) {
-      return value;
-    }
-  }
-  
-  // If we can extract a city name from the address, try that
-  if (normalizedCity.includes("islamabad")) {
-    return cityCoordinates["Islamabad"];
-  }
-  
-  // Default to Pakistan's center
-  return { lat: 30.3753, lng: 69.3451 };
-};
-
 const BranchDetail = () => {
   const { branchId } = useParams();
   const [branch, setBranch] = useState(null);
@@ -61,50 +29,18 @@ const BranchDetail = () => {
         setError(null);
         const branchData = await branchService.getBranchDetails(branchId);
         console.log('Branch data:', branchData);
-        
         if (!branchData) {
           throw new Error('Branch not found');
         }
-        
-        // If coordinates are missing or invalid, add approximate ones based on city/address using geocoding
-        if (!branchService.hasValidCoordinates(branchData)) {
-          const branchWithCoords = { ...branchData };
-          // Try geocoding the address for more accurate coordinates
-          const geocodeAddress = async (address, city) => {
-            const query = encodeURIComponent(`${address}, ${city}`);
-            const url = `https://nominatim.openstreetmap.org/search?q=${query}&format=json&limit=1`;
-            try {
-              const response = await fetch(url, { headers: { 'Accept-Language': 'en' } });
-              const data = await response.json();
-              if (data && data.length > 0) {
-                return { lat: parseFloat(data[0].lat), lng: parseFloat(data[0].lon) };
-              }
-            } catch (e) {
-              console.warn('Geocoding failed for', address, city, e);
-            }
-            return null;
-          };
-          let coords = null;
-          if (branchWithCoords.address && branchWithCoords.city) {
-            coords = await geocodeAddress(branchWithCoords.address, branchWithCoords.city);
-          }
-          if (coords) {
-            branchWithCoords.coordinates = coords;
-          } else if (branchWithCoords.city) {
-            branchWithCoords.coordinates = getCityCoordinates(branchWithCoords.city);
-          } else if (branchWithCoords.address) {
-            const addressLower = branchWithCoords.address.toLowerCase();
-            for (const city of Object.keys(getCityCoordinates(""))) {
-              if (addressLower.includes(city.toLowerCase())) {
-                branchWithCoords.coordinates = getCityCoordinates(city);
-                break;
-              }
-            }
-          }
-          setBranch(branchWithCoords);
-        } else {
-          setBranch(branchData);
+        // Map latitude/longitude to coordinates if present
+        if (typeof branchData.latitude === 'number' && typeof branchData.longitude === 'number') {
+          branchData.coordinates = { lat: branchData.latitude, lng: branchData.longitude };
         }
+        // Check for valid coordinates from backend
+        if (!branchData.coordinates || typeof branchData.coordinates.lat !== 'number' || typeof branchData.coordinates.lng !== 'number') {
+          throw new Error('Branch location data is missing or invalid.');
+        }
+        setBranch(branchData);
       } catch (err) {
         console.error('Error fetching branch details:', err);
         setError(err.message);
@@ -120,28 +56,7 @@ const BranchDetail = () => {
   // Initialize map when branch data is available
   useEffect(() => {
     if (branch && mapRef.current) {
-      let coordinates;
-      
-      // Check if coordinates exist and are valid
-      if (branchService.hasValidCoordinates(branch)) {
-        coordinates = branch.coordinates;
-      } 
-      // Use approximate coordinates based on city or address
-      else if (branch.city) {
-        coordinates = getCityCoordinates(branch.city);
-        console.log(`Using approximate coordinates for ${branch.name} based on city:`, coordinates);
-      } 
-      else if (branch.address && branch.address.toLowerCase().includes('islamabad')) {
-        coordinates = getCityCoordinates('Islamabad');
-        console.log(`Using approximate coordinates for ${branch.name} based on address:`, coordinates);
-      }
-      else {
-        // Default coordinates (Pakistan center)
-        coordinates = { lat: 30.3753, lng: 69.3451 };
-        console.log(`Using default Pakistan coordinates for ${branch.name}:`, coordinates);
-      }
-      
-      const { lat, lng } = coordinates;
+      const { lat, lng } = branch.coordinates;
 
       // Create map centered on branch location
       const map = L.map(mapRef.current).setView([lat, lng], 15);
@@ -177,23 +92,7 @@ const BranchDetail = () => {
   const getDirections = () => {
     if (!branch) return;
     
-    let coordinates;
-    
-    // Check if coordinates exist and are valid
-    if (branchService.hasValidCoordinates(branch)) {
-      coordinates = branch.coordinates;
-    } 
-    // Use approximate coordinates based on city or address
-    else if (branch.city) {
-      coordinates = getCityCoordinates(branch.city);
-    } 
-    else if (branch.address && branch.address.toLowerCase().includes('islamabad')) {
-      coordinates = getCityCoordinates('Islamabad');
-    }
-    else {
-      // Default coordinates (Pakistan center)
-      coordinates = { lat: 30.3753, lng: 69.3451 };
-    }
+    const { lat, lng } = branch.coordinates;
 
     // Get user's current location if available
     if (navigator.geolocation) {
@@ -202,14 +101,14 @@ const BranchDetail = () => {
           const { latitude, longitude } = position.coords;
           // Open Google Maps with directions from current location to branch
           window.open(
-            `https://www.google.com/maps/dir/${latitude},${longitude}/${coordinates.lat},${coordinates.lng}`,
+            `https://www.google.com/maps/dir/${latitude},${longitude}/${lat},${lng}`,
             '_blank'
           );
         },
         // If geolocation fails, just open the branch location
         () => {
           window.open(
-            `https://www.google.com/maps/search/?api=1&query=${coordinates.lat},${coordinates.lng}`,
+            `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`,
             '_blank'
           );
         }
@@ -217,7 +116,7 @@ const BranchDetail = () => {
     } else {
       // Fallback if geolocation is not supported
       window.open(
-        `https://www.google.com/maps/search/?api=1&query=${coordinates.lat},${coordinates.lng}`,
+        `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`,
         '_blank'
       );
     }

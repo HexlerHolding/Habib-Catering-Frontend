@@ -105,7 +105,7 @@ const Navbar = ({ toggleSidebar }) => {
         </Link>
 
         {/* Add the AddressSelector component here */}
-        <div className='!ml-10 '>
+        <div className='sm:ml-7 '>
 
   <AddressSelector />
     </div>

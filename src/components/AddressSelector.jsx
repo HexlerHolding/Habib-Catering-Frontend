@@ -19,6 +19,7 @@ import {
 } from '../redux/slices/locationSlice';
 import toast from 'react-hot-toast';
 import ConfirmationModal from './ConfirmationModal';
+import branchService from '../../Services/branchService';
 
 // Fix Leaflet marker icon issue
 delete L.Icon.Default.prototype._getIconUrl;
@@ -28,13 +29,26 @@ L.Icon.Default.mergeOptions({
   shadowUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png',
 });
 
+// Haversine formula to calculate distance between two lat/lng points in km
+function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
+  const R = 6371; // Radius of the earth in km
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLon = (lon2 - lon1) * Math.PI / 180;
+  const a =
+    0.5 - Math.cos(dLat)/2 +
+    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+    (1 - Math.cos(dLon))/2;
+  return R * 2 * Math.asin(Math.sqrt(a));
+}
+
 const AddressSelector = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isAddressList, setIsAddressList] = useState(false);
+  const [isAddressList, setIsAddressList] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [addressName, setAddressName] = useState('');
   const [showSaveOption, setShowSaveOption] = useState(false);
+  const [branches, setBranches] = useState([]);
 
   const dispatch = useDispatch();
   const selectedAddress = useSelector(selectSelectedAddress);
@@ -80,6 +94,13 @@ const closeConfirmModal = () => {
     }
   }, [isAuthenticated, userId, dispatch]);
 
+  // Fetch branches on mount
+  useEffect(() => {
+    branchService.getBranches().then((data) => {
+      setBranches(data.filter(b => b.latitude && b.longitude));
+    });
+  }, []);
+
   // Initialize map when modal opens
   useEffect(() => {
     if (isModalOpen && mapRef.current && !mapInstanceRef.current && !isAddressList) {
@@ -97,7 +118,7 @@ const closeConfirmModal = () => {
               maxZoom: 19
             }).addTo(map);
             const marker = L.marker(userLatLng, { draggable: true }).addTo(map);
-            // Reverse geocode to get address, but do NOT set it in the input field
+            // Reverse geocode to get address, and set it in the input field
             setIsLoading(true);
             try {
               const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&accept-language=en&addressdetails=1`);
@@ -108,7 +129,7 @@ const closeConfirmModal = () => {
                   lat: latitude,
                   lng: longitude
                 };
-                // Do NOT setSearchQuery(data.display_name);
+                setSearchQuery(data.display_name); // Set input field to marker location
                 setSelectedAddressLocal(addressObj);
               }
             } catch (error) {
@@ -145,6 +166,10 @@ const closeConfirmModal = () => {
             // Handle map click
             map.on('click', async function(e) {
               const { lat, lng } = e.latlng;
+              if (!isWithin10Km(lat, lng)) {
+                toast.error('Sorry, we only deliver within 10 km of our branches.');
+                return;
+              }
               marker.setLatLng([lat, lng]);
               setIsLoading(true);
               
@@ -159,7 +184,7 @@ const closeConfirmModal = () => {
                     lat: lat,
                     lng: lng
                   };
-                  setSearchQuery(data.display_name);
+                  setSearchQuery(data.display_name); // Always update input field
                   setSelectedAddressLocal(addressObj);
                 }
               } catch (error) {
@@ -218,7 +243,6 @@ const closeConfirmModal = () => {
   // Handle search
   const handleSearch = async () => {
     if (!searchQuery.trim()) return;
-    
     setIsLoading(true);
     try {
       // Geocoding using Nominatim with English language parameter
@@ -231,12 +255,15 @@ const closeConfirmModal = () => {
         const result = data[0];
         const lat = parseFloat(result.lat);
         const lng = parseFloat(result.lon);
-        
+        if (!isWithin10Km(lat, lng)) {
+          toast.error('Sorry, we only deliver within 10 km of our branches.');
+          setIsLoading(false);
+          return;
+        }
         // Update map and marker
         if (mapInstanceRef.current && markerRef.current) {
           mapInstanceRef.current.setView([lat, lng], 15);
           markerRef.current.setLatLng([lat, lng]);
-          
           const addressObj = {
             address: result.display_name,
             lat: lat,
@@ -258,46 +285,52 @@ const closeConfirmModal = () => {
   // Local state for selected address before saving to Redux
   const [localSelectedAddress, setLocalSelectedAddress] = useState(selectedAddress);
   
+  // Update setSelectedAddressLocal to check distance
   const setSelectedAddressLocal = (address) => {
+    if (!isWithin10Km(address.lat, address.lng)) {
+      toast.error('Sorry, we only deliver within 10 km of our branches.');
+      setShowSaveOption(false);
+      return;
+    }
     setLocalSelectedAddress(address);
-    // When a new address is selected, show the save option
+    setSearchQuery(address.address || '');
     setShowSaveOption(true);
   };
   
-  // Get current location
+  // Update getCurrentLocation to check distance before allowing selection
   const getCurrentLocation = () => {
     setIsLoading(true);
-    
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         async (position) => {
           const { latitude, longitude } = position.coords;
-          
+          if (!isWithin10Km(latitude, longitude)) {
+            toast.error('Sorry, we only deliver within 10 km of our branches.');
+            setIsLoading(false);
+            return;
+          }
           if (mapInstanceRef.current && markerRef.current) {
             mapInstanceRef.current.setView([latitude, longitude], 15);
             markerRef.current.setLatLng([latitude, longitude]);
-            
             try {
               // Reverse geocoding with English language parameter
               const response = await fetch(
                 `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&accept-language=en&addressdetails=1`
               );
               const data = await response.json();
-              
               if (data.display_name) {
                 const addressObj = {
                   address: data.display_name,
                   lat: latitude,
                   lng: longitude
                 };
-                // Do NOT setSearchQuery(data.display_name);
                 setSelectedAddressLocal(addressObj);
+                setSearchQuery(data.display_name); // Ensure input field is updated
               }
             } catch (error) {
               console.error('Error reverse geocoding:', error);
             }
           }
-          
           setIsLoading(false);
         },
         (error) => {
@@ -307,58 +340,18 @@ const closeConfirmModal = () => {
         }
       );
     } else {
-     toast.error('Geolocation is not supported by this browser.');
+      toast.error('Geolocation is not supported by this browser.');
       setIsLoading(false);
-    }
-  };
-  
-  // Save selected address to Redux and user profile
-  const handleSelectAddress = () => {
-    if (localSelectedAddress && isAuthenticated && userId) {
-      // Create a unique ID if this is a new address
-      const addressToSave = {
-        ...localSelectedAddress,
-        id: localSelectedAddress.id || Date.now().toString()
-      };
-      
-      // Dispatch to Redux and save to user profile
-      dispatch(setUserSelectedAddress({ userId, address: addressToSave }))
-        .unwrap()
-        .then(() => {
-          // Close modal and reset states
-          setIsModalOpen(false);
-          setIsAddressList(false);
-          setShowSaveOption(false);
-          setAddressName('');
-        })
-        .catch(error => {
-          console.error('Failed to set selected address:', error);
-          // Fallback to local storage if API call fails
-          dispatch(setSelectedAddress(addressToSave));
-          setIsModalOpen(false);
-          setIsAddressList(false);
-          setShowSaveOption(false);
-          setAddressName('');
-        });
-    } else if (localSelectedAddress) {
-      // If not authenticated, just use local Redux state
-      const addressToSave = {
-        ...localSelectedAddress,
-        id: localSelectedAddress.id || Date.now().toString()
-      };
-      
-      dispatch(setSelectedAddress(addressToSave));
-      setIsModalOpen(false);
-      setIsAddressList(false);
-      setShowSaveOption(false);
-      setAddressName('');
     }
   };
   
   // Save address to saved addresses list and user profile
   const handleSaveAddress = () => {
     if (!localSelectedAddress) return;
-    
+    if (!isWithin10Km(localSelectedAddress.lat, localSelectedAddress.lng)) {
+      toast.error('Sorry, we only deliver within 10 km of our branches.');
+      return;
+    }
     // Safely check if address is already saved by ensuring savedAddresses exists
     const addressList = savedAddresses || [];
     const isAlreadySaved = addressList.some(addr => 
@@ -473,6 +466,17 @@ const closeConfirmModal = () => {
     }
   };
 
+  // Helper to check if a location is within 10km of any branch
+  function isWithin10Km(lat, lng) {
+    if (!branches.length) return true; // fallback: allow if branches not loaded
+    return branches.some(branch => {
+      const branchLat = branch.latitude || (branch.coordinates && branch.coordinates.lat);
+      const branchLng = branch.longitude || (branch.coordinates && branch.coordinates.lng);
+      if (typeof branchLat !== 'number' || typeof branchLng !== 'number') return false;
+      return getDistanceFromLatLonInKm(lat, lng, branchLat, branchLng) <= 10;
+    });
+  }
+
   // Handle Enter key in search input
   const handleKeyDown = (e) => {
     if (e.key === 'Enter') {
@@ -507,6 +511,19 @@ const closeConfirmModal = () => {
     };
   }, []);
 
+  // Listen for global open modal event
+  useEffect(() => {
+    const openModal = (e) => {
+      setIsModalOpen(true);
+      // If event has detail.showSaved, open saved addresses list
+      if (e && e.detail && e.detail.showSaved) {
+        setIsAddressList(true);
+      }
+    };
+    window.addEventListener('open-address-selector-modal', openModal);
+    return () => window.removeEventListener('open-address-selector-modal', openModal);
+  }, []);
+
   // Don't render if not authenticated
   if (!isAuthenticated) return null;
 
@@ -514,7 +531,7 @@ const closeConfirmModal = () => {
     <>
       {/* Address Button in Navbar */}
       <button
-        onClick={() => setIsModalOpen(true)}
+        onClick={() => { setIsModalOpen(true); setIsAddressList(true); }}
         data-testid="address-selector-btn"
         className="flex items-center text-text cursor-pointer mr-4 hover:text-accent transition-colors"
       >
@@ -570,53 +587,64 @@ const closeConfirmModal = () => {
               /* Saved Addresses List */
               <div className="p-4">
                 {savedAddresses && savedAddresses.length > 0 ? (
-                  <div className="space-y-3">
-                    {savedAddresses.map((address) => (
-                      <div 
-                        key={address.id} 
-                        className={`p-4 border rounded-lg flex items-start cursor-pointer transition-colors ${
-                          selectedAddress && selectedAddress.id === address.id 
-                            ? 'border-primary bg-primary/10' 
-                            : 'border-text/10 hover:border-primary'
-                        }`}
-                        onClick={() => handleSelectSavedAddress(address)}
-                      >
-                        <div className={`p-3 rounded-full mr-3 ${
-                          selectedAddress && selectedAddress.id === address.id 
-                            ? 'bg-primary text-background' 
-                            : 'bg-text/10'
-                        }`}>
-                          {address.name && address.name.toLowerCase().includes('home') ? (
-                            <FaHome />
-                          ) : address.name && address.name.toLowerCase().includes('office') ? (
-                            <FaBuilding />
-                          ) : (
-                            <FaMapMarkerAlt />
-                          )}
-                        </div>
-                        <div className="flex-1">
-                          <h3 className="font-bold text-lg">{address.name || 'Unnamed Location'}</h3>
-                          <p className="text-text/70 text-sm line-clamp-2">{address.address}</p>
-                        </div>
-                        <button 
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleDeleteAddress(address.id);
-                          }}
-                          className="text-accent cursor-pointer hover:text-red-600 p-2"
+                  <>
+                    <div className="space-y-3">
+                      {savedAddresses.map((address) => (
+                        <div 
+                          key={address.id} 
+                          className={`p-4 border rounded-lg flex items-start cursor-pointer transition-colors ${
+                            selectedAddress && selectedAddress.id === address.id 
+                              ? 'border-primary bg-primary/10' 
+                              : 'border-text/10 hover:border-primary'
+                          }`}
+                          onClick={() => handleSelectSavedAddress(address)}
                         >
-                          <FaTimes />
-                        </button>
-                      </div>
-                    ))}
-                  </div>
+                          <div className={`p-3 rounded-full mr-3 ${
+                            selectedAddress && selectedAddress.id === address.id 
+                              ? 'bg-primary text-background' 
+                              : 'bg-text/10'
+                          }`}>
+                            {address.name && address.name.toLowerCase().includes('home') ? (
+                              <FaHome />
+                            ) : address.name && address.name.toLowerCase().includes('office') ? (
+                              <FaBuilding />
+                            ) : (
+                              <FaMapMarkerAlt />
+                            )}
+                          </div>
+                          <div className="flex-1">
+                            <h3 className="font-bold text-lg">{address.name || 'Unnamed Location'}</h3>
+                            <p className="text-text/70 text-sm line-clamp-2">{address.address}</p>
+                          </div>
+                          <button 
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleDeleteAddress(address.id);
+                            }}
+                            className="text-accent cursor-pointer hover:text-red-600 p-2"
+                          >
+                            <FaTimes />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                    {/* Add New Address button always at the end */}
+                    <div className="text-center mt-6">
+                      <button
+                        onClick={() => setIsAddressList(false)}
+                        className="bg-primary text-background px-6 py-3 rounded-lg font-medium"
+                      >
+                        Add New Address
+                      </button>
+                    </div>
+                  </>
                 ) : (
                   <div className="text-center py-8">
                     <FaMapMarkerAlt className="text-4xl mx-auto mb-4 text-text/30" />
                     <p className="text-lg font-medium mb-2">No saved addresses</p>
                     <p className="text-text/50 mb-4">You haven't saved any addresses yet.</p>
                     <button
-                      onClick={toggleAddressList}
+                      onClick={() => setIsAddressList(false)}
                       className="bg-primary text-background px-6 py-3 rounded-lg font-medium"
                     >
                       Add New Address
@@ -627,6 +655,18 @@ const closeConfirmModal = () => {
             ) : (
               /* Map View */
               <>
+                {/* Use Current Location Button - now styled as a small link/button for better UI/UX */}
+                <div className="px-4 pt-4 flex justify-end">
+                  <button
+                    onClick={getCurrentLocation}
+                    className="inline-flex items-center text-primary text-sm font-medium hover:underline hover:text-accent bg-transparent p-0 m-0 border-0 shadow-none focus:outline-none"
+                    style={{ background: 'none', boxShadow: 'none' }}
+                  >
+                    <FaMapMarkerAlt className="mr-1 text-base" />
+                    Use Current Location
+                  </button>
+                </div>
+
                 {/* Instruction text */}
                 <div className="px-4 py-3">
                   <p className="text-text/70">
@@ -684,12 +724,7 @@ const closeConfirmModal = () => {
                       <div className="flex-1 overflow-hidden pr-2">
                         <p className="font-medium text-text truncate">{localSelectedAddress.address}</p>
                       </div>
-                      <button 
-                        onClick={handleSelectAddress}
-                        className="bg-primary text-secondary cursor-pointer px-4 py-2 rounded-lg font-bold hover:bg-primary/80 flex-shrink-0"
-                      >
-                        SELECT
-                      </button>
+                      {/* SELECT button removed */}
                     </div>
                   </div>
                 )}
@@ -711,24 +746,14 @@ const closeConfirmModal = () => {
                       />
                       <button
                         onClick={handleSaveAddress}
-                        className="w-full bg-accent text-secondary cursor-pointer py-2 rounded-lg font-medium hover:bg-accent/90"
+                        className="w-full bg-accent text-secondary cursor-pointer py-2 rounded-lg font-medium hover:bg-accent/90 disabled:opacity-50 disabled:cursor-not-allowed"
+                        disabled={!addressName.trim()}
                       >
                         Save Address
                       </button>
                     </div>
                   </div>
                 )}
-
-                {/* Use Current Location Button */}
-                <div className="px-4 pb-4">
-                  <button
-                    onClick={getCurrentLocation}
-                    className="w-full bg-primary text-secondary cursor-pointer py-3 rounded-lg font-medium hover:bg-primary/80 flex items-center justify-center"
-                  >
-                    <FaMapMarkerAlt className="mr-2" />
-                    Use Current Location
-                  </button>
-                </div>
               </>
             )}
           </div>

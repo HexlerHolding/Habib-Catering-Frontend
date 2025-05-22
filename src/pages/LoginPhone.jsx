@@ -102,9 +102,9 @@ const LoginPhone = () => {
             className="flex justify-center cursor-pointer items-center w-full py-3 md:py-4 bg-primary text-secondary font-bold rounded hover:bg-primary/80 hover:brightness-105 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <span className="mr-2">
-              <FaEnvelope size={20} />
+              {/* <FaEnvelope size={20} /> */}
             </span>
-            {loading ? 'Verifying...' : 'Continue with Phone'}
+            {loading ? 'Verifying...' : 'Continue'}
           </button>
         </div>
       </div>

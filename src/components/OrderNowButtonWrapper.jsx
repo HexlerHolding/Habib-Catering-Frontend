@@ -6,10 +6,10 @@ const OrderNowButtonWrapper = () => {
   const location = useLocation();
   const path = location.pathname;
   
-  // Don't show button on login-related pages
-  const loginPages = ['/login', '/login/phone-number', '/login/otp'];
+  // Don't show button on login-related pages or the menu page
+  const hiddenPages = ['/login', '/login/phone-number', '/login/otp', '/menu'];
   
-  if (loginPages.includes(path)) {
+  if (hiddenPages.includes(path)) {
     return null;
   }
   

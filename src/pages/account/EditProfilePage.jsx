@@ -1,16 +1,36 @@
 import React, { useState, useEffect } from 'react';
-import { FaUser, FaPhone, FaLock, FaEye, FaEyeSlash } from 'react-icons/fa';
+import { FaUser, FaPhone, FaLock, FaEye, FaEyeSlash, FaEnvelope } from 'react-icons/fa';
 import authService from '../../../Services/authService';
 import { toast } from 'react-hot-toast';
+import { PHONE_INPUT_CONFIG } from '../../data/globalText';
 
-const EditProfilePage = () => {
+const EditProfilePage = () => {  
   const [userData, setUserData] = useState({
     name: '',
+    email: '',
     phone: '',
-    password: '',
+    password: '', // Single password field
   });
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [passwordValidation, setPasswordValidation] = useState({
+    minLength: false,
+    hasUpperCase: false,
+    hasLowerCase: false,
+    hasNumber: false,
+    hasSpecial: false
+  });
+
+  // Password validation function (copied from Register)
+  const validatePassword = (password) => {
+    return {
+      minLength: password.length >= 8,
+      hasUpperCase: /[A-Z]/.test(password),
+      hasLowerCase: /[a-z]/.test(password),
+      hasNumber: /[0-9]/.test(password),
+      hasSpecial: /[!@#$%^&*()_+\-=[\]{};':"\\|,.<>\/?]/.test(password)
+    };
+  };
 
   // Fetch user profile on mount
   useEffect(() => {
@@ -19,11 +39,12 @@ const EditProfilePage = () => {
         const user = JSON.parse(localStorage.getItem('user'));
         if (!user || !user._id) return;
         const profile = await authService.getProfile(user._id);
-        console.log('Fetched profile:', profile);
-        setUserData({
+        console
+        console.log('Fetched profile:', profile);        setUserData({
           name: profile.Name || profile.name || '',
+          email: profile.Email || profile.email || '',
           phone: profile.Phone || profile.phone || '',
-          password: '', // Never pre-fill password for security
+          password: '',
         });
       } catch (err) {
         toast.error('Failed to load profile');
@@ -34,6 +55,9 @@ const EditProfilePage = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+    if (name === 'password') {
+      setPasswordValidation(validatePassword(value));
+    }
     setUserData(prev => ({ ...prev, [name]: value }));
   };
 
@@ -43,14 +67,23 @@ const EditProfilePage = () => {
     try {
       const user = JSON.parse(localStorage.getItem('user'));
       if (!user || !user._id) throw new Error('User not found');
-      // Only send fields that are filled
       const updates = {};
       if (userData.name) updates.name = userData.name;
+      if (userData.email) updates.email = userData.email;
       if (userData.phone) updates.phone = userData.phone;
-      if (userData.password) updates.password = userData.password;
+      // If new password is being set, validate it
+      if (userData.password) {
+        const { minLength, hasUpperCase, hasLowerCase, hasNumber, hasSpecial } = passwordValidation;
+        if (!(minLength && hasUpperCase && hasLowerCase && hasNumber && hasSpecial)) {
+          toast.error('New password does not meet all requirements');
+          setLoading(false);
+          return;
+        }
+        updates.password = userData.password;
+      }
       await authService.updateProfile(user._id, updates);
       toast.success('Profile updated successfully!');
-      setUserData(prev => ({ ...prev, password: '' })); // Clear password field
+      setUserData(prev => ({ ...prev, password: '' }));
     } catch (err) {
       toast.error(err.message || 'Failed to update profile');
     } finally {
@@ -81,6 +114,23 @@ const EditProfilePage = () => {
             </div>
           </div>
           <div>
+            <label className="block text-text/70 mb-2" htmlFor="email">Email Address</label>
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-text/50">
+                <FaEnvelope />
+              </div>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                value={userData.email}
+                onChange={handleChange}
+                className="bg-background border border-text/10 text-text rounded-lg block w-full pl-10 p-3 focus:outline-none focus:ring-2 focus:ring-primary"
+                required
+              />
+            </div>
+          </div>
+          <div>
             <label className="block text-text/70 mb-2" htmlFor="phone">Phone Number</label>
             <div className="relative">
               <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-text/50">
@@ -94,6 +144,9 @@ const EditProfilePage = () => {
                 onChange={handleChange}
                 className="bg-background border border-text/10 text-text rounded-lg block w-full pl-10 p-3 focus:outline-none focus:ring-2 focus:ring-primary"
                 required
+                readOnly
+                maxLength={PHONE_INPUT_CONFIG.maxLength}
+                placeholder={PHONE_INPUT_CONFIG.placeholder}
               />
             </div>
           </div>
@@ -121,6 +174,27 @@ const EditProfilePage = () => {
               >
                 {showPassword ? <FaEyeSlash /> : <FaEye />}
               </button>
+            </div>
+            {/* Password requirements display */}
+            <div className="text-xs space-y-1 text-text/70 mt-2">
+              <p className="font-semibold">Password must have:</p>
+              <ul className="pl-4 space-y-0.5">
+                <li className={passwordValidation.minLength ? "text-green-600" : "text-red-500"}>
+                  At least 8 characters
+                </li>
+                <li className={passwordValidation.hasUpperCase ? "text-green-600" : "text-red-500"}>
+                  At least 1 uppercase letter (A-Z)
+                </li>
+                <li className={passwordValidation.hasLowerCase ? "text-green-600" : "text-red-500"}>
+                  At least 1 lowercase letter (a-z)
+                </li>
+                <li className={passwordValidation.hasNumber ? "text-green-600" : "text-red-500"}>
+                  At least 1 number (0-9)
+                </li>
+                <li className={passwordValidation.hasSpecial ? "text-green-600" : "text-red-500"}>
+                  At least 1 special character (!@#$%^&*...)
+                </li>
+              </ul>
             </div>
           </div>
         </div>

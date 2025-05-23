@@ -155,6 +155,8 @@ const CheckoutPage = () => {
     email: '',
     phone: '',
     address: '', // Single address field
+    lat:'',
+    lng:'',
     notes: ''
   });
 
@@ -244,7 +246,7 @@ useEffect(() => {
             ...prev,
             fullName: profile.Name || profile.name || '',
             email: profile.Email || profile.email || '',
-            phone: profile.Phone || profile.phone || ''
+            phone: profile.Phone || profile.phone || '',
           }));
         } catch (error) {
           console.error('Error fetching user profile:', error);
@@ -254,18 +256,21 @@ useEffect(() => {
     
     fetchUserProfile();
   }, [isAuthenticated]);
-
   // Update address field when selectedAddress changes in Redux
   useEffect(() => {
     if (selectedAddressFromStore) {
       setFormData(prev => ({
         ...prev,
-        address: selectedAddressFromStore.address
+        address: selectedAddressFromStore.address,
+        lat: selectedAddressFromStore.lat,
+        lng: selectedAddressFromStore.lng
       }));
     } else if (!isAuthenticated) {
       setFormData(prev => ({
         ...prev,
-        address: '' // Clear address when logged out
+        address: '', // Clear address when logged out
+        lat: '',
+        lng: ''
       }));
     }
   }, [selectedAddressFromStore, isAuthenticated]);
@@ -361,9 +366,12 @@ useEffect(() => {
 
   // Handle address selection from AddressSelector - NEW
   const handleAddressSelected = (selectedAddress) => {
+    console.log("selected address: ", selectedAddress)
     setFormData(prev => ({
       ...prev,
-      address: selectedAddress.address
+      address: selectedAddress.address,
+      lat:selectedAddress.lat,
+      lng:selectedAddress.lng
     }));
     setShowAddressSelectorModal(false);
   };
@@ -462,8 +470,10 @@ const handleSubmit = async (e) => {
       items: cartItems,
       customerName: formData.fullName,
       email: formData.email,
-      phone: formData.phone,
+      phone: formData.phone,      
       address: formData.address,
+      lat: formData.lat,
+      lng: formData.lng,
       notes: formData.notes,
       paymentMethod: paymentMethod,
       orderType: orderType,

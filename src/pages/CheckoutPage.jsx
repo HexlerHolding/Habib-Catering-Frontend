@@ -11,6 +11,7 @@ import { CURRENCY_SYMBOL, PHONE_INPUT_CONFIG } from '../data/globalText';
 import { selectIsAuthenticated } from '../redux/slices/authSlice';
 import { clearCart, selectCartItems, selectCartTotalAmount } from '../redux/slices/cartSlice';
 import { selectSavedAddresses, selectSelectedAddress } from '../redux/slices/locationSlice';
+import AddressSelector from '../components/AddressSelector';
 
 // Component for displaying a single branch option
 const BranchOption = ({ branch, isSelected, onChange }) => (

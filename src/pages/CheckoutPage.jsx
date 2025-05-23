@@ -11,6 +11,7 @@ import { CURRENCY_SYMBOL, PHONE_INPUT_CONFIG } from '../data/globalText';
 import { selectIsAuthenticated } from '../redux/slices/authSlice';
 import { clearCart, selectCartItems, selectCartTotalAmount } from '../redux/slices/cartSlice';
 import { selectSavedAddresses, selectSelectedAddress } from '../redux/slices/locationSlice';
+import AddressSelector from '../components/AddressSelector';
 
 // Component for displaying a single branch option
 const BranchOption = ({ branch, isSelected, onChange }) => (
@@ -122,9 +123,6 @@ const CartItem = ({ item }) => (
       <p className="text-sm text-text/70">Qty: {item.quantity}</p>
       <p className="font-medium text-text">{CURRENCY_SYMBOL} {item.price.toFixed(2)}</p>
     </div>
-    {/* <div className="font-medium text-text">
-      {CURRENCY_SYMBOL} {(item.price * item.quantity).toFixed(2)}
-    </div> */}
   </div>
 );
 
@@ -184,6 +182,7 @@ const CheckoutPage = () => {
   const [submitError, setSubmitError] = useState('');
 const taxAmount = subtotal * (taxRate / 100);
 const finalTotal = subtotal + taxAmount + deliveryCharges;
+
   // Fetch branches on component mount
   useEffect(() => {
     const fetchBranches = async () => {
@@ -350,20 +349,25 @@ useEffect(() => {
     setShowCardModal(false);
   };
 
-  // Show address selector modal
+  // Show address selector modal - UPDATED
   const handleShowAddressSelector = () => {
-    // If logged in, show saved addresses first; if not, show map entry directly
-    if (isAuthenticated) {
-      window.dispatchEvent(new CustomEvent('open-address-selector-modal', { detail: { showSaved: true } }));
-    } else {
-      window.dispatchEvent(new CustomEvent('open-address-selector-modal', { detail: { showSaved: false } }));
-    }
+    setShowAddressSelectorModal(true);
   };
 
-  // Hide address selector modal
+  // Hide address selector modal - UPDATED
   const handleAddressSelectorClose = () => {
     setShowAddressSelectorModal(false);
   };
+
+  // Handle address selection from AddressSelector - NEW
+  const handleAddressSelected = (selectedAddress) => {
+    setFormData(prev => ({
+      ...prev,
+      address: selectedAddress.address
+    }));
+    setShowAddressSelectorModal(false);
+  };
+
   // Validate form
   const validateForm = () => {
     const newErrors = {};
@@ -523,24 +527,18 @@ if (cartItems.length === 0) {
 
   return (
     <div className='bg-background min-h-screen'>
-      {/* Address Selector Modal - Conditionally rendered */}
-      {/* REMOVE this block, modal is now globally controlled */}
-      {/* {showAddressSelectorModal && (
+      {/* Address Selector Modal - UPDATED for proper scrolling */}
+      {showAddressSelectorModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-          <div className="bg-background rounded-lg w-full max-w-lg p-6">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-bold text-text">Select Address</h2>
-              <button
-                onClick={handleAddressSelectorClose}
-                className="text-text/50 hover:text-accent"
-              >
-                <FaArrowLeft size={20} />
-              </button>
-            </div>
-            <AddressSelector onAddressSelected={handleAddressSelectorClose} />
+          <div className="bg-background rounded-lg w-full max-w-lg m-4 max-h-[90vh] overflow-hidden">
+            <AddressSelector 
+              onAddressSelected={handleAddressSelected}
+              onClose={handleAddressSelectorClose}
+              forceMapView={!isAuthenticated} // Force map view for non-authenticated users
+            />
           </div>
         </div>
-      )} */}
+      )}
 
       <div className="max-w-6xl mx-auto px-4 py-8 bg-background mt-9">
         {/* Checkout header */}
@@ -634,7 +632,9 @@ if (cartItems.length === 0) {
                       placeholder="John Doe"
                     />
                     {errors.fullName && <p className="text-accent text-sm mt-1 font-montserrat">{errors.fullName}</p>}
-                  </div>                  {/* Email */}
+                  </div>
+                  
+                  {/* Email */}
                   <div className="col-span-2 md:col-span-1">
                     <label htmlFor="email" className="block text-sm font-medium mb-1 text-text font-montserrat">
                       Email Address (Optional)
@@ -671,7 +671,7 @@ if (cartItems.length === 0) {
                     {errors.phone && <p className="text-accent text-sm mt-1 font-montserrat">{errors.phone}</p>}
                   </div>
 
-                  {/* Single Address Field with Map Selection Button */}
+                  {/* Single Address Field with Map Selection Button - UPDATED */}
                   <div className="col-span-2 md:col-span-2">
                     <label htmlFor="address" className="flex justify-between items-center text-sm font-medium mb-1 text-text font-montserrat">
                       <span>Complete Address *</span>
@@ -681,7 +681,10 @@ if (cartItems.length === 0) {
                         className="text-primary hover:text-primary/80 text-sm flex items-center"
                       >
                         <FaMapMarkerAlt className="mr-1" />
-                        {selectedAddressFromStore ? 'Change Address' : 'Select from Map'}
+                        {isAuthenticated 
+                          ? (selectedAddressFromStore ? 'Change Address' : 'Select from Map')
+                          : 'Select from Map'
+                        }
                       </button>
                     </label>
                     <div className="relative">
@@ -690,8 +693,8 @@ if (cartItems.length === 0) {
                         id="address"
                         name="address"
                         value={formData.address}
-                        readOnly
                         onChange={handleChange}
+                        readOnly
                         className={`w-full p-3 focus:outline-text focus:outline-2 outline-1 outline-text/50  rounded-md ${errors.address ? 'border-accent' : 'border-text/20'} sm:pr-40`}
                         placeholder="Enter your complete address"
                       />
@@ -812,7 +815,8 @@ if (cartItems.length === 0) {
                 ))}
               </div>
 
-              {/* Totals */}              <div className="space-y-2 py-4 border-t border-b border-text/20">
+              {/* Totals */}
+              <div className="space-y-2 py-4 border-t border-b border-text/20">
                 <div className="flex justify-between">
                   <span className="text-text/70 font-montserrat">Subtotal</span>
                   <span className="text-text font-montserrat">{CURRENCY_SYMBOL} {subtotal.toFixed(2)}</span>

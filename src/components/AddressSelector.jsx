@@ -41,19 +41,19 @@ function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
   return R * 2 * Math.asin(Math.sqrt(a));
 }
 
-const AddressSelector = () => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isAddressList, setIsAddressList] = useState(true);
+const AddressSelector = ({ onAddressSelected, onClose, forceMapView }) => {
+  const dispatch = useDispatch();
+  const selectedAddress = useSelector(selectSelectedAddress);
+  const savedAddresses = useSelector(selectSavedAddresses);
+  const isAuthenticated = useSelector(selectIsAuthenticated);
+  
+  const [isModalOpen, setIsModalOpen] = useState(!!onClose); // Start with modal open when used as controlled component
+  const [isAddressList, setIsAddressList] = useState(!forceMapView && isAuthenticated); // Use forceMapView prop
   const [searchQuery, setSearchQuery] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [addressName, setAddressName] = useState('');
   const [showSaveOption, setShowSaveOption] = useState(false);
   const [branches, setBranches] = useState([]);
-
-  const dispatch = useDispatch();
-  const selectedAddress = useSelector(selectSelectedAddress);
-  const savedAddresses = useSelector(selectSavedAddresses);
-  const isAuthenticated = useSelector(selectIsAuthenticated);
   const userId = useSelector(selectUserId);
   const locationStatus = useSelector(selectLocationStatus);
   const locationError = useSelector(selectLocationError);
@@ -72,7 +72,6 @@ const [confirmModal, setConfirmModal] = useState({
   onConfirm: null,
 });
 
-
 // Helper to open confirmation modal
 const openConfirmModal = ({ title, message, onConfirm }) => {
   setConfirmModal({
@@ -87,6 +86,7 @@ const openConfirmModal = ({ title, message, onConfirm }) => {
 const closeConfirmModal = () => {
   setConfirmModal({ ...confirmModal, open: false });
 };
+
   // Fetch user's addresses when component mounts and user is authenticated
   useEffect(() => {
     if (isAuthenticated && userId) {
@@ -103,7 +103,7 @@ const closeConfirmModal = () => {
 
   // Initialize map when modal opens
   useEffect(() => {
-    if (isModalOpen && mapRef.current && !mapInstanceRef.current && !isAddressList) {
+    if ((isModalOpen || onClose) && mapRef.current && !mapInstanceRef.current && !isAddressList) {
       // Try to get user's current location first
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
@@ -232,13 +232,13 @@ const closeConfirmModal = () => {
     
     // Clean up map when modal closes
     return () => {
-      if (!isModalOpen && mapInstanceRef.current) {
+      if ((!isModalOpen && !onClose) && mapInstanceRef.current) {
         mapInstanceRef.current.remove();
         mapInstanceRef.current = null;
         markerRef.current = null;
       }
     };
-  }, [isModalOpen, selectedAddress, isAddressList]);
+  }, [isModalOpen, selectedAddress, isAddressList, onClose]);
   
   // Handle search
   const handleSearch = async () => {
@@ -345,6 +345,20 @@ const closeConfirmModal = () => {
     }
   };
   
+  // Handle adding address for non-authenticated users - NEW
+  const handleAddAddressForGuest = () => {
+    if (!localSelectedAddress) return;
+    if (!isWithin10Km(localSelectedAddress.lat, localSelectedAddress.lng)) {
+      toast.error('Sorry, we only deliver within 10 km of our branches.');
+      return;
+    }
+    
+    // For non-authenticated users, just pass the address back to parent
+    if (onAddressSelected) {
+      onAddressSelected(localSelectedAddress);
+    }
+  };
+
   // Save address to saved addresses list and user profile
   const handleSaveAddress = () => {
     if (!localSelectedAddress) return;
@@ -384,8 +398,12 @@ const closeConfirmModal = () => {
               // Reset states
               setShowSaveOption(false);
               setAddressName('');
-              setIsModalOpen(false);
-              setIsAddressList(false);
+              if (onClose) {
+                onClose();
+              } else {
+                setIsModalOpen(false);
+                setIsAddressList(false);
+              }
               
               // Show success message
               toast.success('Address saved successfully!');
@@ -399,8 +417,12 @@ const closeConfirmModal = () => {
           
           setShowSaveOption(false);
           setAddressName('');
-          setIsModalOpen(false);
-          setIsAddressList(false);
+          if (onClose) {
+            onClose();
+          } else {
+            setIsModalOpen(false);
+            setIsAddressList(false);
+          }
           
           toast.success('Address saved successfully!');
         });
@@ -411,8 +433,12 @@ const closeConfirmModal = () => {
       
       setShowSaveOption(false);
       setAddressName('');
-      setIsModalOpen(false);
-      setIsAddressList(false);
+      if (onClose) {
+        onClose();
+      } else {
+        setIsModalOpen(false);
+        setIsAddressList(false);
+      }
       
       toast.success('Address saved successfully!');
     }
@@ -449,20 +475,32 @@ const closeConfirmModal = () => {
       dispatch(setUserSelectedAddress({ userId, address }))
         .unwrap()
         .then(() => {
-          setIsModalOpen(false);
-          setIsAddressList(false);
+          if (onClose) {
+            onClose();
+          } else {
+            setIsModalOpen(false);
+            setIsAddressList(false);
+          }
         })
         .catch(error => {
           console.error('Failed to set selected address:', error);
           // Fallback to local storage
           dispatch(setSelectedAddress(address));
-          setIsModalOpen(false);
-          setIsAddressList(false);
+          if (onClose) {
+            onClose();
+          } else {
+            setIsModalOpen(false);
+            setIsAddressList(false);
+          }
         });
     } else {
       dispatch(setSelectedAddress(address));
-      setIsModalOpen(false);
-      setIsAddressList(false);
+      if (onClose) {
+        onClose();
+      } else {
+        setIsModalOpen(false);
+        setIsAddressList(false);
+      }
     }
   };
 
@@ -496,8 +534,10 @@ const closeConfirmModal = () => {
     }
   };
   
-  // Close modal when clicking outside
+  // Close modal when clicking outside - only when not used as controlled component
   useEffect(() => {
+    if (onClose) return; // Skip click outside when used as controlled component
+    
     const handleClickOutside = (event) => {
       if (modalRef.current && !modalRef.current.contains(event.target)) {
         setIsModalOpen(false);
@@ -509,10 +549,12 @@ const closeConfirmModal = () => {
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, []);
+  }, [onClose]);
 
-  // Listen for global open modal event
+  // Listen for global open modal event - only when not used as controlled component
   useEffect(() => {
+    if (onClose) return; // Skip event listener when used as controlled component
+    
     const openModal = (e) => {
       setIsModalOpen(true);
       // If event has detail.showSaved, open saved addresses list; otherwise, open map entry
@@ -524,37 +566,39 @@ const closeConfirmModal = () => {
     };
     window.addEventListener('open-address-selector-modal', openModal);
     return () => window.removeEventListener('open-address-selector-modal', openModal);
-  }, []);
+  }, [onClose]);
 
   return (
     <>
-      {/* Address Button in Navbar */}
-      <button
-        onClick={() => { setIsModalOpen(true); setIsAddressList(true); }}
-        data-testid="address-selector-btn"
-        className="flex items-center text-text cursor-pointer mr-4 hover:text-accent transition-colors"
-      >
-        <FaMapMarkerAlt className="mr-1" />
-        <span className="hidden sm:inline-block max-w-[150px] overflow-hidden truncate">
-          {selectedAddress ? (selectedAddress.name || selectedAddress.address.split(',')[0]) : 'Select Address'}
-        </span>
-      </button>
+      {/* Address Button in Navbar - only show when not used as controlled component */}
+      {!onClose && (
+        <button
+          onClick={() => { setIsModalOpen(true); setIsAddressList(true); }}
+          data-testid="address-selector-btn"
+          className="flex items-center text-text cursor-pointer mr-4 hover:text-accent transition-colors"
+        >
+          <FaMapMarkerAlt className="mr-1" />
+          <span className="hidden sm:inline-block max-w-[150px] overflow-hidden truncate">
+            {selectedAddress ? (selectedAddress.name || selectedAddress.address.split(',')[0]) : 'Select Address'}
+          </span>
+        </button>
+      )}
 
-      {/* Modal Overlay */}
-      {isModalOpen && (
-        <div className="fixed inset-0 bg-modal/50 z-50 flex items-center justify-center p-4">
+      {/* Modal Overlay - show when modal is open or when used as controlled component */}
+      {(isModalOpen || onClose) && (
+        <div className={`${onClose ? '' : 'fixed inset-0 bg-modal/50 z-50 flex items-center justify-center p-4'}`}>
           <div
             ref={modalRef}
-            className="bg-background rounded-lg w-full h-auto overflow-auto max-w-xl shadow-xl max-h-[90vh] overflow-y-auto"
+            className={`bg-background rounded-lg w-full flex flex-col ${onClose ? 'h-[80vh]' : 'max-w-xl shadow-xl max-h-[90vh]'}`}
           >
-            {/* Modal Header */}
-            <div className="flex justify-between items-center p-4 border-b border-text/10">
+            {/* Modal Header - Fixed at the top */}
+            <div className="flex justify-between items-center p-4 border-b border-text/10 sticky top-0 bg-background z-10">
               <h2 className="text-2xl font-bold text-text">
                 {isAddressList ? 'Your Saved Addresses' : 'Enter Address'}
               </h2>
               <div className="flex items-center space-x-3">
                 {/* Only allow toggling to saved addresses if authenticated */}
-                {isAuthenticated && (
+                {isAuthenticated && !forceMapView && (
                   <button
                     onClick={toggleAddressList}
                     className="text-primary cursor-pointer hover:text-primary/80"
@@ -565,8 +609,12 @@ const closeConfirmModal = () => {
                 )}
                 <button
                   onClick={() => {
-                    setIsModalOpen(false);
-                    setIsAddressList(false);
+                    if (onClose) {
+                      onClose();
+                    } else {
+                      setIsModalOpen(false);
+                      setIsAddressList(false);
+                    }
                   }}
                   className="text-text/50 cursor-pointer hover:text-accent"
                 >
@@ -575,64 +623,79 @@ const closeConfirmModal = () => {
               </div>
             </div>
 
-            {/* Loading Indicator for API calls */}
-            {locationStatus === 'loading' && (
-              <div className="fixed inset-0 bg-text/20 z-50 flex items-center justify-center">
-                <div className="bg-background p-6 rounded-lg shadow-xl flex items-center">
-                  <FaSpinner className="text-primary text-2xl animate-spin mr-3" />
-                  <span>Processing...</span>
+            {/* Scrollable Content Area */}
+            <div className="overflow-y-auto flex-1">
+              {/* Loading Indicator for API calls */}
+              {locationStatus === 'loading' && (
+                <div className="fixed inset-0 bg-text/20 z-50 flex items-center justify-center">
+                  <div className="bg-background p-6 rounded-lg shadow-xl flex items-center">
+                    <FaSpinner className="text-primary text-2xl animate-spin mr-3" />
+                    <span>Processing...</span>
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
 
-            {/* Only show saved addresses list if authenticated, otherwise always show map entry */}
-            {isAddressList && isAuthenticated ? (
-              /* Saved Addresses List */
-              <div className="p-4">
-                {savedAddresses && savedAddresses.length > 0 ? (
-                  <>
-                    <div className="space-y-3">
-                      {savedAddresses.map((address) => (
-                        <div 
-                          key={address.id} 
-                          className={`p-4 border rounded-lg flex items-start cursor-pointer transition-colors ${
-                            selectedAddress && selectedAddress.id === address.id 
-                              ? 'border-primary bg-primary/10' 
-                              : 'border-text/10 hover:border-primary'
-                          }`}
-                          onClick={() => handleSelectSavedAddress(address)}
-                        >
-                          <div className={`p-3 rounded-full mr-3 ${
-                            selectedAddress && selectedAddress.id === address.id 
-                              ? 'bg-primary text-background' 
-                              : 'bg-text/10'
-                          }`}>
-                            {address.name && address.name.toLowerCase().includes('home') ? (
-                              <FaHome />
-                            ) : address.name && address.name.toLowerCase().includes('office') ? (
-                              <FaBuilding />
-                            ) : (
-                              <FaMapMarkerAlt />
-                            )}
-                          </div>
-                          <div className="flex-1">
-                            <h3 className="font-bold text-lg">{address.name || 'Unnamed Location'}</h3>
-                            <p className="text-text/70 text-sm line-clamp-2">{address.address}</p>
-                          </div>
-                          <button 
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleDeleteAddress(address.id);
-                            }}
-                            className="text-accent cursor-pointer hover:text-red-600 p-2"
+              {/* Only show saved addresses list if authenticated and not forced to map view, otherwise always show map entry */}
+              {isAddressList && isAuthenticated && !forceMapView ? (
+                /* Saved Addresses List */
+                <div className="p-4">
+                  {savedAddresses && savedAddresses.length > 0 ? (
+                    <>
+                      <div className="space-y-3">
+                        {savedAddresses.map((address) => (
+                          <div 
+                            key={address.id} 
+                            className={`p-4 border rounded-lg flex items-start cursor-pointer transition-colors ${
+                              selectedAddress && selectedAddress.id === address.id 
+                                ? 'border-primary bg-primary/10' 
+                                : 'border-text/10 hover:border-primary'
+                            }`}
+                            onClick={() => handleSelectSavedAddress(address)}
                           >
-                            <FaTimes />
-                          </button>
-                        </div>
-                      ))}
-                    </div>
-                    {/* Add New Address button always at the end */}
-                    <div className="text-center mt-6">
+                            <div className={`p-3 rounded-full mr-3 ${
+                              selectedAddress && selectedAddress.id === address.id 
+                                ? 'bg-primary text-background' 
+                                : 'bg-text/10'
+                            }`}>
+                              {address.name && address.name.toLowerCase().includes('home') ? (
+                                <FaHome />
+                              ) : address.name && address.name.toLowerCase().includes('office') ? (
+                                <FaBuilding />
+                              ) : (
+                                <FaMapMarkerAlt />
+                              )}
+                            </div>
+                            <div className="flex-1">
+                              <h3 className="font-bold text-lg">{address.name || 'Unnamed Location'}</h3>
+                              <p className="text-text/70 text-sm line-clamp-2">{address.address}</p>
+                            </div>
+                            <button 
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleDeleteAddress(address.id);
+                              }}
+                              className="text-accent cursor-pointer hover:text-red-600 p-2"
+                            >
+                              <FaTimes />
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                      {/* Add New Address button always at the end */}
+                      <div className="text-center mt-6">
+                        <button
+                          onClick={() => setIsAddressList(false)}
+                          className="bg-primary text-background px-6 py-3 rounded-lg font-medium"
+                        >
+                          Add New Address
+                        </button>
+                      </div>
+                    </>
+                  ) : (
+                    <div className="text-center py-8">
+                      <FaMapMarkerAlt className="text-4xl mx-auto mb-4 text-text/30" />
+                      <p className="text-lg font-medium mb-2">No saved addresses</p>
+                      <p className="text-text/50 mb-4">You haven't saved any addresses yet.</p>
                       <button
                         onClick={() => setIsAddressList(false)}
                         className="bg-primary text-background px-6 py-3 rounded-lg font-medium"
@@ -640,150 +703,153 @@ const closeConfirmModal = () => {
                         Add New Address
                       </button>
                     </div>
-                  </>
-                ) : (
-                  <div className="text-center py-8">
-                    <FaMapMarkerAlt className="text-4xl mx-auto mb-4 text-text/30" />
-                    <p className="text-lg font-medium mb-2">No saved addresses</p>
-                    <p className="text-text/50 mb-4">You haven't saved any addresses yet.</p>
-                    <button
-                      onClick={() => setIsAddressList(false)}
-                      className="bg-primary text-background px-6 py-3 rounded-lg font-medium"
-                    >
-                      Add New Address
-                    </button>
-                  </div>
-                )}
-              </div>
-            ) : (
-              /* Map View */
-              <>
-                {/* Use Current Location Button - now styled as a small link/button for better UI/UX */}
-                <div className="px-4 pt-4 flex justify-end">
-                  <button
-                    onClick={getCurrentLocation}
-                    className="inline-flex items-center text-primary text-sm font-medium hover:underline hover:text-accent bg-transparent p-0 m-0 border-0 shadow-none focus:outline-none"
-                    style={{ background: 'none', boxShadow: 'none' }}
-                  >
-                    <FaMapMarkerAlt className="mr-1 text-base" />
-                    Use Current Location
-                  </button>
-                </div>
-
-                {/* Instruction text */}
-                <div className="px-4 py-3">
-                  <p className="text-text/70">
-                    Please allow location for free delivery and good food experience.
-                  </p>
-                </div>
-
-                {/* Search input with icon */}
-                <div className="px-4 pb-4 relative">
-                  <div className="relative flex items-center">
-                    <FaMapMarkerAlt className="absolute left-3 text-text/50" />
-                    <input
-                      ref={inputRef}
-                      type="text"
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      onKeyDown={handleKeyDown}
-                      placeholder="Enter location"
-                      className="w-full p-3 pl-10 pr-20 focus:outline-text focus:outline-2 outline-1 outline-text/50  rounded-full  truncate"
-                    />
-                    {searchQuery && (
-                      <button
-                        onClick={() => setSearchQuery('')}
-                        className="absolute right-12 text-text/50 cursor-pointer hover:text-accent"
-                      >
-                        <FaTimes />
-                      </button>
-                    )}
-                    <button 
-                      onClick={handleSearch} 
-                      className="absolute right-3 text-accent cursor-pointer hover:text-accent/80"
-                    >
-                      <FaMapMarkerAlt />
-                    </button>
-                  </div>
-                </div>
-
-                {/* Map Container */}
-                <div className="w-full h-64 relative mb-4">
-                  <div ref={mapRef} className="h-full w-full"></div>
-                  {isLoading && (
-                    <div className="absolute inset-0 flex items-center justify-center bg-text/10 z-10">
-                      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
-                    </div>
                   )}
                 </div>
+              ) : (
+                /* Map View */
+                <>
+                  {/* Use Current Location Button - now styled as a small link/button for better UI/UX */}
+                  <div className="px-4 pt-4 flex justify-end">
+                    <button
+                      onClick={getCurrentLocation}
+                      className="inline-flex items-center text-primary text-sm font-medium hover:underline hover:text-accent bg-transparent p-0 m-0 border-0 shadow-none focus:outline-none"
+                      style={{ background: 'none', boxShadow: 'none' }}
+                    >
+                      <FaMapMarkerAlt className="mr-1 text-base" />
+                      Use Current Location
+                    </button>
+                  </div>
 
-                {/* Selected Location Info */}
-                {localSelectedAddress && (
+                  {/* Instruction text */}
                   <div className="px-4 py-3">
-                    <div className="flex items-center px-4 py-3 bg-text/5 rounded-lg mb-4">
-                      <div className="bg-primary p-2 rounded-full mr-3">
-                        <FaMapMarkerAlt className="text-secondary" />
-                      </div>
-                      <div className="flex-1 overflow-hidden pr-2">
-                        <p className="font-medium text-text truncate">{localSelectedAddress.address}</p>
-                      </div>
-                    </div>
-                    {/* Show 'Select this location' button for guests only */}
-                    {!isAuthenticated && (
-                      <button
-                        className="w-full bg-primary text-secondary py-2 rounded-lg font-medium hover:bg-primary/90 mb-2"
-                        onClick={() => {
-                          dispatch(setSelectedAddress(localSelectedAddress));
-                          setIsModalOpen(false);
-                          setIsAddressList(false);
-                        }}
+                    <p className="text-text/70">
+                      Please allow location for free delivery and good food experience.
+                    </p>
+                  </div>
+
+                  {/* Search input with icon */}
+                  <div className="px-4 pb-4 relative">
+                    <div className="relative flex items-center">
+                      <FaMapMarkerAlt className="absolute left-3 text-text/50" />
+                      <input
+                        ref={inputRef}
+                        type="text"
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        onKeyDown={handleKeyDown}
+                        placeholder="Enter location"
+                        className="w-full p-3 pl-10 pr-20 focus:outline-text focus:outline-2 outline-1 outline-text/50  rounded-full  truncate"
+                      />
+                      {searchQuery && (
+                        <button
+                          onClick={() => setSearchQuery('')}
+                          className="absolute right-12 text-text/50 cursor-pointer hover:text-accent"
+                        >
+                          <FaTimes />
+                        </button>
+                      )}
+                      <button 
+                        onClick={handleSearch} 
+                        className="absolute right-3 text-accent cursor-pointer hover:text-accent/80"
                       >
-                        Select this location
+                        <FaMapMarkerAlt />
                       </button>
+                    </div>
+                  </div>
+
+                  {/* Map Container */}
+                  <div className="w-full h-64 relative mb-4">
+                    <div ref={mapRef} className="h-full w-full"></div>
+                    {isLoading && (
+                      <div className="absolute inset-0 flex items-center justify-center bg-text/10 z-10">
+                        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+                      </div>
                     )}
                   </div>
-                )}
-                
-                {/* Save Address Option */}
-                {isAuthenticated && showSaveOption && localSelectedAddress && (
-                  <div className="px-4 pb-4">
-                    <div className="border border-primary/20 rounded-lg p-4">
-                      <div className="flex items-center mb-3">
-                        <FaSave className="text-primary mr-2" />
-                        <h3 className="font-medium">Save this address for later</h3>
+
+                  {/* Selected Location Info */}
+                  {localSelectedAddress && (
+                    <div className="px-4 py-3">
+                      <div className="flex items-center px-4 py-3 bg-text/5 rounded-lg mb-4">
+                        <div className="bg-primary p-2 rounded-full mr-3">
+                          <FaMapMarkerAlt className="text-secondary" />
+                        </div>
+                        <div className="flex-1 overflow-hidden pr-2">
+                          <p className="font-medium text-text truncate">{localSelectedAddress.address}</p>
+                        </div>
                       </div>
-                      <input
-                        type="text"
-                        value={addressName}
-                        onChange={(e) => setAddressName(e.target.value)}
-                        placeholder="Location name (e.g. Home, Office)"
-                        className="w-full p-3 focus:outline-text focus:outline-2 outline-1 outline-text/50 rounded-lg  mb-3"
-                      />
-                      <button
-                        onClick={handleSaveAddress}
-                        className="w-full bg-accent text-secondary cursor-pointer py-2 rounded-lg font-medium hover:bg-accent/90 disabled:opacity-50 disabled:cursor-not-allowed"
-                        disabled={!addressName.trim()}
-                      >
-                        Save Address
-                      </button>
+
+                      {/* Add Address button for non-authenticated users - NEW */}
+                      {!isAuthenticated && onAddressSelected && (
+                        <button
+                          className="w-full bg-accent text-secondary py-2 rounded-lg font-medium hover:bg-accent/90 mb-2"
+                          onClick={handleAddAddressForGuest}
+                        >
+                          Add Address
+                        </button>
+                      )}
+
+                      {/* Show 'Select this location' button for guests only when not used in checkout */}
+                      {!isAuthenticated && !onAddressSelected && (
+                        <button
+                          className="w-full bg-primary text-secondary py-2 rounded-lg font-medium hover:bg-primary/90 mb-2"
+                          onClick={() => {
+                            dispatch(setSelectedAddress(localSelectedAddress));
+                            if (onClose) {
+                              onClose();
+                            } else {
+                              setIsModalOpen(false);
+                              setIsAddressList(false);
+                            }
+                          }}
+                        >
+                          Select this location
+                        </button>
+                      )}
                     </div>
-                  </div>
-                )}
-              </>
-            )}
+                  )}
+                  
+                  {/* Save Address Option - only for authenticated users */}
+                  {isAuthenticated && showSaveOption && localSelectedAddress && (
+                    <div className="px-4 pb-4">
+                      <div className="border border-primary/20 rounded-lg p-4">
+                        <div className="flex items-center mb-3">
+                          <FaSave className="text-primary mr-2" />
+                          <h3 className="font-medium">Save this address for later</h3>
+                        </div>
+                        <input
+                          type="text"
+                          value={addressName}
+                          onChange={(e) => setAddressName(e.target.value)}
+                          placeholder="Location name (e.g. Home, Office)"
+                          className="w-full p-3 focus:outline-text focus:outline-2 outline-1 outline-text/50 rounded-lg  mb-3"
+                        />
+                        <button
+                          onClick={handleSaveAddress}
+                          className="w-full bg-accent text-secondary cursor-pointer py-2 rounded-lg font-medium hover:bg-accent/90 disabled:opacity-50 disabled:cursor-not-allowed"
+                          disabled={!addressName.trim()}
+                        >
+                          Save Address
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </>
+              )}
+            </div>
           </div>
         </div>
       )}
       {/* Confirmation Modal */}
-<ConfirmationModal
-  open={confirmModal.open}
-  title={confirmModal.title}
-  message={confirmModal.message}
-  onConfirm={confirmModal.onConfirm}
-  onCancel={closeConfirmModal}
-  confirmText="Yes"
-  cancelText="No"
-/>
+      <ConfirmationModal
+        open={confirmModal.open}
+        title={confirmModal.title}
+        message={confirmModal.message}
+        onConfirm={confirmModal.onConfirm}
+        onCancel={closeConfirmModal}
+        confirmText="Yes"
+        cancelText="No"
+      />
     </>
   );
 };

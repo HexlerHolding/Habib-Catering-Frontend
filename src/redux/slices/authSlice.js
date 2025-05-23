@@ -64,10 +64,35 @@ const authSlice = createSlice({
       state.user = null;
       state.isAuthenticated = false;
       
-      // Remove from localStorage
+      // Remove auth data from localStorage
       localStorage.removeItem('userToken');
       localStorage.removeItem('user');
       localStorage.removeItem('token');
+      
+      // Clean up any remaining location data from localStorage
+      localStorage.removeItem('selectedAddress');
+      localStorage.removeItem('savedAddresses');
+      
+      // Clean up redux state in localStorage to remove location data
+      try {
+        const existingState = localStorage.getItem('reduxState');
+        if (existingState) {
+          const parsedState = JSON.parse(existingState);
+          // Remove location data and reset auth
+          const cleanState = {
+            cart: parsedState.cart || { items: [], totalQuantity: 0, totalAmount: 0 },
+            auth: {
+              token: null,
+              user: null,
+              isAuthenticated: false
+            }
+            // Explicitly not including location
+          };
+          localStorage.setItem('reduxState', JSON.stringify(cleanState));
+        }
+      } catch (error) {
+        console.log('Error cleaning up redux state on logout:', error);
+      }
     },
     updateUser: (state, action) => {
       // Extract only essential data for updates

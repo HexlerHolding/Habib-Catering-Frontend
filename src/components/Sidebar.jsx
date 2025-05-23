@@ -7,6 +7,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { logout } from '../redux/slices/authSlice';
 import { TITLE } from '../data/globalText';
 import { CONTACT_INFO } from '../data/globalText';
+import { clearAddresses } from '../redux/slices/locationSlice';
 
 const Sidebar = ({ isOpen, closeSidebar, isLoggedIn, user }) => {
   const navigate = useNavigate();
@@ -14,15 +15,18 @@ const Sidebar = ({ isOpen, closeSidebar, isLoggedIn, user }) => {
 
   // Logout handler
   const handleLogout = () => {
-    // Use Redux logout action instead of direct localStorage manipulation
-    dispatch(logout());
-    
-    // Close sidebar
-    closeSidebar();
-    
-    // Redirect to login page
-    navigate('/login');
-  };
+  // Clear location data first
+  dispatch(clearAddresses());
+  
+  // Then logout (this will also clean localStorage)
+  dispatch(logout());
+  
+  // Close sidebar
+  closeSidebar();
+  
+  // Redirect to login page
+  navigate('/login');
+};
   console.log("user", {user, isLoggedIn});
 
   // Determine user name and phone to display

@@ -6,6 +6,13 @@ import { Link, useNavigate } from 'react-router-dom';
 import { authService } from '../../Services/authService';
 import { login } from '../redux/slices/authSlice';
 import { TITLE, PHONE_INPUT_CONFIG } from '../data/globalText';
+import OtpModal from '../components/OtpModal';
+
+const COUNTRY_OPTIONS = [
+  { code: 'US', label: '+1 (USA)', value: '+1' },
+  { code: 'PK', label: '+92 (Pakistan)', value: '+92' },
+  // Add more countries as needed
+];
 
 const Register = () => {    
     const [showPassword, setShowPassword] = useState(false);
@@ -24,7 +31,12 @@ const Register = () => {
         hasNumber: false,
         hasSpecial: false
     });
-    
+    const [country, setCountry] = useState(COUNTRY_OPTIONS[0].code);
+    const [showOtpModal, setShowOtpModal] = useState(false);
+    const [otpLoading, setOtpLoading] = useState(false);
+    const [pendingUserId, setPendingUserId] = useState(null);
+    const [pendingPhone, setPendingPhone] = useState('');
+
     const dispatch = useDispatch();
     const navigate = useNavigate();    
     
@@ -41,17 +53,13 @@ const Register = () => {
     
     const handleChange = (e) => {
         const { name, value } = e.target;
-        
-        // Phone number validation
         if (name === 'phone') {
-            // Only allow numbers and limit to PHONE_INPUT_CONFIG.maxLength digits
-            const numbersOnly = value.replace(/[^\d]/g, '');
-            if (numbersOnly.length <= PHONE_INPUT_CONFIG.maxLength) {
-                setFormData(prev => ({
-                    ...prev,
-                    [name]: numbersOnly
-                }));
-            }
+            // Only allow numbers (and optional + for international)
+            const numbersOnly = value.replace(/[^\d+]/g, '');
+            setFormData(prev => ({
+                ...prev,
+                [name]: numbersOnly
+            }));
         } else if (name === 'password') {
             // Update password validation state
             setPasswordValidation(validatePassword(value));
@@ -69,6 +77,10 @@ const Register = () => {
         setError(''); // Clear error when user types
     };    
     
+    const handleCountryChange = (e) => {
+        setCountry(e.target.value);
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
@@ -78,15 +90,6 @@ const Register = () => {
         // Basic validation
         if (!formData.name || !formData.phone || !formData.password || !formData.email) {
             setError('All fields are required');
-            setLoading(false);
-            return;
-        }
-
-        // Phone number validation
-        if (formData.phone.length < PHONE_INPUT_CONFIG.maxLength) {
-            const msg = `Phone number must be ${PHONE_INPUT_CONFIG.maxLength} digits`;
-            setError(msg);
-            toast.error(msg);
             setLoading(false);
             return;
         }
@@ -103,34 +106,62 @@ const Register = () => {
             const response = await authService.register({
                 name: formData.name,
                 phone: formData.phone,
-                email: formData.email, // Pass email to service
-                password: formData.password
+                email: formData.email,
+                password: formData.password,
+                country: country,
             });
-            
-            if (response.token) {
-                console.log('Registration Response:', response);
-                
-                // Store token and essential user data in Redux
+            // Show OTP modal if userId is present in response
+            if (response && response.userId) {
+                setPendingUserId(response.userId);
+                setPendingPhone(`${COUNTRY_OPTIONS.find(c => c.code === country)?.value || ''}${formData.phone}`);
+                setShowOtpModal(true);
+            } else if (response.token) {
+                // Fallback: if token is returned directly
                 dispatch(login({ 
                     token: response.token,
-                    user: response.user // This will contain only essential data now
+                    user: response.user
                 }));
-
-                // Show success message
                 toast.success('Registration successful!');
-                
-                // Navigate to home page after successful registration
                 navigate('/');
             }
         } catch (err) {
             setError(err.message || 'Registration failed. Please try again.');
-            toast.error(err.message || 'Registration failed');        } finally {
+            toast.error(err.message || 'Registration failed');
+        } finally {
             setLoading(false);
+        }
+    };
+
+    // OTP submit handler
+    const handleOtpSubmit = async (otp) => {
+        setOtpLoading(true);
+        try {
+            const result = await authService.verifyOtp(pendingUserId, otp);
+            if (result.token) {
+                dispatch(login({ token: result.token, user: result.essentialUserData || result.user }));
+                toast.success('Account verified!');
+                setShowOtpModal(false);
+                navigate('/');
+            } else {
+                toast.error('OTP verification failed.');
+            }
+        } catch (err) {
+            toast.error(err.message || 'OTP verification failed.');
+        } finally {
+            setOtpLoading(false);
         }
     };
 
     return (
         <div className="min-h-screen flex flex-col md:flex-row overflow-auto">
+            {/* OTP Modal */}
+            <OtpModal
+                isOpen={showOtpModal}
+                onClose={() => setShowOtpModal(false)}
+                onSubmit={handleOtpSubmit}
+                phone={pendingPhone}
+                loading={otpLoading}
+            />
             {/* Fixed Header Bar */}
             <div className="fixed top-0 left-0 right-0 bg-background z-20 md:absolute md:bg-transparent">
                 <div className="flex items-start flex-col-reverse gap-4 p-4 md:p-0 md:top-8 md:left-8 md:absolute">
@@ -167,6 +198,20 @@ const Register = () => {
                     )}
 
                     <form onSubmit={handleSubmit} className="space-y-4">
+                        {/* Country code selector */}
+                        <div className="relative">
+                            <select
+                                name="country"
+                                value={country}
+                                onChange={handleCountryChange}
+                                className="w-full py-3 pl-3 pr-4 bg-text/5 rounded focus:outline-text focus:outline-2 outline-1 outline-text/50"
+                            >
+                                {COUNTRY_OPTIONS.map(opt => (
+                                    <option key={opt.code} value={opt.code}>{opt.label}</option>
+                                ))}
+                            </select>
+                        </div>
+
                         <div className="relative">
                             <FaUser className="absolute left-3 top-1/2 transform -translate-y-1/2 text-text/60" />
                             <input
@@ -186,8 +231,7 @@ const Register = () => {
                                 name="phone"
                                 value={formData.phone}
                                 onChange={handleChange}
-                                placeholder={PHONE_INPUT_CONFIG.placeholder}
-                                maxLength={PHONE_INPUT_CONFIG.maxLength}
+                                placeholder="Phone Number"
                                 className="w-full py-3 pl-10 pr-4 bg-text/5 rounded focus:outline-text focus:outline-2 outline-1 outline-text/50"
                             />
                         </div>

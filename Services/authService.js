@@ -8,7 +8,6 @@ export const authService = {
    */  
   async verifyPhone(phone) {
     try {
-      // Format phone number - just send as is since backend expects exact match
       const response = await fetch(`${API_URL}/user/login`, {
         method: 'POST',
         headers: {
@@ -22,12 +21,14 @@ export const authService = {
       if (data.error === 'Invalid credentials') {
         return { exists: true };
       }
-      
+      // If we get 2xx and not "User not found", assume phone exists
+      if (response.ok && !data.error) {
+        return { exists: true };
+      }
       // If we get "User not found", phone doesn't exist
       if (data.error === 'User not found') {
         return { exists: false };
       }
-
       // For any other error, also return false
       return { exists: false };
     } catch (error) {
@@ -43,6 +44,7 @@ export const authService = {
    * @param {string} userData.phone - User's phone number
    * @param {string} userData.email - User's email
    * @param {string} userData.password - User's password
+   * @param {string} userData.country - User's country
    * @returns {Promise<Object>} - Registration response with token
    */
   async register(userData) {
@@ -57,6 +59,7 @@ export const authService = {
           phone: userData.phone,
           email: userData.email, // Send email to backend
           password: userData.password,
+          country: userData.country, // Send country to backend
         }),
       });
 
@@ -87,13 +90,13 @@ export const authService = {
       console.log('Essential user data stored after registration:', essentialUserData);
       
       // Store only essential user data in localStorage
-      localStorage.setItem('userToken', data.token);
-      localStorage.setItem('user', JSON.stringify(essentialUserData));
+      // localStorage.setItem('userToken', data.token);
+      // localStorage.setItem('user', JSON.stringify(essentialUserData));
 
+      // Only return the response, do not store in localStorage yet
       return {
-        success: true,
-        token: data.token,
-        user: essentialUserData
+        ...data,
+        user: essentialUserData,
       };
     } catch (error) {
       console.error('Registration error:', error);
@@ -258,6 +261,43 @@ export const authService = {
       return data;
     } catch (error) {
       console.error('Update profile error:', error);
+      throw error;
+    }
+  },
+
+  /**
+   * Verify OTP and complete registration
+   * @param {string} userId - User's ID
+   * @param {string} otp - OTP code
+   * @returns {Promise<Object>} - Verification response with token and user
+   */
+  async verifyOtp(userId, otp) {
+    try {
+      const response = await fetch(`${API_URL}/user/verify-otp`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ userId, otp }),
+      });
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.error || 'OTP verification failed');
+      }
+      // Store token and essential user data if present
+      if (data.token && data.user) {
+        const essentialUserData = {
+          _id: data.user._id || data.user.id || '',
+          Name: data.user.Name || data.user.name || '',
+          Phone: data.user.Phone || data.user.phone || '',
+        };
+        localStorage.setItem('userToken', data.token);
+        localStorage.setItem('user', JSON.stringify(essentialUserData));
+        data.essentialUserData = essentialUserData;
+      }
+      return data;
+    } catch (error) {
+      console.error('OTP verification error:', error);
       throw error;
     }
   },

@@ -4,6 +4,28 @@ import axios from 'axios';
 
 const API_URL = import.meta.env.VITE_API_URL;
 
+// Clean up any existing location data from localStorage on module load
+// This ensures no old location data persists in localStorage
+if (typeof window !== 'undefined') {
+  try {
+    // Remove any old location data from localStorage
+    localStorage.removeItem('selectedAddress');
+    localStorage.removeItem('savedAddresses');
+    
+    // Also clean up from the main redux state if it exists
+    const existingState = localStorage.getItem('reduxState');
+    if (existingState) {
+      const parsedState = JSON.parse(existingState);
+      if (parsedState.location) {
+        const { location, ...stateWithoutLocation } = parsedState;
+        localStorage.setItem('reduxState', JSON.stringify(stateWithoutLocation));
+      }
+    }
+  } catch (error) {
+    console.log('Error cleaning up location data from localStorage:', error);
+  }
+}
+
 // Async thunks for address operations
 export const fetchUserAddresses = createAsyncThunk(
   'location/fetchUserAddresses',
@@ -112,10 +134,10 @@ export const updateUserAddressName = createAsyncThunk(
   }
 );
 
-// Set up initial state properly with an empty array for savedAddresses
+// Initial state - completely clean, no localStorage dependency
 const initialState = {
-  selectedAddress: null, // Do not load from localStorage
-  savedAddresses: [], // Always start empty
+  selectedAddress: null,
+  savedAddresses: [],
   status: 'idle', // 'idle' | 'loading' | 'succeeded' | 'failed'
   error: null
 };
@@ -124,23 +146,23 @@ const locationSlice = createSlice({
   name: 'location',
   initialState,
   reducers: {
-    // Set the currently selected address for delivery (local only)
+    // Set the currently selected address for delivery (in-memory only)
     setSelectedAddress: (state, action) => {
       state.selectedAddress = action.payload;
-      // Removed: localStorage.setItem('selectedAddress', ...)
+      // NO localStorage operations
     },
     
-    // Add a new address to the saved addresses list (local only)
+    // Add a new address to the saved addresses list (in-memory only for guests)
     addSavedAddress: (state, action) => {
       // Check if address already exists by ID
       const exists = state.savedAddresses.some(addr => addr.id === action.payload.id);
       if (!exists) {
         state.savedAddresses.push(action.payload);
-        // Removed: localStorage.setItem('savedAddresses', ...)
+        // NO localStorage operations
       }
     },
     
-    // Update an address name
+    // Update an address name (in-memory only)
     updateAddressName: (state, action) => {
       const { id, name } = action.payload;
       const address = state.savedAddresses.find(addr => addr.id === id);
@@ -150,13 +172,12 @@ const locationSlice = createSlice({
         // If this is the selected address, update that too
         if (state.selectedAddress && state.selectedAddress.id === id) {
           state.selectedAddress.name = name;
-          // Removed: localStorage.setItem('selectedAddress', ...)
         }
-        // Removed: localStorage.setItem('savedAddresses', ...)
+        // NO localStorage operations
       }
     },
     
-    // Remove an address from the saved list (local only)
+    // Remove an address from the saved list (in-memory only)
     removeAddress: (state, action) => {
       state.savedAddresses = state.savedAddresses.filter(
         address => address.id !== action.payload
@@ -165,16 +186,17 @@ const locationSlice = createSlice({
       // If the deleted address was the selected one, clear the selection
       if (state.selectedAddress && state.selectedAddress.id === action.payload) {
         state.selectedAddress = state.savedAddresses.length > 0 ? state.savedAddresses[0] : null;
-        // Removed: localStorage.setItem('selectedAddress', ...)
       }
-      // Removed: localStorage.setItem('savedAddresses', ...)
+      // NO localStorage operations
     },
     
-    // Clear addresses
+    // Clear addresses (for logout scenarios)
     clearAddresses: (state) => {
       state.savedAddresses = [];
       state.selectedAddress = null;
-      // Removed: localStorage.removeItem('savedAddresses');
+      state.status = 'idle';
+      state.error = null;
+      // NO localStorage operations
     }
   },
   extraReducers: (builder) => {
@@ -189,9 +211,8 @@ const locationSlice = createSlice({
         // If there are addresses but no selected address, select the first one
         if (action.payload.length > 0 && !state.selectedAddress) {
           state.selectedAddress = action.payload[0];
-          // Removed: localStorage.setItem('selectedAddress', ...)
         }
-        // Removed: localStorage.setItem('savedAddresses', ...)
+        // NO localStorage operations
       })
       .addCase(fetchUserAddresses.rejected, (state, action) => {
         state.status = 'failed';
@@ -204,7 +225,7 @@ const locationSlice = createSlice({
       .addCase(saveUserAddress.fulfilled, (state, action) => {
         state.status = 'succeeded';
         state.savedAddresses = action.payload;
-        // Removed: localStorage.setItem('savedAddresses', ...)
+        // NO localStorage operations
       })
       .addCase(saveUserAddress.rejected, (state, action) => {
         state.status = 'failed';
@@ -217,12 +238,12 @@ const locationSlice = createSlice({
       .addCase(deleteUserAddress.fulfilled, (state, action) => {
         state.status = 'succeeded';
         state.savedAddresses = action.payload;
-        // Removed: localStorage.setItem('savedAddresses', ...)
         // If the selected address was deleted, select the first available one
         if (state.selectedAddress && 
             !action.payload.some(addr => addr.id === state.selectedAddress.id)) {
           state.selectedAddress = action.payload.length > 0 ? action.payload[0] : null;
         }
+        // NO localStorage operations
       })
       .addCase(deleteUserAddress.rejected, (state, action) => {
         state.status = 'failed';
@@ -235,7 +256,7 @@ const locationSlice = createSlice({
       .addCase(setUserSelectedAddress.fulfilled, (state, action) => {
         state.status = 'succeeded';
         state.selectedAddress = action.payload;
-        // Removed: localStorage.setItem('selectedAddress', ...)
+        // NO localStorage operations
       })
       .addCase(setUserSelectedAddress.rejected, (state, action) => {
         state.status = 'failed';
@@ -249,7 +270,7 @@ const locationSlice = createSlice({
       .addCase(updateUserAddressName.fulfilled, (state, action) => {
         state.status = 'succeeded';
         state.savedAddresses = action.payload;
-        // Removed: localStorage.setItem('savedAddresses', ...)
+        // NO localStorage operations
       })
       .addCase(updateUserAddressName.rejected, (state, action) => {
         state.status = 'failed';

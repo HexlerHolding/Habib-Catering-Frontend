@@ -1,12 +1,11 @@
 import { useElements, useStripe } from '@stripe/react-stripe-js';
 import { useEffect, useState } from 'react';
-import { FaArrowLeft, FaCreditCard, FaMapMarkerAlt, FaMoneyBillWave, FaStore } from 'react-icons/fa';
+import { FaArrowLeft, FaCreditCard, FaMapMarkerAlt, FaStore } from 'react-icons/fa';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import authService from '../../Services/authService';
 import { branchService } from '../../Services/branchService';
 import { orderService } from '../../Services/orderService';
-import authService from '../../Services/authService';
-import AddressSelector from '../components/AddressSelector';
 import CardDetailsModal from '../components/CardDetailsModal';
 import { CURRENCY_SYMBOL, PHONE_INPUT_CONFIG } from '../data/globalText';
 import { selectIsAuthenticated } from '../redux/slices/authSlice';
@@ -264,8 +263,13 @@ useEffect(() => {
         ...prev,
         address: selectedAddressFromStore.address
       }));
+    } else if (!isAuthenticated) {
+      setFormData(prev => ({
+        ...prev,
+        address: '' // Clear address when logged out
+      }));
     }
-  }, [selectedAddressFromStore]);
+  }, [selectedAddressFromStore, isAuthenticated]);
 
  
   // Define order type options

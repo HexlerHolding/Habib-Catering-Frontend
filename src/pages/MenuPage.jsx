@@ -14,7 +14,6 @@ import { CURRENCY_SYMBOL } from '../data/globalText';
 // start
 // import dummyMenuData from '../data/dummyMenuData';
 // const dummyCategories = [
-//   { id: 'all', name: 'All' },
 //   { id: 'cat1', name: 'Main Course' },
 //   { id: 'cat2', name: 'Snacks' },
 //   { id: 'cat3', name: 'Desserts' },
@@ -83,7 +82,7 @@ const MenuPage = () => {
   const queryParams = new URLSearchParams(location.search);
   const categoryFromUrl = queryParams.get('category');
 
-  const [activeCategory, setActiveCategory] = useState('all');
+  const [activeCategory, setActiveCategory] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [menuItems, setMenuItems] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -121,19 +120,22 @@ const fetchMenuData = async () => {
       try {
         setIsLoading(true);
         const fetchedCategories = await menuService.getMenuCategories();
-        const allCategories = [
-          { id: 'all', name: 'All' },
-          ...fetchedCategories
-        ];
-        setCategories(allCategories);
-        console.log('Fetched categories:', allCategories);
+        // Remove "All" category - just use fetched categories
+        setCategories(fetchedCategories);
+        console.log('Fetched categories:', fetchedCategories);
+        
+        // Set first category as active by default
+        if (fetchedCategories.length > 0 && !categoryFromUrl) {
+          setActiveCategory(fetchedCategories[0].id);
+        }
+        
         const products = await menuService.getMenuProducts();
         console.log('Fetched products:', products);
         setMenuItems(products);
         setError(null);
       } catch (err) {
         setError('Failed to load menu data');
-        setCategories([{ id: 'all', name: 'All' }]);
+        setCategories([]);
         setMenuItems([]);
       } finally {
         setIsLoading(false);
@@ -146,10 +148,13 @@ const fetchMenuData = async () => {
   // if the variation data is not comming from the backend then you can use the dummy data
   // start
     // setMenuItems(dummyMenuData);
-    // setCategories(dummyCategories);
+    // setCategories(dummyCategories.filter(cat => cat.id !== 'all')); // Remove 'all' from dummy data too
+    // if (dummyCategories.length > 1 && !categoryFromUrl) {
+    //   setActiveCategory(dummyCategories[1].id); // Set first non-'all' category
+    // }
     // setIsLoading(false);
   // end
-  }, []);
+  }, [categoryFromUrl]);
      
 
 
@@ -179,14 +184,6 @@ const fetchMenuData = async () => {
       if (isScrollingToSection.current) return;
 
       const scrollPosition = window.scrollY + 250; // Increased offset to account for category headings
-      
-      // If we're at the top of the page, set "all" as active
-      if (window.scrollY < 100) {
-        if (activeCategory !== 'all') {
-          setActiveCategory('all');
-        }
-        return;
-      }
       
       // Check which section is currently in view
       const categoryIds = Object.keys(sectionRefs.current);
@@ -230,7 +227,7 @@ const fetchMenuData = async () => {
     const element = sectionRefs.current[categoryId];
     if (element) {
       isScrollingToSection.current = true;
-      const headerOffset = 250; // Increased offset to show the category heading
+      const headerOffset = 250; // Reduced offset to keep category heading visible
       const elementPosition = element.offsetTop - headerOffset;
       
       window.scrollTo({
@@ -254,8 +251,6 @@ const fetchMenuData = async () => {
 
   // Group items by category
   const groupedItems = categories.reduce((acc, category) => {
-    if (category.id === 'all') return acc;
-    
     const categoryItems = filteredItems.filter(item => item.categoryId === category.id);
     if (categoryItems.length > 0) {
       acc[category.id] = {
@@ -319,7 +314,7 @@ const fetchMenuData = async () => {
           Back
         </button>
         <h1 className="text-2xl md:text-4xl font-bold mb-4 text-center text-text">
-            Our Menu
+            {categories.length > 0 && activeCategory === categories[0]?.id ? 'Our Menu' : ''}
         </h1>
         <div className="sticky top-20 pt-8 pb-2 px-4 bg-background z-10">
           

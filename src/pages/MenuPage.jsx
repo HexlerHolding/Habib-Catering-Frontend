@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import toast from 'react-hot-toast';
 import { FaHeart, FaSearch, FaArrowLeft } from 'react-icons/fa';
 import { useDispatch, useSelector } from 'react-redux';
@@ -97,6 +97,10 @@ const MenuPage = () => {
   const isLoggedIn = useSelector(selectIsAuthenticated);
   const token = useSelector(selectToken);
 
+  // Refs for scroll detection
+  const sectionRefs = useRef({});
+  const isScrollingToSection = useRef(false);
+
   // Always scroll to top when MenuPage mounts
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -122,6 +126,7 @@ const fetchMenuData = async () => {
           ...fetchedCategories
         ];
         setCategories(allCategories);
+        console.log('Fetched categories:', allCategories);
         const products = await menuService.getMenuProducts();
         console.log('Fetched products:', products);
         setMenuItems(products);
@@ -159,6 +164,7 @@ const fetchMenuData = async () => {
         const favs = await favoritesService.getFavorites(token);
         // Ensure all IDs are strings for consistent comparison
         setFavoriteIds(favs.map(f => f.toString()));
+        console.log('Fetched favorites:', favs);
       } catch {
         setFavoriteIds([]);
       }
@@ -166,13 +172,99 @@ const fetchMenuData = async () => {
     fetchFavorites();
   }, [isLoggedIn, token]);
 
-  // Filter items based on active category and search query
+  // Scroll spy effect
+  useEffect(() => {
+    const handleScroll = () => {
+      // Skip scroll detection only during the brief moment of programmatic scrolling
+      if (isScrollingToSection.current) return;
+
+      const scrollPosition = window.scrollY + 250; // Increased offset to account for category headings
+      
+      // If we're at the top of the page, set "all" as active
+      if (window.scrollY < 100) {
+        if (activeCategory !== 'all') {
+          setActiveCategory('all');
+        }
+        return;
+      }
+      
+      // Check which section is currently in view
+      const categoryIds = Object.keys(sectionRefs.current);
+      for (let i = 0; i < categoryIds.length; i++) {
+        const categoryId = categoryIds[i];
+        const element = sectionRefs.current[categoryId];
+        if (element) {
+          const { offsetTop, offsetHeight } = element;
+          // Start detection from the category heading (earlier in the section)
+          const sectionStart = offsetTop - 50; // Start detecting 50px before the actual section
+          const sectionEnd = offsetTop + offsetHeight;
+          
+          if (scrollPosition >= sectionStart && scrollPosition < sectionEnd) {
+            if (activeCategory !== categoryId) {
+              setActiveCategory(categoryId);
+            }
+            break;
+          }
+        }
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [activeCategory]);
+
+  // Handle category click with smooth scroll
+  const handleCategoryClick = (categoryId) => {
+    setActiveCategory(categoryId);
+    
+    if (categoryId === 'all') {
+      isScrollingToSection.current = true;
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      // Re-enable scroll detection after animation completes
+      setTimeout(() => {
+        isScrollingToSection.current = false;
+      }, 800);
+      return;
+    }
+
+    const element = sectionRefs.current[categoryId];
+    if (element) {
+      isScrollingToSection.current = true;
+      const headerOffset = 250; // Increased offset to show the category heading
+      const elementPosition = element.offsetTop - headerOffset;
+      
+      window.scrollTo({
+        top: Math.max(0, elementPosition), // Ensure we don't scroll to negative position
+        behavior: 'smooth'
+      });
+      
+      // Re-enable scroll detection after animation completes
+      setTimeout(() => {
+        isScrollingToSection.current = false;
+      }, 800);
+    }
+  };
+
+  // Filter items based on search query only (not category for sections view)
   const filteredItems = menuItems.filter((item) => {
-    const matchesCategory = activeCategory === 'all' || item.categoryId === activeCategory;
     const matchesSearch = (item.name?.toLowerCase() || '').includes(searchQuery.toLowerCase()) ||
       (item.description?.toLowerCase() || '').includes(searchQuery.toLowerCase());
-    return matchesCategory && matchesSearch;
+    return matchesSearch;
   });
+
+  // Group items by category
+  const groupedItems = categories.reduce((acc, category) => {
+    if (category.id === 'all') return acc;
+    
+    const categoryItems = filteredItems.filter(item => item.categoryId === category.id);
+    if (categoryItems.length > 0) {
+      acc[category.id] = {
+        category,
+        items: categoryItems
+      };
+    }
+    return acc;
+  }, {});
 
   // Handle adding item to cart
   const handleAddToCart = (item) => {
@@ -255,7 +347,7 @@ const fetchMenuData = async () => {
                       ? 'bg-primary text-secondary'
                       : 'bg-text/10 text-text'
                   }`}
-                  onClick={() => setActiveCategory(category.id)}
+                  onClick={() => handleCategoryClick(category.id)}
                 >
                   {category.name}
                 </button>
@@ -276,32 +368,52 @@ const fetchMenuData = async () => {
             <span className="block sm:inline">{error}</span>
           </div>
         )}
-        {/* Menu Items Grid - Scrollable Section */}
+        {/* Menu Items by Category Sections - Scrollable Section */}
         {!isLoading && !error && (
-          <div className="px-4 pt-4 pb-12 ">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 ">
-              {filteredItems.map((item) => (
-                <MenuItem
-                  key={item.id}
-                  item={item}
-                  isFavorite={favoriteIds.includes((item.id || item._id)?.toString())}
-                  onToggleFavorite={handleToggleFavorite}
-                  onAddToCart={handleAddToCart}
-                  isLoggedIn={isLoggedIn}
-                />
-              ))}
-            </div>
-            {/* No Results Message */}
-            {filteredItems.length === 0 && (
+          <div className="px-4 pt-4 pb-12">
+            {Object.keys(groupedItems).length === 0 && filteredItems.length === 0 ? (
+              /* No Results Message */
               <div className="text-center py-8">
                 <h3 className="text-xl font-medium mb-2 text-black">
                   No items found
                 </h3>
                 <p className="text-gray-600">
-                  Try a different search term or category
+                  Try a different search term
                 </p>
               </div>
+            ) : (
+              /* Category Sections */
+              Object.entries(groupedItems).map(([categoryId, { category, items }]) => (
+                <div 
+                  key={categoryId} 
+                  ref={el => sectionRefs.current[categoryId] = el}
+                  className="mb-12"
+                >
+                  {/* Category Header */}
+                  <div className="mb-6">
+                    <h2 className="text-2xl font-bold text-text mb-2">
+                      {category.name}
+                    </h2>
+                    <div className="h-1 w-16 bg-primary rounded"></div>
+                  </div>
+                  
+                  {/* Category Items Grid */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                    {items.map((item) => (
+                      <MenuItem
+                        key={item.id}
+                        item={item}
+                        isFavorite={favoriteIds.includes((item.id || item._id)?.toString())}
+                        onToggleFavorite={handleToggleFavorite}
+                        onAddToCart={handleAddToCart}
+                        isLoggedIn={isLoggedIn}
+                      />
+                    ))}
+                  </div>
+                </div>
+              ))
             )}
+            
             {/* Variation Modal */}
             {showVariationModal && variationItem && (
               <VariationModal

@@ -177,14 +177,14 @@ const Sidebar = ({ isOpen, closeSidebar, isLoggedIn, user }) => {
         
         {/* Hotline */}
         <div className={`absolute bottom-0 left-0 right-0 p-4 flex items-center justify-between bg-primary`}>
-          <div className="flex items-center">
+          <Link to="/" onClick={closeSidebar} className="flex items-center">
             <img 
               src="/offerSectionImage34.png" 
               alt="Cheezious Icon"
               className="h-6 mr-2"
             />
             <div className="text-secondary font-medium">{TITLE} Hotline</div>
-          </div>
+          </Link>
           <a 
             href={`tel:${CONTACT_INFO.phone}`}
             className={`bg-text text-secondary p-2 rounded-full flex items-center justify-center`}

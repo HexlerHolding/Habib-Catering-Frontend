@@ -1,9 +1,9 @@
 export const TITLE = 'Habib Catering';
 
 export const CONTACT_INFO = {
-  email: 'Habibcateringinc@gmail.com',
-  phone: '732-719-8472',
-  address: `${TITLE} Headquarters, Main Street, City`,
+  email: 'habibcateringinc@gmail.com',
+  phone: '(732) 719-8742',
+website:"www.habibcatering.com",
 };
 
 // Phone input configuration for different countries

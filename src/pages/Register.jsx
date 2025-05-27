@@ -5,7 +5,7 @@ import { useDispatch } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import { authService } from '../../Services/authService';
 import { login } from '../redux/slices/authSlice';
-import { TITLE, PHONE_INPUT_CONFIG } from '../data/globalText';
+import { TITLE } from '../data/globalText';
 import OtpModal from '../components/OtpModal';
 
 const COUNTRY_OPTIONS = [

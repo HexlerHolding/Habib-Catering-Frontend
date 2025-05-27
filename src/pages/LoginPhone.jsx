@@ -4,7 +4,7 @@ import { FaEnvelope, FaArrowLeft } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { authService } from "../../Services/authService";
-import { TITLE } from "../data/globalText";
+import { TITLE, PHONE_INPUT_CONFIG } from "../data/globalText";
 
 const LoginPhone = () => {
   const [phoneNumber, setPhoneNumber] = useState("");
@@ -90,7 +90,7 @@ const LoginPhone = () => {
               type="tel"
               placeholder="Enter your phone number"
               value={phoneNumber}
-              maxLength={20}
+              maxLength={PHONE_INPUT_CONFIG.maxLength}
               onChange={handlePhoneNumberChange}
               className="flex-grow p-3 bg-text/5 rounded focus:outline-text focus:outline-2 outline-1 outline-text/50 "
             />

@@ -586,10 +586,10 @@ const closeConfirmModal = () => {
 
       {/* Modal Overlay - show when modal is open or when used as controlled component */}
       {(isModalOpen || onClose) && (
-        <div className={`${onClose ? '' : 'fixed inset-0 bg-modal/50 z-50 flex items-center justify-center p-4'}`}>
+        <div className="fixed inset-0 bg-modal/50 z-50 flex items-center justify-center p-4">
           <div
             ref={modalRef}
-            className={`bg-background rounded-lg w-full flex flex-col ${onClose ? 'h-[80vh]' : 'max-w-xl shadow-xl max-h-[90vh]'}`}
+            className="bg-background rounded-lg w-full max-w-xl shadow-xl max-h-[90vh] flex flex-col"
           >
             {/* Modal Header - Fixed at the top */}
             <div className="flex justify-between items-center p-4 border-b border-text/10 sticky top-0 bg-background z-10">

@@ -386,7 +386,7 @@ const fetchMenuData = async () => {
                 >
                   {/* Category Header */}
                   <div className="mb-6">
-                    <h2 className="text-2xl font-bold text-text mb-2">
+                    <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-text mb-2">
                       {category.name}
                     </h2>
                     <div className="h-1 w-16 bg-primary rounded"></div>

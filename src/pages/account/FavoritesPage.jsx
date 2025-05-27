@@ -114,7 +114,9 @@ const FavoritesPage = () => {
     <div>
       <h2 className="text-2xl font-semibold mb-6 text-text">My Favorites</h2>
       {loading ? (
-        <div className="text-center py-8">Loading...</div>
+                <div className="flex items-center justify-center min-h-[300px]">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-primary border-solid"></div>
+      </div>
       ) : favorites.length === 0 ? (
         <div className="text-center py-8">
           <FaHeart className="mx-auto text-5xl cursor-pointer text-text/30 mb-4" />

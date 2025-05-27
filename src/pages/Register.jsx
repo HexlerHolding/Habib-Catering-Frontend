@@ -184,7 +184,7 @@ const Register = () => {
             </div>
 
             {/* Left Section - Registration Form */}
-            <div className="w-full md:w-1/2 bg-background pt-24 md:pt-8 px-4 md:px-8 pb-8 ">
+            <div className="w-full md:w-1/2 bg-background mt-10 pt-24 md:pt-8 px-4 md:px-8 pb-8 ">
                 <div className="max-w-md mx-auto  md:mt-24 ">
                     <div className="text-center mb-6 md:mb-8">
                         <h1 className="text-xl md:text-2xl font-bold mb-2 md:mb-4 text-text/90">Create Account</h1>

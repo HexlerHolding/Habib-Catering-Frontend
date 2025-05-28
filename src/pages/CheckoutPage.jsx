@@ -275,6 +275,20 @@ useEffect(() => {
     }
   }, [selectedAddressFromStore, isAuthenticated]);
 
+  // Clear address field if selected address is deleted from saved addresses or if no saved addresses remain
+useEffect(() => {
+  if (
+    (selectedAddressFromStore && !savedAddresses.some(addr => addr._id === selectedAddressFromStore._id)) ||
+    savedAddresses.length === 0
+  ) {
+    setFormData(prev => ({
+      ...prev,
+      address: '',
+      lat: '',
+      lng: ''
+    }));
+  }
+}, [savedAddresses, selectedAddressFromStore]);
  
   // Define order type options
   const orderTypeOptions = [
@@ -688,7 +702,7 @@ if (cartItems.length === 0) {
                       <button
                         type="button"
                         onClick={handleShowAddressSelector}
-                        className="text-primary hover:text-primary/80 text-sm flex items-center"
+                        className="text-primary hover:text-primary/80 text-sm flex items-center cursor-pointer"
                       >
                         <FaMapMarkerAlt className="mr-1" />
                         {isAuthenticated 

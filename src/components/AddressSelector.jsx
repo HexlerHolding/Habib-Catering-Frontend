@@ -632,7 +632,7 @@ const closeConfirmModal = () => {
             <div className="overflow-y-auto flex-1">
               {/* Loading Indicator for API calls */}
               {locationStatus === 'loading' && (
-                <div className="fixed inset-0 bg-text/20 z-50 flex items-center justify-center">
+                <div className="fixed inset-0 bg-text/20 !z-50 flex items-center justify-center">
                   <div className="bg-background p-6 rounded-lg shadow-xl flex items-center">
                     <FaSpinner className="text-primary text-2xl animate-spin mr-3" />
                     <span>Processing...</span>
@@ -690,7 +690,7 @@ const closeConfirmModal = () => {
                       <div className="text-center mt-6">
                         <button
                           onClick={() => setIsAddressList(false)}
-                          className="bg-primary text-background px-6 py-3 rounded-lg font-medium"
+                          className="bg-primary text-background cursor-pointer px-6 py-3 rounded-lg font-medium"
                         >
                           Add New Address
                         </button>
@@ -703,7 +703,7 @@ const closeConfirmModal = () => {
                       <p className="text-text/50 mb-4">You haven't saved any addresses yet.</p>
                       <button
                         onClick={() => setIsAddressList(false)}
-                        className="bg-primary text-background px-6 py-3 rounded-lg font-medium"
+                        className="bg-primary text-background cursor-pointer px-6 py-3 rounded-lg font-medium"
                       >
                         Add New Address
                       </button>
@@ -763,7 +763,7 @@ const closeConfirmModal = () => {
                   </div>
 
                   {/* Map Container */}
-                  <div className="w-full h-64 relative mb-4">
+                  <div className="w-full h-64 relative mb-4 !z-10">
                     <div ref={mapRef} className="h-full w-full"></div>
                     {isLoading && (
                       <div className="absolute inset-0 flex items-center justify-center bg-text/10 z-10">

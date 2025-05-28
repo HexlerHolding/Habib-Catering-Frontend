@@ -26,10 +26,7 @@ const PrivacyPolicy = () => {
         </h1>
         <div className="bg-background rounded-lg shadow-md p-5 md:p-8">
           <section className="mb-8">
-            <h2 className="text-xl md:text-2xl font-semibold mb-4 text-text">
-              Effective Date
-            </h2>
-            <p className="mb-4 text-text">Effective Date: May 14, 2025</p>
+            <p className="mb-4 text-text">Effective Date: {CONTACT_INFO.effectiveDate}</p>
             <p className="mb-4 text-text">
               Website:
               <Link

@@ -286,8 +286,8 @@ const BranchLocator = () => {
       {/* Branch Listings and Map Container */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Branch Listings */}
-        <div className="bg-background rounded-lg shadow overflow-hidden">
-          <div className="overflow-y-auto h-[27rem]">
+        <div className="bg-background  rounded-lg shadow overflow-hidden">
+          <div className="overflow-y-auto h-auto md:h-[27rem]">
             {isLoading ? (
               <div className="px-4 py-6 text-center text-text/50">
                 Loading branches...

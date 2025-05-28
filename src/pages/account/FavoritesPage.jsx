@@ -10,7 +10,7 @@ import { CURRENCY_SYMBOL } from '../../data/globalText';
 
 // MenuItem component copied from MenuPage for consistent card UI
 const MenuItem = ({ item, onRemoveFavorite, onAddToCart }) => (
-  <div className="bg-background rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all p-4 flex flex-col h-full">
+  <div className="bg-background rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all p-4 flex flex-col h-fulll">
     <div className="relative">
       {/* Heart icon for remove */}
       <button
@@ -111,7 +111,7 @@ const FavoritesPage = () => {
   };
 
   return (
-    <div>
+    <div >
       <h2 className="text-2xl font-semibold mb-6 text-text">My Favorites</h2>
       {loading ? (
                 <div className="flex items-center justify-center min-h-[300px]">

@@ -239,7 +239,7 @@ const EditProfilePage = () => {
                 placeholder="Click to change password"
                 readOnly
               />
-              <button
+              {/* <button
                 type="button"
                 tabIndex={-1}
                 className="absolute inset-y-0 right-0 flex items-center pr-3 text-text/50"
@@ -247,7 +247,7 @@ const EditProfilePage = () => {
                 style={{ background: 'none', border: 'none' }}
               >
                 {showMainPassword ? <FaEyeSlash /> : <FaEye />}
-              </button>
+              </button> */}
             </div>
           </div>
         </div>
@@ -264,7 +264,7 @@ const EditProfilePage = () => {
 
       {showPasswordModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-modal/50 bg-opacity-40">
-          <div className="bg-background rounded-lg shadow-lg p-6 w-full max-w-md border border-primary">
+          <div className="bg-background rounded-lg shadow-lg p-6  sm:w-full max-w-md border border-primary">
             <h3 className="text-lg font-semibold mb-4 text-primary">Change Password</h3>
             <form onSubmit={handlePasswordChangeSubmit} className="space-y-4">
               <div>

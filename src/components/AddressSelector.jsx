@@ -362,6 +362,11 @@ const closeConfirmModal = () => {
   // Save address to saved addresses list and user profile
   const handleSaveAddress = () => {
     if (!localSelectedAddress) return;
+    // Block saving if branches are not loaded or empty
+    if (!branches || branches.length === 0) {
+      toast.error('No branches available. Cannot save address.');
+      return;
+    }
     if (!isWithin10Km(localSelectedAddress.lat, localSelectedAddress.lng)) {
       toast.error('Sorry, we only deliver within 10 km of our branches.');
       return;

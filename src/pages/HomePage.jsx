@@ -16,6 +16,7 @@ const HomePage = () => {
   const userId = useSelector(selectUserId);
   const savedAddresses = useSelector(selectSavedAddresses);
   const [showAddressModal, setShowAddressModal] = useState(false);
+  const [addressPromptShown, setAddressPromptShown] = useState(false); // Add this flag
 
   useEffect(() => {
     if (isAuthenticated && userId) {
@@ -24,19 +25,27 @@ const HomePage = () => {
   }, [isAuthenticated, userId, dispatch]);
 
   useEffect(() => {
-    if (isAuthenticated && userId && savedAddresses && savedAddresses.length === 0) {
-       // Show modal after 4 seconds delay
+    if (
+      isAuthenticated &&
+      userId &&
+      savedAddresses &&
+      savedAddresses.length === 0 &&
+      !addressPromptShown
+    ) {
+      // Show modal after 4 seconds delay
       const timer = setTimeout(() => {
         toast.error('Please add a delivery address to continue');
         setShowAddressModal(true);
+        setAddressPromptShown(true); // Set flag so it doesn't show again
       }, 4000);
 
       // Cleanup timer if component unmounts or dependencies change
       return () => clearTimeout(timer);
-    } else {
+    } else if (savedAddresses && savedAddresses.length > 0) {
       setShowAddressModal(false);
+      setAddressPromptShown(false); // Reset flag if addresses are added
     }
-  }, [savedAddresses, isAuthenticated, userId]);
+  }, [savedAddresses, isAuthenticated, userId, addressPromptShown]);
 
   return (
     <div className="relative bg-background">

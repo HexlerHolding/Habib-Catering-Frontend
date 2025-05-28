@@ -9,6 +9,10 @@ const AccountLayout = () => {
   const isAuthenticated = useSelector(selectIsAuthenticated);
   const navigate = useNavigate();
   const dispatch = useDispatch();
+   // Always scroll to top when MenuPage mounts
+    useEffect(() => {
+      window.scrollTo(0, 0);
+    }, []);
   
   useEffect(() => {
     console.log("AccountLayout mounted - Auth state:", isAuthenticated);
@@ -78,7 +82,7 @@ const AccountLayout = () => {
         
         {/* Content Area - Full Width */}
         <div className="w-full">
-          <div className="bg-background rounded-lg shadow-sm p-6">
+          <div className="bg-background rounded-lg  sm:p-6">
             <Outlet />
           </div>
         </div>

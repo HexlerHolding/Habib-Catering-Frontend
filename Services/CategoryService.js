@@ -14,7 +14,7 @@ class CategoryService {
         'default': 'others'
       };
     }
-  
+    
     mapPOSCategory(posCategory) {
       if (!posCategory) return 'others';
       
